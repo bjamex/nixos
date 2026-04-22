@@ -5,7 +5,7 @@
     imports = [
       self.nixosModules.styxHardware
       self.nixosModules.niri
-#      self.nixosModules.pipewire
+      self.nixosModules.gaming
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -22,11 +22,15 @@
 
     # Enable networking
     networking.networkmanager.enable = true;
+    
+    # Allow unfree software
+    nixpkgs.config.allowUnfree = true;
 
-services.openssh = {
-  enable = true;
-  passwordAuthentication = true;
-};
+    # SSH
+    services.openssh = {
+      enable = true;
+      passwordAuthentication = true;
+    };
     
     # Set your time zone.
     time.timeZone = "Australia/Brisbane";
@@ -46,21 +50,19 @@ services.openssh = {
       LC_TIME = "en_AU.UTF-8";
     };
 
-    # Enable the X11 windowing system.
+    # GPU stuff
+    hardware.amdgpu.initrd.enable = true;
+
     services.xserver.enable = true;
 
-    hardware.graphics.enable = true;
-#    hardware.amdgpu.amdvlk.enable = true;
+    hardware.bluetooth.enable = true;
+    hardware.bluetooth.powerOnBoot = true;
+    services.blueman.enable = true;
+    # hardware.amdgpu.amdvlk.enable = true;
  
-   # Enable the GNOME Desktop Environment.
+    # Enable the GNOME Desktop Environment.
     # services.xserver.displayManager.gdm.enable = true;
     # services.xserver.desktopManager.gnome.enable = true;
-
-    # Configure keymap in X11
-    services.xserver.xkb = {
-      layout = "au";
-      variant = "";
-    };
 
     # Enable CUPS to print documents.
     services.printing.enable = true;
@@ -87,26 +89,20 @@ services.openssh = {
 
     services.tailscale.enable = true;
 
-    # Install firefox.
-    programs.firefox.enable = true;
-
-    programs.steam = {
-	enable = true;
-  	package = pkgs.steam.override {
-	  extraArgs ="-system-composer";
-      };
-    };	
-    # Allow unfree packages
-    nixpkgs.config.allowUnfree = true;
-
     # List packages installed in system profile.
     environment.systemPackages = with pkgs; [
     discord
-    opencode
     neovim
     claude-code
     mcp-nixos
     git
+    google-chrome
+    qbittorrent
+    btop
+    ncdu    
+    fzf
+    lazygit
+    yazi    
     ];
 
 
