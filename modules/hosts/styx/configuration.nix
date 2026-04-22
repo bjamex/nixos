@@ -106,6 +106,7 @@ services.openssh = {
     neovim
     claude-code
     mcp-nixos
+    git
     ];
 
 
