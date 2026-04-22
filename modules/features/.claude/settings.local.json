@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(nix-shell -p git --run \"git --version\")"
+      "Bash(nix-shell -p git --run \"git --version\")",
+      "Bash(nix-shell *)"
     ]
   }
 }
