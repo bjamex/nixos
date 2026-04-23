@@ -30,7 +30,7 @@
     # SSH
     services.openssh = {
       enable = true;
-      passwordAuthentication = true;
+      settings.PasswordAuthentication = true;
     };
     
     # Set your time zone.
@@ -54,7 +54,7 @@
     # GPU stuff
     hardware.amdgpu.initrd.enable = true;
 
-    services.xserver.enable = true;
+    # services.xserver.enable = true;
 
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;

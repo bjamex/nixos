@@ -4,6 +4,14 @@
       enable = true;
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
     };
+
+    services.greetd = {
+      enable = true;
+      settings.default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd niri-session";
+        user = "greeter";
+      };
+    };
   };
 
   perSystem = { pkgs, lib, self', ... }: {
@@ -39,10 +47,20 @@
           "Mod+Return".spawn-sh = lib.getExe pkgs.kitty;
           "Mod+W".close-window = _: {};
           "Mod+Space".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
+          "Mod+Left".focus-column-left = _: {};
+          "Mod+Right".focus-column-right = _: {};
+          "Mod+Up".focus-window-up = _: {};
+          "Mod+Down".focus-window-down = _: {};
           "Mod+Shift+Left".move-column-left = _: {};
           "Mod+Shift+Right".move-column-right = _: {};
           "Mod+Shift+Up".move-window-up = _: {};
           "Mod+Shift+Down".move-window-down = _: {};
+          "Mod+Shift+F".fullscreen-window = _: {};
+          "Mod+M".maximize-column = _: {};
+          "Mod+C".center-column = _: {};
+          "Mod+Comma".consume-window-into-column = _: {};
+          "Mod+Period".expel-window-from-column = _: {};
+          "Mod+Tab".toggle-overview = _: {};
           "Mod+1".focus-workspace = 1;
           "Mod+2".focus-workspace = 2;
           "Mod+3".focus-workspace = 3;
