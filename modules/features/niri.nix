@@ -22,6 +22,19 @@
         input.focus-follows-mouse = {};
         layout.gaps = 10;
 
+        window-rules = [
+          {
+            matches = [
+              {
+                app-id = "steam";
+                title = "^notificationtoasts_\\d+_desktop$";
+              }
+            ];
+            default-floating-position = _: { props = { x = 0; y = 0; relative-to = "bottom-right"; }; };
+            open-focused = false;
+          }
+        ];
+
         binds = {
           "Mod+Return".spawn-sh = lib.getExe pkgs.kitty;
           "Mod+W".close-window = _: {};

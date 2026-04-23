@@ -106,7 +106,12 @@
     jellyfin-tui
     vesktop
     xournalpp
+    obs-studio    
+    # audio stuff
+    pamixer 
     ];
+
+
 
 
     system.stateVersion = "25.11"; 
