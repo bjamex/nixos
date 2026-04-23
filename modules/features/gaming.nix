@@ -2,6 +2,7 @@
   flake.nixosModules.gaming = { pkgs, lib, ... }: {
 
     hardware.graphics.enable = lib.mkDefault true;
+    hardware.graphics.enable32Bit = lib.mkDefault true;
 
     programs = {
       gamemode.enable = true;
