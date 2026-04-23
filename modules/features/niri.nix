@@ -49,7 +49,17 @@
           "Mod+Shift+8".move-column-to-workspace = 8;
           "Mod+Shift+9".move-column-to-workspace = 9;
           "Print".screenshot = _: {};
+          
+          # Applications
           "Mod+B".spawn-sh = "google-chrome-stable";
+
+          # Scroll Bindings
+          "Mod+WheelScrollDown".focus-workspace-down = _: {};
+          "Mod+WheelScrollUp".focus-workspace-up = _: {};
+
+          
+
+
         };
       };
     };

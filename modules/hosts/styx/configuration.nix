@@ -103,6 +103,9 @@
     fzf
     lazygit
     yazi    
+    jellyfin-tui
+    vesktop
+    xournalpp
     ];
 
 
