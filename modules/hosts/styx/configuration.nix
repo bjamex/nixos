@@ -6,6 +6,7 @@
       self.nixosModules.styxHardware
       self.nixosModules.niri
       self.nixosModules.gaming
+      self.nixosModules.pipewire
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -68,14 +69,14 @@
     services.printing.enable = true;
 
     # Enable sound with pipewire.
-    # services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-    };
+    # security.rtkit.enable = true;
+    # services.pipewire = {
+    #  enable = true;
+    #  alsa.enable = true;
+    #  alsa.support32Bit = true;
+    #  pulse.enable = true;
+    #  jack.enable = true;
+    #    };
 
     # Define a user account.
     users.users.swin = {
