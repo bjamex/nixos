@@ -44,7 +44,7 @@
         ];
 
         binds = {
-          "Mod+Return".spawn-sh = lib.getExe pkgs.kitty;
+          "Mod+Return".spawn-sh = "kitty";
           "Mod+W".close-window = _: {};
           "Mod+Space".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
           "Mod+Left".focus-column-left = _: {};
