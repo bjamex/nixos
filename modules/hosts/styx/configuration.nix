@@ -8,6 +8,7 @@
       self.nixosModules.gaming
       self.nixosModules.pipewire
       self.nixosModules.kitty
+      self.nixosModules.neovim
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -101,8 +102,7 @@
     # List packages installed in system profile.
     environment.systemPackages = with pkgs; [
     discord
-    neovim
-    claude-code
+claude-code
     mcp-nixos
     git
     google-chrome

@@ -6,6 +6,11 @@
     import-tree.url = "github:vic/import-tree";
 
     wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
+
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
