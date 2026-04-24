@@ -1,6 +1,7 @@
 { self, inputs, ... }: {
 
   flake.nixosModules.pipewire = {pkgs, ...}: {
+    environment.systemPackages = [ pkgs.crosspipe ];
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;
