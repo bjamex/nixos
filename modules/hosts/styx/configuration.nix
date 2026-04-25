@@ -108,7 +108,8 @@ claude-code
     google-chrome
     qbittorrent
     btop
-    ncdu    
+    ncdu
+    baobab
     fzf
     lazygit
     yazi    
