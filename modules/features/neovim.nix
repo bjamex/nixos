@@ -36,7 +36,7 @@
         plugins = {
           lualine = {
             enable = true;
-            settings.options.theme = "catppuccin";
+            settings.options.theme = "auto";
           };
 
           bufferline.enable = true;
@@ -54,10 +54,7 @@
             };
           };
 
-          treesitter = {
-            enable = true;
-            settings.highlight.enable = true;
-          };
+          treesitter.enable = true;
 
           lsp = {
             enable = true;

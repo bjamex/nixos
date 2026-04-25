@@ -42,6 +42,7 @@
       prismlauncher
       lsfg-vk
       lsfg-vk-ui
+      faugus-launcher
       # self.packages.${pkgs.system}.wow-launcher
     ];
 
