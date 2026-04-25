@@ -1,5 +1,6 @@
 {self, inputs, ...}: {
   flake.nixosModules.gaming = { pkgs, lib, ... }: {
+    imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
     hardware.graphics.enable = lib.mkDefault true;
     hardware.graphics.enable32Bit = lib.mkDefault true;
@@ -29,7 +30,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      lutris
+      # lutris  # broken: openldap test failure in nixpkgs
       steam-run
       dxvk
       gamescope
@@ -37,7 +38,7 @@
       r2modman
       heroic
       er-patcher
-      bottles
+      # bottles  # broken: openldap test failure in nixpkgs
       steamtinkerlaunch
       prismlauncher
       lsfg-vk
@@ -63,8 +64,8 @@
     # ];
 
     nix.settings = {
-      substituters = ["https://nix-gaming.cachix.org"];
-      trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+      substituters = [ "https://nix-gaming.cachix.org" ];
+      trusted-public-keys = [ "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];
     };
   };
 }

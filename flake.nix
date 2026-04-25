@@ -7,10 +7,12 @@
 
     wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
 
-    nixvim = {
-      url = "github:nix-community/nixvim";
+    nix-gaming = {
+      url = "github:fufexan/nix-gaming";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixvim.url = "github:nix-community/nixvim";
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 

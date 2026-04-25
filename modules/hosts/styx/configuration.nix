@@ -8,7 +8,7 @@
       self.nixosModules.gaming
       self.nixosModules.pipewire
       self.nixosModules.kitty
-      self.nixosModules.neovim
+      # self.nixosModules.neovim
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -103,7 +103,7 @@
     environment.systemPackages = with pkgs; [
     discord
 claude-code
-    mcp-nixos
+    # mcp-nixos
     git
     google-chrome
     qbittorrent
