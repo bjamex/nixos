@@ -1,5 +1,10 @@
 {self, inputs, ...}: {
-  flake.nixosModules.gaming = { pkgs, lib, ... }: {
+  flake.nixosModules.gaming = { pkgs, lib, ... }: let
+    pinnedPkgs = import inputs.nixpkgs-pinned {
+      system = pkgs.stdenv.hostPlatform.system;
+      config.allowUnfree = true;
+    };
+  in {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
     hardware.graphics.enable = lib.mkDefault true;
@@ -30,7 +35,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      # lutris  # broken: openldap test failure in nixpkgs
+      pinnedPkgs.lutris
       steam-run
       dxvk
       gamescope
