@@ -54,7 +54,7 @@
             };
           };
 
-          treesitter.enable = true;
+          # treesitter.enable = true;
 
           lsp = {
             enable = true;

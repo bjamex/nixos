@@ -8,7 +8,7 @@
       self.nixosModules.gaming
       self.nixosModules.pipewire
       self.nixosModules.kitty
-      # self.nixosModules.neovim
+      self.nixosModules.neovim
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
