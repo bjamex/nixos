@@ -119,6 +119,8 @@ claude-code
     obs-studio    
     # audio stuff
     pamixer 
+    xivlauncher
+
     ];
 
 
