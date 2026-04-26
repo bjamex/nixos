@@ -122,6 +122,17 @@
         ],
         "right": [
           {
+            "id": "CustomButton",
+            "ipcIdentifier": "mic-status",
+            "textStream": false,
+            "textIntervalMs": 1000,
+            "textCollapse": "LIVE",
+            "hideMode": "expandWithOutput",
+            "showIcon": false,
+            "colorizeSystemText": "error",
+            "textCommand": "m=$(pamixer --default-source --get-mute); [ \"$m\" = \"true\" ] && echo MUTED || echo LIVE"
+          },
+          {
             "blacklist": [],
             "chevronColor": "none",
             "colorizeIcons": false,
@@ -588,7 +599,7 @@
     },
     "audio": {
       "volumeStep": 5,
-      "volumeOverdrive": false,
+      "volumeOverdrive": true,
       "spectrumFrameRate": 30,
       "visualizerType": "linear",
       "spectrumMirrored": true,

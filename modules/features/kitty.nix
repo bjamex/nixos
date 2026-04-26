@@ -15,7 +15,7 @@
         wrapProgram $out/bin/kitty --add-flags "--config ${pkgs.writeText "kitty.conf" ''
           font_size 12.0
           cursor_shape beam
-confirm_os_window_close 0
+          confirm_os_window_close 0
           enable_audio_bell 0
           tab_bar_style separator
           tab_separator  " | "

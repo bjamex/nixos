@@ -14,9 +14,19 @@
     };
   };
 
-  perSystem = { pkgs, lib, self', ... }: {
+  perSystem = { pkgs, lib, self', ... }: let
+    micMuteToggle = pkgs.writeShellScript "mic-mute-toggle" ''
+      ${lib.getExe pkgs.pamixer} --default-source -t
+      if [ "$(${lib.getExe pkgs.pamixer} --default-source --get-mute)" = "true" ]; then
+        ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-muted.oga
+      else
+        ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
+      fi
+      ${lib.getExe self'.packages.myNoctalia} ipc call cb refresh mic-status
+    '';
+  in {
     packages.myNiri = inputs.wrapper-modules.wrappers.niri.wrap {
-      inherit pkgs; # THIS PART IS VERY IMPORTAINT, I FORGOT IT IN THE VIDEO!!!
+      inherit pkgs;
       settings = {
         spawn-at-startup = [
           (lib.getExe self'.packages.myNoctalia)
@@ -81,17 +91,10 @@
           "Mod+Shift+8".move-column-to-workspace = 8;
           "Mod+Shift+9".move-column-to-workspace = 9;
           "Print".screenshot = _: {};
-          
-          # Applications
           "Mod+B".spawn-sh = "google-chrome-stable";
-
-          # Scroll Bindings
+          "KP_Subtract".spawn-sh = "${micMuteToggle}";
           "Mod+WheelScrollDown".focus-workspace-down = _: {};
           "Mod+WheelScrollUp".focus-workspace-up = _: {};
-
-          
-
-
         };
       };
     };
