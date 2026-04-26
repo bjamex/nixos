@@ -39,8 +39,17 @@
         input.mouse.accel-profile = "flat";
         input.focus-follows-mouse = {};
         layout.gaps = 10;
+        layout.focus-ring = {
+          width = 3;
+          active-color = "#CBA6F7";
+          inactive-color = "#45475A";
+        };
 
         window-rules = [
+          {
+            geometry-corner-radius = 12;
+            clip-to-geometry = true;
+          }
           {
             matches = [
               {
@@ -92,6 +101,7 @@
           "Mod+Shift+9".move-column-to-workspace = 9;
           "Print".screenshot = _: {};
           "Mod+B".spawn-sh = "google-chrome-stable";
+          "Mod+D".spawn-sh = "google-chrome-stable --app=https://discord.com/app";
           "KP_Subtract".spawn-sh = "${micMuteToggle}";
           "Mod+WheelScrollDown".focus-workspace-down = _: {};
           "Mod+WheelScrollUp".focus-workspace-up = _: {};
