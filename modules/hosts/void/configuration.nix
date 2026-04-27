@@ -11,6 +11,35 @@
       self.nixosModules.neovim
     ];
 
+    environment.systemPackages = with pkgs; [
+      discord
+      claude-code
+      git
+      google-chrome
+      qbittorrent
+      btop
+      ncdu
+      baobab
+      fzf
+      lazygit
+      yazi
+      jellyfin-tui
+      vesktop
+      xournalpp
+      obs-studio
+      darktable
+      pamixer
+      docker
+      epsonscan2
+      freecad
+      google-earth-pro
+      nordpass
+      localsend
+      pdfarranger
+      sunshine
+      moonlight
+    ];
+
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
     nix.gc = {
@@ -59,34 +88,16 @@
 
     services.printing.enable = true;
 
+    virtualisation.docker.enable = true;
+
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [ "networkmanager" "wheel" "docker" ];
       packages = with pkgs; [];
     };
 
     services.tailscale.enable = true;
-
-    environment.systemPackages = with pkgs; [
-      discord
-      claude-code
-      git
-      google-chrome
-      qbittorrent
-      btop
-      ncdu
-      baobab
-      fzf
-      lazygit
-      yazi
-      jellyfin-tui
-      vesktop
-      xournalpp
-      obs-studio
-      darktable
-      pamixer
-    ];
 
     system.stateVersion = "25.11";
   };
