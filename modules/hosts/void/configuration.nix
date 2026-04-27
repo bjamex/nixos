@@ -1,9 +1,9 @@
 { self, inputs, ... }: {
 
-  flake.nixosModules.styxConfiguration = { pkgs, lib, ... }: {
+  flake.nixosModules.voidConfiguration = { pkgs, lib, ... }: {
     imports = [
-      self.nixosModules.styxHardware
-      self.nixosModules.niriStyx
+      self.nixosModules.voidHardware
+      self.nixosModules.niriVoid
       self.nixosModules.gaming
       self.nixosModules.pipewire
       self.nixosModules.fileManager
@@ -25,7 +25,7 @@
 
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
-    networking.hostName = "styx";
+    networking.hostName = "void";
     networking.networkmanager.enable = true;
 
     nixpkgs.config.allowUnfree = true;
@@ -56,7 +56,6 @@
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
     services.blueman.enable = true;
-    # hardware.amdgpu.amdvlk.enable = true;
 
     services.printing.enable = true;
 
@@ -72,7 +71,6 @@
     environment.systemPackages = with pkgs; [
       discord
       claude-code
-      # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
       git
       google-chrome
       qbittorrent

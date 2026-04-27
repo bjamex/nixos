@@ -34,6 +34,7 @@
       lsfg-vk
       lsfg-vk-ui
       faugus-launcher
+      xivlauncher
     ];
 
     nix.settings = {
