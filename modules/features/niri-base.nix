@@ -1,9 +1,6 @@
 { self, inputs, ... }: {
   flake.nixosModules.niriBase = { config, pkgs, lib, ... }: {
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
-    };
+    programs.niri.enable = true;
 
     services.greetd = {
       enable = true;
@@ -98,8 +95,13 @@
         "Mod+Shift+8".move-column-to-workspace = 8;
         "Mod+Shift+9".move-column-to-workspace = 9;
         "Print".screenshot = _: {};
+        "Mod+Shift+slash".show-hotkey-overlay = _: {};
+        "Mod+V".toggle-window-floating = _: {};
         "Mod+B".spawn-sh = "google-chrome-stable";
-        "Mod+D".spawn-sh = "google-chrome-stable --app=https://discord.com/app";
+        "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
+        "Mod+F".spawn-sh = "kitty yazi";
+        "Mod+E".spawn-sh = "dolphin";
+        "Mod+D".spawn-sh = "google-chrome-stable --app=https://discord.com/app --disable-features=WebRtcAllowInputVolumeAdjustment";
         "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";
         "Mod+WheelScrollDown".focus-workspace-down = _: {};
@@ -107,6 +109,6 @@
       };
     };
   in {
-    packages.niriCommonSettings = niriCommonSettings;
+    legacyPackages.niriCommonSettings = niriCommonSettings;
   };
 }

@@ -14,6 +14,7 @@
       postBuild = ''
         wrapProgram $out/bin/kitty --add-flags "--config ${pkgs.writeText "kitty.conf" ''
           font_size 12.0
+          hide_window_decorations yes
           cursor_shape beam
           confirm_os_window_close 0
           enable_audio_bell 0

@@ -2,6 +2,38 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.2] - 2026-04-27
+
+### Added
+
+- **Discord webapp:** Runs via Chrome (`--app=https://discord.com/app`) with `Mod+D` keybind
+  - Added `--disable-features=WebRtcAllowInputVolumeAdjustment` to prevent Chrome WebRTC from altering mic volume
+
+- **Niri window rules:**
+  - Rounded corners (`geometry-corner-radius = 12`) on all windows
+  - Catppuccin Mocha focus ring (`#CBA6F7` active, `#45475A` inactive)
+
+- **New keybinds:**
+  - `Mod+F` — Open Yazi terminal file manager in Kitty
+  - `Mod+E` — Open Dolphin file manager
+  - `Mod+semicolon` — Toggle wallpaper selector (Noctalia IPC)
+  - `Mod+Shift+/` — Show hotkey overlay
+  - `Mod+V` — Toggle window between floating and tiling
+
+- **File manager improvements:**
+  - Added `breeze-icons` and `xdg-utils` to fileManager.nix
+
+- **Kitty:** Removed title bar (`hide_window_decorations yes`)
+
+- **Neovim / LazyVim:**
+  - Switched from nixvim to plain `pkgs.neovim` with LazyVim runtime dependencies
+  - Added `tree-sitter` CLI, `trash-cli` for LazyVim health check compliance
+
+### Changed
+
+- `Mod+W` keybind reassigned from close-window to wallpaper — close-window moved to `Mod+W` (no change, kept as is)
+- `Mod+semicolon` replaces the old wallpaper shortcut
+
 ## [1.1] - 2026-04-27
 
 ### Security

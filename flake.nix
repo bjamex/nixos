@@ -13,8 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim.url = "github:nix-community/nixvim/53aad7a9aaadaec21d740117ba0f0531b9a9b3cd";
-  };
+};
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
     {inherit inputs;} 

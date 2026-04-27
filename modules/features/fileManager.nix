@@ -6,6 +6,8 @@
       kdePackages.kio
       kdePackages.kio-fuse
       kdePackages.kio-extras
+      kdePackages.breeze-icons
+      xdg-utils
     ];
   };
 }
