@@ -6,11 +6,8 @@ All notable changes to this NixOS configuration are documented in this file.
 
 ### Security
 
-- **SSH hardening:** Switched to Tailscale SSH only
+- **SSH hardening:** 
   - Disabled OpenSSH on all hosts
-  - Eliminated password authentication vulnerability
-  - SSH now only accessible over Tailscale private network
-  - Enabled Tailscale certificate authentication for `swin` user
 
 ## [1.0] - 2026-04-27
 
