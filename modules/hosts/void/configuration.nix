@@ -59,10 +59,10 @@
 
     nixpkgs.config.allowUnfree = true;
 
-    services.openssh = {
-      enable = true;
-      settings.PasswordAuthentication = true;
-    };
+    services.openssh.enable = false;
+
+    services.tailscale.enable = true;
+    services.tailscale.permitCertUid = "swin";
 
     time.timeZone = "Australia/Brisbane";
 

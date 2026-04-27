@@ -7,9 +7,7 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  # TODO: Update with your hardware-specific configuration
-  # Run: nixos-generate-config --root /mnt
-  # Then copy the relevant hardware settings from /mnt/etc/nixos/hardware-configuration.nix
+  # TODO: Update with hardware-specific configuration when base OS is setup
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];

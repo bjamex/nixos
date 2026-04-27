@@ -63,7 +63,6 @@
       binds = {
         "Mod+Return".spawn-sh = "kitty";
         "Mod+N".spawn-sh = "kitty nvim";
-        "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
         "Mod+W".close-window = _: {};
         "Mod+Space".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
         "Mod+Left".focus-column-left = _: {};
@@ -101,6 +100,7 @@
         "Print".screenshot = _: {};
         "Mod+B".spawn-sh = "google-chrome-stable";
         "Mod+D".spawn-sh = "google-chrome-stable --app=https://discord.com/app";
+        "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";
         "Mod+WheelScrollDown".focus-workspace-down = _: {};
         "Mod+WheelScrollUp".focus-workspace-up = _: {};
