@@ -35,6 +35,7 @@
       lsfg-vk-ui
       faugus-launcher
       xivlauncher
+      rusty-path-of-building
     ];
 
     nix.settings = {

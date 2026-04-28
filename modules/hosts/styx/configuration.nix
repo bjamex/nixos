@@ -60,10 +60,18 @@
 
     services.printing.enable = true;
 
+    virtualisation.docker.enable = true;
+
+    services.sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+    };
+
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [ "networkmanager" "wheel" "docker" ];
       packages = with pkgs; [];
     };
 
@@ -86,6 +94,14 @@
       obs-studio
       darktable
       pamixer
+      epsonscan2
+      freecad
+      google-earth-pro
+      loupe
+      nordpass
+      localsend
+      pdfarranger
+      moonlight-qt
     ];
 
     system.stateVersion = "25.11";

@@ -2,6 +2,23 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.4] - 2026-04-28
+
+### Added
+
+- **Docker:** `virtualisation.docker.enable = true`; `swin` added to `docker` group
+- **Sunshine:** `services.sunshine` enabled as a user service with `autoStart` and `capSysAdmin` for virtual input/display support
+- **New packages (styx):**
+  - `epsonscan2` — Epson scanner
+  - `freecad` — parametric 3D modeller
+  - `google-earth-pro` — Google Earth
+  - `loupe` — Wayland-native GTK4 image viewer
+  - `nordpass` — password manager
+  - `localsend` — local network file sharing
+  - `pdfarranger` — PDF page organiser
+  - `moonlight-qt` — game stream client (pairs with Sunshine)
+  - `rusty-path-of-building` — Path of Building for PoE1 and PoE2 (added to gaming.nix)
+
 ## [1.3] - 2026-04-28
 
 ### Added
