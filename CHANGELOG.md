@@ -2,6 +2,15 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.3] - 2026-04-28
+
+### Added
+
+- **Niri input:** `warp-mouse-to-focus` — cursor warps to newly focused window
+- **Niri input:** `hotkey-overlay.skip-at-startup` — suppresses hotkey overlay on login
+- **Niri environment:** `ELECTRON_OZONE_PLATFORM_HINT=auto` — ensures Electron apps use native Wayland
+- **XDG portal:** `xdg-desktop-portal-gtk` added for GTK file pickers; niri's own portal backend handles screen sharing
+
 ## [1.2] - 2026-04-27
 
 ### Added

@@ -2,6 +2,8 @@
   flake.nixosModules.niriBase = { config, pkgs, lib, ... }: {
     programs.niri.enable = true;
 
+    xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+
     services.greetd = {
       enable = true;
       settings.default_session = {
@@ -30,10 +32,15 @@
 
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
 
+      environment.ELECTRON_OZONE_PLATFORM_HINT = "auto";
+
+      hotkey-overlay.skip-at-startup = true;
+
       input.keyboard.xkb.layout = "us,ua";
       input.mouse.accel-profile = "flat";
       input.focus-follows-mouse = {};
-      layout.gaps = 10;
+      input.warp-mouse-to-focus = {};
+      layout.gaps = 8;
       layout.focus-ring = {
         width = 3;
         active-color = "#CBA6F7";
