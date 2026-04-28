@@ -2,6 +2,18 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.5] - 2026-04-28
+
+### Added
+
+- **llm.nix module (styx only):** new `nixosModules.llm` feature module covering local AI
+  - `services.ollama` with `pkgs.ollama-rocm` and `rocmOverrideGfx = "12.0.1"` for RX 9070 XT (RDNA4)
+  - `services.open-webui` on `127.0.0.1:8080` — browser UI for local model interaction
+
+### Changed
+
+- Renamed `modules/features/ollama.nix` → `modules/features/llm.nix`; module ref updated from `nixosModules.ollama` → `nixosModules.llm`
+
 ## [1.4] - 2026-04-28
 
 ### Added

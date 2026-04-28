@@ -9,6 +9,7 @@
       self.nixosModules.fileManager
       self.nixosModules.kitty
       self.nixosModules.neovim
+      self.nixosModules.llm
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
