@@ -107,7 +107,7 @@
         "Mod+B".spawn-sh = "google-chrome-stable";
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
         "Mod+F".spawn-sh = "kitty yazi";
-        "Mod+E".spawn-sh = "dolphin";
+        "Mod+E".spawn-sh = "nautilus";
         "Mod+D".spawn-sh = "google-chrome-stable --app=https://discord.com/app --disable-features=WebRtcAllowInputVolumeAdjustment";
         "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";

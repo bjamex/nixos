@@ -1,12 +1,14 @@
 { self, inputs, ... }: {
   flake.nixosModules.fileManager = { config, pkgs, lib, ... }: {
+    services.gvfs.enable = true;
+
+    programs.nautilus-open-any-terminal = {
+      enable = true;
+      terminal = "kitty";
+    };
+
     environment.systemPackages = with pkgs; [
-      kdePackages.dolphin
-      kdePackages.qtsvg
-      kdePackages.kio
-      kdePackages.kio-fuse
-      kdePackages.kio-extras
-      kdePackages.breeze-icons
+      nautilus
       xdg-utils
     ];
   };

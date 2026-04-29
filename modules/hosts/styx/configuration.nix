@@ -72,7 +72,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "docker" ];
+      extraGroups = [ "networkmanager" "wheel" "docker" "render" "video" ];
       packages = with pkgs; [];
     };
 
@@ -103,6 +103,14 @@
       localsend
       pdfarranger
       moonlight-qt
+      inkscape
+      pinta
+      vlc
+      davinci-resolve
+      insync
+      insync-nautilus
+      thunderbird
+      gnome-calculator
     ];
 
     system.stateVersion = "25.11";

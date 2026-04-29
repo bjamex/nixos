@@ -2,6 +2,31 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.6] - 2026-04-29
+
+### Added
+
+- **New packages (styx):**
+  - `davinci-resolve` — professional video editor (20.x; v21 pending version confirmation)
+  - `insync` + `insync-nautilus` — Google Drive sync with Nautilus integration
+  - `thunderbird` — email client
+  - `gnome-calculator` — calculator
+  - `inkscape` — vector graphics editor
+  - `pinta` — raster image editor
+  - `vlc` — media player
+
+- **File manager:** switched from Dolphin to Nautilus
+  - Removed KDE deps (dolphin, qtsvg, kio, kio-fuse, kio-extras, breeze-icons)
+  - Added `nautilus`, `xdg-utils`, `services.gvfs` (network drive mounting), `programs.nautilus-open-any-terminal` (opens Kitty from context menu)
+
+- **AMD GPU / DaVinci Resolve prep:**
+  - `swin` user added to `render` and `video` groups
+  - `rocmPackages.clr` added to `hardware.graphics.extraPackages` in llm.nix for ROCm OpenCL support
+
+### Changed
+
+- `Mod+E` keybind updated from `dolphin` to `nautilus`
+
 ## [1.5] - 2026-04-28
 
 ### Added
