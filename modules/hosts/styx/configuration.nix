@@ -28,13 +28,22 @@
 
     networking.hostName = "styx";
     networking.networkmanager.enable = true;
+    networking.networkmanager.insertNameservers = [ "100.79.180.7" "1.1.1.1" ];
+    networking.enableIPv6 = false;
+    boot.kernel.sysctl = {
+      "net.ipv6.conf.all.disable_ipv6" = 1;
+      "net.ipv6.conf.default.disable_ipv6" = 1;
+      "net.ipv6.conf.wlo1.disable_ipv6" = 1;
+    };
 
     nixpkgs.config.allowUnfree = true;
 
     services.openssh.enable = false;
+    networking.firewall.enable = false;
 
     services.tailscale.enable = true;
     services.tailscale.permitCertUid = "swin";
+    services.tailscale.extraUpFlags = [ "--netfilter-mode=off" "--accept-routes=false" ];
 
     time.timeZone = "Australia/Brisbane";
 
@@ -61,7 +70,6 @@
 
     services.printing.enable = true;
 
-    virtualisation.docker.enable = true;
 
     services.sunshine = {
       enable = true;
@@ -72,7 +80,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "docker" "render" "video" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" ];
       packages = with pkgs; [];
     };
 
@@ -97,7 +105,6 @@
       pamixer
       epsonscan2
       freecad
-      google-earth-pro
       loupe
       nordpass
       localsend
@@ -112,6 +119,11 @@
       thunderbird
       gnome-calculator
     ];
+
+    fileSystems."/mnt/nvme2" = {
+      device = "/dev/disk/by-uuid/eba90478-2582-4260-b65d-70cb4ffa1352";
+      fsType = "ext4";
+    };
 
     system.stateVersion = "25.11";
   };
