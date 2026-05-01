@@ -39,11 +39,10 @@
     nixpkgs.config.allowUnfree = true;
 
     services.openssh.enable = false;
-    networking.firewall.enable = false;
+    networking.firewall.enable = true;
 
     services.tailscale.enable = true;
     services.tailscale.permitCertUid = "swin";
-    services.tailscale.extraUpFlags = [ "--netfilter-mode=off" "--accept-routes=false" ];
 
     time.timeZone = "Australia/Brisbane";
 
@@ -70,6 +69,8 @@
 
     services.printing.enable = true;
 
+    virtualisation.docker.enable = true;
+
 
     services.sunshine = {
       enable = true;
@@ -80,7 +81,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "render" "video" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" ];
       packages = with pkgs; [];
     };
 
