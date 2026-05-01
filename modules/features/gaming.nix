@@ -9,6 +9,8 @@
 
     hardware.graphics.enable = lib.mkDefault true;
     hardware.graphics.enable32Bit = lib.mkDefault true;
+    hardware.graphics.extraPackages = with pkgs; [ amdvlk rocmPackages.clr.icd ];
+    hardware.graphics.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
 
     programs = {
       gamemode.enable = true;
