@@ -2,6 +2,33 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.7] - 2026-05-03
+
+### Added
+
+- **Helium browser:** added via `amaanq/helium-flake` community flake; sourced via `inputs.helium.packages` overlay
+- **Flatpak:** `services.flatpak.enable = true`; Discord switched from nixpkgs package to Flatpak (`com.discordapp.Discord`) for Krisp support and working Tailscale audio
+- **GitHub CLI:** `gh` added to system packages
+- **Minecraft Bedrock:** `mcpelauncher-client` and `mcpelauncher-ui-qt` added to gaming.nix
+- **EasyEffects:** added to pipewire.nix for mic noise suppression and volume boost
+- **Mono mic loopback:** PipeWire `libpipewire-module-loopback` config creates a "Mono Mic" virtual source (captures FL channel only) to fix quiet stereo mic issue
+- **Auto-login:** greetd `initial_session` added for passwordless login as swin
+- **Second drive mount:** `fileSystems."/mnt/nvme2"` with UUID `eba90478-2582-4260-b65d-70cb4ffa1352`
+- **Stylix theming:** `modules/features/theming.nix` — system-wide Tokyo Night Dark theme via `danth/stylix`; wallpaper stored at `assets/wallpaper.jpg`
+- **Home Manager:** added as NixOS module via `nix-community/home-manager`; `modules/users/swin.nix` provides per-user home config with stylix home-manager integration
+- **Tailscale routing fix:** `extraUpFlags = [ "--accept-routes=false" "--snat-subnet-routes=false" ]` to prevent Tailscale from routing local subnet traffic through tunnel (fixes slow DNS)
+
+### Changed
+
+- `Mod+D` keybind updated from `vesktop` → `flatpak run com.discordapp.Discord`
+- Niri main monitor output corrected from `DP-1` → `DP-2` (Dell AW2724DM at 2560x1440@143.973)
+- `networking.firewall.enable` set to `false`
+
+### Removed
+
+- `amdvlk` and `driversi686Linux.amdvlk` — removed from nixpkgs (RADV is the default AMD Vulkan driver)
+- `discord` and `vesktop` system packages — replaced by Flatpak Discord
+
 ## [1.6] - 2026-04-29
 
 ### Added
