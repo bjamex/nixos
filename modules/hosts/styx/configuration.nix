@@ -10,6 +10,8 @@
       self.nixosModules.kitty
       self.nixosModules.neovim
       self.nixosModules.llm
+      self.nixosModules.theming
+      self.nixosModules.swinHome
     ];
 
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
