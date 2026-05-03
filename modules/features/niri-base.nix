@@ -114,7 +114,7 @@
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
         "Mod+F".spawn-sh = "kitty yazi";
         "Mod+E".spawn-sh = "nautilus";
-        "Mod+D".spawn-sh = "vesktop --force-webrtc-ip-handling-policy=default_public_interface_only";
+        "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
         "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";
         "Mod+WheelScrollDown".focus-workspace-down = _: {};
