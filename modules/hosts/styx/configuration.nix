@@ -28,21 +28,15 @@
 
     networking.hostName = "styx";
     networking.networkmanager.enable = true;
-    networking.networkmanager.insertNameservers = [ "100.79.180.7" "1.1.1.1" ];
-    networking.enableIPv6 = false;
-    boot.kernel.sysctl = {
-      "net.ipv6.conf.all.disable_ipv6" = 1;
-      "net.ipv6.conf.default.disable_ipv6" = 1;
-      "net.ipv6.conf.wlo1.disable_ipv6" = 1;
-    };
 
     nixpkgs.config.allowUnfree = true;
 
     services.openssh.enable = false;
-    networking.firewall.enable = true;
+    networking.firewall.enable = false;
 
     services.tailscale.enable = true;
     services.tailscale.permitCertUid = "swin";
+    services.tailscale.extraUpFlags = [ "--accept-routes=false" "--snat-subnet-routes=false" ];
 
     time.timeZone = "Australia/Brisbane";
 
@@ -69,6 +63,8 @@
 
     services.printing.enable = true;
 
+    services.flatpak.enable = true;
+
     virtualisation.docker.enable = true;
 
 
@@ -86,10 +82,11 @@
     };
 
     environment.systemPackages = with pkgs; [
-      discord
       claude-code
+      inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
       # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
       git
+      gh
       google-chrome
       qbittorrent
       btop
@@ -99,7 +96,6 @@
       lazygit
       yazi
       jellyfin-tui
-      vesktop
       xournalpp
       obs-studio
       darktable
