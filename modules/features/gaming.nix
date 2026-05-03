@@ -9,8 +9,7 @@
 
     hardware.graphics.enable = lib.mkDefault true;
     hardware.graphics.enable32Bit = lib.mkDefault true;
-    hardware.graphics.extraPackages = with pkgs; [ amdvlk rocmPackages.clr.icd ];
-    hardware.graphics.extraPackages32 = with pkgs; [ driversi686Linux.amdvlk ];
+    hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr.icd ];
 
     programs = {
       gamemode.enable = true;
@@ -33,6 +32,8 @@
       # bottles  # broken: openldap test failure in nixpkgs
       steamtinkerlaunch
       prismlauncher
+      mcpelauncher-client
+      mcpelauncher-ui-qt
       lsfg-vk
       lsfg-vk-ui
       faugus-launcher

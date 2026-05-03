@@ -13,7 +13,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-};
+    helium = {
+      url = "github:amaanq/helium-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+  };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
     {inherit inputs;} 
