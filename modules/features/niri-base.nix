@@ -53,10 +53,18 @@
         inactive-color = "#45475A";
       };
 
+      layer-rules = [
+        {
+          matches = [{ namespace = "^launcher$"; }];
+          background-effect = { blur = true; };
+        }
+      ];
+
       window-rules = [
         {
           geometry-corner-radius = 12;
           clip-to-geometry = true;
+          background-effect = { blur = true; geometry-corner-radius = 12; };
         }
         {
           matches = [
@@ -110,7 +118,7 @@
         "Print".screenshot = _: {};
         "Mod+Shift+slash".show-hotkey-overlay = _: {};
         "Mod+V".toggle-window-floating = _: {};
-        "Mod+B".spawn-sh = "google-chrome-stable";
+        "Mod+B".spawn-sh = "helium";
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
         "Mod+F".spawn-sh = "kitty yazi";
         "Mod+E".spawn-sh = "nautilus";

@@ -2,6 +2,20 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.8] - 2026-05-05
+
+### Added
+
+- **Gigabyte M27Q monitor:** added EDID-based output config in `niri-styx.nix` (`GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 21410B002170` on HDMI-A-1 @ 2560x1440@143.856); matches by full EDID string so it activates on any port
+- **nvme3 drive:** formatted `/dev/nvme3n1p1` as ext4 (label `nvme3`) and mounted at `/mnt/nvme3` (UUID `3a71adec-87f1-430e-a3e3-9f1dd30e9b50`)
+- **nvme0 drive:** formatted `/dev/nvme0n1p1` as ext4 (label `nvme0`) and mounted at `/mnt/nvme0` (UUID `6ab3631f-5d79-466e-a9fe-10aaddf7ce6e`)
+- **AppImage support:** `programs.appimage.enable = true` + `programs.appimage.binfmt = true` — AppImages now run directly without wrappers
+- **Niri blur:** `background-effect { blur = true; geometry-corner-radius = 12; }` added to global window rule and launcher layer rule in `niri-base.nix`
+
+### Changed
+
+- `Mod+B` keybind updated from `google-chrome-stable` → `helium`
+
 ## [1.7] - 2026-05-03
 
 ### Added

@@ -274,12 +274,12 @@
       "settingsPanelSideBarCardStyle": false
     },
     "location": {
-      "name": "",
+      "name": "Australia/Brisbane",
       "weatherEnabled": true,
       "weatherShowEffects": true,
       "weatherTaliaMascotAlways": false,
       "useFahrenheit": false,
-      "use12hourFormat": false,
+      "use12hourFormat": true,
       "showWeekNumberInCalendar": false,
       "showCalendarEvents": true,
       "showCalendarWeather": true,
@@ -319,7 +319,7 @@
       "fillColor": "#000000",
       "useSolidColor": false,
       "solidColor": "#1a1a2e",
-      "automationEnabled": false,
+      "automationEnabled": true,
       "wallpaperChangeMode": "random",
       "randomIntervalSec": 300,
       "transitionDuration": 1500,
