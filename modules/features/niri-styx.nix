@@ -9,6 +9,7 @@
       inherit pkgs;
       settings = self'.legacyPackages.niriCommonSettings // {
         outputs."DP-2".mode = "2560x1440@143.973";
+        outputs."GIGA-BYTE TECHNOLOGY CO., LTD. M27Q 21410B002170".mode = "2560x1440@143.856";
       };
     };
   };
