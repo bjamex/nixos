@@ -41,6 +41,12 @@
       environment.ELECTRON_OZONE_PLATFORM_HINT = "auto";
 
       hotkey-overlay.skip-at-startup = true;
+      prefer-no-csd = _: {};
+
+      blur = {
+        passes = 2;
+        noise = 0.02;
+      };
 
       input.keyboard.xkb.layout = "us,ua";
       input.mouse.accel-profile = "flat";
@@ -53,18 +59,13 @@
         inactive-color = "#45475A";
       };
 
-      layer-rules = [
-        {
-          matches = [{ namespace = "^launcher$"; }];
-          background-effect = { blur = true; };
-        }
-      ];
-
       window-rules = [
         {
           geometry-corner-radius = 12;
           clip-to-geometry = true;
-          background-effect = { blur = true; geometry-corner-radius = 12; };
+          background-effect = { blur = true; };
+          opacity = 0.90;
+          draw-border-with-background = false;
         }
         {
           matches = [
@@ -118,6 +119,7 @@
         "Print".screenshot = _: {};
         "Mod+Shift+slash".show-hotkey-overlay = _: {};
         "Mod+V".toggle-window-floating = _: {};
+        "Mod+O".toggle-window-rule-opacity = _: {};
         "Mod+B".spawn-sh = "helium";
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
         "Mod+F".spawn-sh = "kitty yazi";

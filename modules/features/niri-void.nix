@@ -7,6 +7,7 @@
   perSystem = { pkgs, lib, self', ... }: {
     packages.myNiriVoid = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
+      v2-settings = true;
       settings = self'.legacyPackages.niriCommonSettings;
     };
   };

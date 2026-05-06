@@ -10,7 +10,6 @@ All notable changes to this NixOS configuration are documented in this file.
 - **nvme3 drive:** formatted `/dev/nvme3n1p1` as ext4 (label `nvme3`) and mounted at `/mnt/nvme3` (UUID `3a71adec-87f1-430e-a3e3-9f1dd30e9b50`)
 - **nvme0 drive:** formatted `/dev/nvme0n1p1` as ext4 (label `nvme0`) and mounted at `/mnt/nvme0` (UUID `6ab3631f-5d79-466e-a9fe-10aaddf7ce6e`)
 - **AppImage support:** `programs.appimage.enable = true` + `programs.appimage.binfmt = true` — AppImages now run directly without wrappers
-- **Niri blur:** `background-effect { blur = true; geometry-corner-radius = 12; }` added to global window rule and launcher layer rule in `niri-base.nix`
 
 ### Changed
 

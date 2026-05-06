@@ -27,11 +27,20 @@
     boot.loader.efi.canTouchEfiVariables = true;
 
     boot.kernelPackages = pkgs.linuxPackages_latest;
+    boot.kernelModules = [ "igc" ];
 
     networking.hostName = "styx";
     networking.networkmanager.enable = true;
 
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = [
+      (final: prev: {
+        stable = import inputs.nixpkgs-pinned {
+          system = final.stdenv.hostPlatform.system;
+          config.allowUnfree = true;
+        };
+      })
+    ];
 
     services.openssh.enable = false;
     networking.firewall.enable = false;
@@ -87,6 +96,10 @@
     };
 
     environment.systemPackages = with pkgs; [
+      (writeShellScriptBin "nwhich" "readlink -f $(which $1)")
+      (writeShellScriptBin "cnwhich" "cat $(readlink -f $(which $1))")
+      (writeShellScriptBin "md" "mkdir -p \"$1\" && cd \"$1\"")
+
       claude-code
       inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
       # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
@@ -122,8 +135,10 @@
       gnome-calculator
       linssid
       cisco-packet-tracer_9
-      geekbench
+      nethogs
+      lmstudio 
     ];
+
 
     fileSystems."/mnt/nvme2" = {
       device = "/dev/disk/by-uuid/eba90478-2582-4260-b65d-70cb4ffa1352";
