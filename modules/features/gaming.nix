@@ -1,10 +1,5 @@
 { self, inputs, ... }: {
-  flake.nixosModules.gaming = { pkgs, lib, ... }: let
-    pinnedPkgs = import inputs.nixpkgs-pinned {
-      system = pkgs.stdenv.hostPlatform.system;
-      config.allowUnfree = true;
-    };
-  in {
+  flake.nixosModules.gaming = { pkgs, lib, ... }: {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
     hardware.graphics.enable = lib.mkDefault true;
@@ -21,7 +16,7 @@
     };
 
     environment.systemPackages = with pkgs; [
-      pinnedPkgs.lutris
+      pkgs.stable.lutris
       steam-run
       dxvk
       gamescope

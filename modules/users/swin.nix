@@ -11,10 +11,25 @@
 
       gtk.gtk4.theme = null;
 
+      # Disable Stylix theming for apps managed by noctalia live theming
+      stylix.targets.kitty.enable = false;
+      stylix.targets.btop.enable = false;
+
       programs.btop.enable = true;
+
+      programs.vscode = {
+        enable = true;
+        package = pkgs.vscode-fhs;
+        mutableExtensionsDir = true;
+        profiles.default.extensions = with pkgs.vscode-extensions; [
+          jnoortheen.nix-ide
+          ms-vscode.cpptools
+        ];
+      };
 
       programs.kitty = {
         enable = true;
+        extraConfig = "include ./themes/noctalia.conf";
         settings = {
           font_size = 12;
           hide_window_decorations = "yes";
