@@ -2,6 +2,35 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [1.9] - 2026-05-06
+
+### Added
+
+- **hjem:** replaced Home Manager with `feel-co/hjem` for user file management; dotfiles now live as plain files in `modules/users/dotfiles/` and are symlinked into place
+  - `modules/users/dotfiles/kitty.conf` — kitty config as editable dotfile
+  - `modules/users/dotfiles/vscode/settings.json` — VSCode settings as editable dotfile
+  - `vscode-fhs` moved to system packages (was managed by HM)
+
+- **Printer: Epson SC-T3160N:** configured via CUPS driverless IPP Everywhere
+  - `services.avahi` enabled with `nssmdns4` and `openFirewall` for network printer/scanner discovery
+  - `hardware.printers.ensurePrinters` declaratively adds `EPSON_SC_T3100_Series` with default tray set to `Rear`
+
+- **Scanner: Epson DS-570W II:** `hardware.sane.enable = true` with `epsonscan2` as SANE backend; `swin` added to `scanner` and `lp` groups
+
+- **Niri blur:** window blur working via `background-effect { blur true }` in global window rule; `prefer-no-csd` added to fix focus ring bleeding through transparent windows; `draw-border-with-background = false` in window rule
+- **Niri opacity:** `opacity = 0.90` on global window rule for consistent window transparency
+- **Niri keybind:** `Mod+O` — toggle focused window between transparent and opaque
+
+### Changed
+
+- `home-manager` input removed from `flake.nix`; replaced with `hjem` (`github:feel-co/hjem`)
+- Config files reorganised with section comments (`# --- Boot ---`, `# --- Networking ---`, etc.) and packages grouped by category in both `styx` and `void` hosts
+- Niri `blur` global settings: removed invalid `on` node; `saturation` removed (was causing purple tint)
+
+### Removed
+
+- Home Manager (`nix-community/home-manager`) — replaced by hjem
+
 ## [1.8] - 2026-05-05
 
 ### Added
