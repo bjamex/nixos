@@ -615,7 +615,7 @@
       "backlightDeviceMappings": []
     },
     "colorSchemes": {
-      "useWallpaperColors": false,
+      "useWallpaperColors": true,
       "predefinedScheme": "Tokyo Night",
       "darkMode": true,
       "schedulingMode": "off",
@@ -626,8 +626,12 @@
       "syncGsettings": true
     },
     "templates": {
-      "activeTemplates": [],
-      "enableUserTheming": false
+      "activeTemplates": [
+        "kitty",
+        "btop",
+        "yazi"
+      ],
+      "enableUserTheming": true
     },
     "nightLight": {
       "enabled": false,
