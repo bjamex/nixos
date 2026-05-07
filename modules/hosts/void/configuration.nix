@@ -9,6 +9,8 @@
       self.nixosModules.fileManager
       self.nixosModules.kitty
       self.nixosModules.neovim
+      self.nixosModules.theming
+      self.nixosModules.swinHome
     ];
 
     # --- Nix ---
@@ -20,6 +22,14 @@
       options = "--delete-older-than 30d";
     };
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = [
+      (final: prev: {
+        stable = import inputs.nixpkgs-pinned {
+          system = final.stdenv.hostPlatform.system;
+          config.allowUnfree = true;
+        };
+      })
+    ];
 
     # --- Boot ---
     boot.loader.systemd-boot.enable = true;
@@ -29,10 +39,12 @@
     # --- Networking ---
     networking.hostName = "void";
     networking.networkmanager.enable = true;
+    networking.firewall.enable = false;
     services.openssh.enable = false;
     services.tailscale = {
       enable = true;
       permitCertUid = "swin";
+      extraUpFlags = [ "--accept-routes=false" "--snat-subnet-routes=false" ];
     };
 
     # --- Locale & Time ---
@@ -50,9 +62,6 @@
       LC_TIME           = "en_AU.UTF-8";
     };
 
-    # --- Hardware ---
-    hardware.amdgpu.initrd.enable = true;
-
     # --- Bluetooth ---
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
@@ -60,24 +69,57 @@
 
     # --- Audio (see pipewire.nix) ---
 
+    # --- Scanning ---
+    hardware.sane.enable = true;
+    hardware.sane.extraBackends = [ pkgs.epsonscan2 ];
+
     # --- Printing ---
     services.printing.enable = true;
+    services.avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+    };
+
+    # --- Shell ---
+    programs.bash.shellAliases.n = "nvim";
+
+    # --- Programs ---
+    programs.appimage.enable = true;
+    programs.appimage.binfmt = true;
+
+    # --- Remote Access ---
+    services.sunshine = {
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+    };
 
     # --- Virtualisation ---
     virtualisation.docker.enable = true;
+
+    # --- Services ---
+    services.flatpak.enable = true;
 
     # --- Users ---
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "docker" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" ];
       packages = with pkgs; [];
     };
 
     # --- Packages ---
     environment.systemPackages = with pkgs; [
+      # Shell utilities
+      (writeShellScriptBin "nwhich" "readlink -f $(which $1)")
+      (writeShellScriptBin "cnwhich" "cat $(readlink -f $(which $1))")
+      (writeShellScriptBin "md" "mkdir -p \"$1\" && cd \"$1\"")
+
       # Development
       git
+      gh
+      vscode-fhs
       claude-code
 
       # Terminal & System
@@ -89,32 +131,47 @@
       yazi
 
       # Internet & Communication
+      inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
       google-chrome
       qbittorrent
       thunderbird
       nordpass
       localsend
-      discord
-      vesktop
 
       # Media & Creative
       obs-studio
       darktable
       jellyfin-tui
+      loupe
+      vlc
+      inkscape
+      pinta
       xournalpp
+      davinci-resolve
 
       # Productivity
+      impression
+      libreoffice
+      gnome-calculator
       pdfarranger
       freecad
       epsonscan2
+      cisco-packet-tracer_9
 
-      # Networking & Remote
-      moonlight
+      # Networking & Monitoring
+      nethogs
+      linssid
+      moonlight-qt
       pamixer
 
+      # AI
+      lmstudio
+
+      # Sync
+      insync
+      insync-nautilus
+
       # Misc
-      google-earth-pro
-      sunshine
     ];
 
     system.stateVersion = "25.11";

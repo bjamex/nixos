@@ -8,6 +8,7 @@
       directory = "/home/swin";
       files = {
         ".config/kitty/kitty.conf".source = ./dotfiles/kitty.conf;
+        ".config/btop/btop.conf".source = ./dotfiles/btop.conf;
         ".config/Code/User/settings.json".source = ./dotfiles/vscode/settings.json;
       };
     };
