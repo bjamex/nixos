@@ -34,6 +34,7 @@
     niriCommonSettings = {
       spawn-at-startup = [
         (lib.getExe self'.packages.myNoctalia)
+        "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
       ];
 
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
@@ -55,7 +56,7 @@
       layout.gaps = 8;
       layout.focus-ring = {
         width = 3;
-        active-color = "#CBA6F7";
+        active-color = "#7fc8ff";
         inactive-color = "#45475A";
       };
 
@@ -66,6 +67,8 @@
           background-effect = { blur = true; };
           opacity = 0.90;
           draw-border-with-background = false;
+          # open-maximized = true;
+
         }
         {
           matches = [
@@ -122,7 +125,7 @@
         "Mod+O".toggle-window-rule-opacity = _: {};
         "Mod+B".spawn-sh = "helium";
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
-        "Mod+F".spawn-sh = "kitty yazi";
+        "Mod+F".spawn-sh = "nautilus";
         "Mod+E".spawn-sh = "nautilus";
         "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
         "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
