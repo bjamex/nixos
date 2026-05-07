@@ -50,6 +50,9 @@
       };
 
       input.keyboard.xkb.layout = "us,ua";
+      input.touchpad.tap = _: {};
+      input.touchpad.natural-scroll = _: {};
+      input.touchpad.accel-speed = 0.2;
       input.mouse.accel-profile = "flat";
       input.focus-follows-mouse = {};
       input.warp-mouse-to-focus = {};
@@ -128,7 +131,7 @@
         "Mod+F".spawn-sh = "nautilus";
         "Mod+E".spawn-sh = "nautilus";
         "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
-        "Mod+A".spawn-sh = "google-chrome-stable --app=https://gemini.google.com";
+        "Mod+A".spawn-sh = "helium --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";
         "Mod+WheelScrollDown".focus-workspace-down = _: {};
         "Mod+WheelScrollUp".focus-workspace-up = _: {};
