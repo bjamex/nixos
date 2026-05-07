@@ -35,6 +35,7 @@
       spawn-at-startup = [
         (lib.getExe self'.packages.myNoctalia)
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+        "insync"
       ];
 
       xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
