@@ -8,7 +8,9 @@
     packages.myNiriVoid = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs;
       v2-settings = true;
-      settings = self'.legacyPackages.niriCommonSettings;
+      settings = self'.legacyPackages.niriCommonSettings // {
+        outputs."eDP-1".scale = 1.0;
+      };
     };
   };
 }
