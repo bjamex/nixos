@@ -132,7 +132,6 @@
 
       # Internet & Communication
       inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
-      google-chrome
       qbittorrent
       thunderbird
       nordpass
@@ -172,6 +171,16 @@
 
       # Misc
     ];
+
+    xdg.mime.defaultApplications = {
+      "text/html"               = "helium.desktop";
+      "x-scheme-handler/http"   = "helium.desktop";
+      "x-scheme-handler/https"  = "helium.desktop";
+      "x-scheme-handler/about"  = "helium.desktop";
+      "x-scheme-handler/unknown" = "helium.desktop";
+    };
+
+    environment.sessionVariables.BROWSER = "helium";
 
     system.stateVersion = "25.11";
   };
