@@ -11,6 +11,7 @@
       self.nixosModules.neovim
       self.nixosModules.llm
       self.nixosModules.theming
+      self.nixosModules.insync
       self.nixosModules.swinHome
     ];
 
@@ -182,9 +183,6 @@
       # AI
       lmstudio
 
-      # Sync
-      insync
-      insync-nautilus
     ];
 
     # --- Storage ---
