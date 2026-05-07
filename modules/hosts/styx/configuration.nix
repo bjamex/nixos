@@ -97,7 +97,11 @@
     # --- Virtualisation ---
     virtualisation.docker.enable = true;
 
+    # --- Shell ---
+    programs.bash.shellAliases.n = "nvim";
+
     # --- Programs ---
+    security.polkit.enable = true;
     programs.appimage.enable = true;
     programs.appimage.binfmt = true;
 
@@ -115,7 +119,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" "disk" ];
       packages = with pkgs; [];
     };
 
@@ -143,13 +147,13 @@
       # Internet & Communication
       inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
       # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
-      google-chrome
       qbittorrent
       thunderbird
       nordpass
       localsend
 
       # Media & Creative
+      rapidraw
       obs-studio
       darktable
       jellyfin-tui
@@ -161,6 +165,8 @@
       davinci-resolve
 
       # Productivity
+      impression
+      libreoffice
       gnome-calculator
       pdfarranger
       freecad
