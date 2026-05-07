@@ -156,7 +156,6 @@
       pdfarranger
       freecad
       epsonscan2
-      cisco-packet-tracer_9
 
       # Networking & Monitoring
       nethogs
