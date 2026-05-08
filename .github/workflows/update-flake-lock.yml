@@ -1,0 +1,21 @@
+name: Update flake.lock
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # every Monday at midnight UTC
+  workflow_dispatch:       # allow manual runs from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/update-flake-lock@v23
+        with:
+          pr-title: "chore: update flake.lock"
+          pr-labels: automated
+          commit-msg: "chore: update flake.lock"
