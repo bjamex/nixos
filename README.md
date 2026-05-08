@@ -7,7 +7,7 @@ My personal NixOS configuration using flakes, supporting multiple hosts (styx de
 ```
 flake.nix                 # Flake inputs and outputs (flake-parts + import-tree)
 assets/
-  wallpaper.jpg           # Wallpaper used by stylix for theming
+  wallpaper.jpg           # Default wallpaper
 modules/
   hosts/
     styx/
@@ -21,26 +21,27 @@ modules/
   features/
     niri-base.nix         # Shared niri compositor settings, keybinds
     niri-styx.nix         # Styx desktop monitor config (DP-2 @ 2560x1440@143.973)
-    niri-void.nix         # Void laptop with dynamic monitors
+    niri-void.nix         # Void laptop (eDP-1 @ 1.0 scale)
     gaming.nix            # Steam, Lutris, gamemode, mcpelauncher, xivlauncher
     kitty.nix             # Kitty terminal
     neovim.nix            # Neovim with LazyVim
-    noctalia.nix          # Noctalia shell/launcher
+    noctalia.nix          # Noctalia shell/launcher (bar, color schemes, wallpaper)
     pipewire.nix          # Audio (ALSA, PulseAudio, JACK, EasyEffects, mono mic)
-    fileManager.nix       # Nautilus file manager
+    fileManager.nix       # Nautilus with dconf settings and Papirus-Dark icons
     llm.nix               # Ollama (ROCm) + Open WebUI
-    theming.nix           # Stylix system-wide theming (Tokyo Night Dark)
+    insync.nix            # Insync Google Drive sync + inotify tuning
   users/
-    swin.nix              # Home Manager config for user swin
+    swin.nix              # hjem user file management (dotfiles)
+    dotfiles/             # Managed dotfiles (kitty, btop, nvim, vscode, gtk)
 ```
 
 ## Hosts
 
 ### styx
-Desktop machine (AMD Ryzen / RX 9070 XT) with dual monitor support (Dell AW2724DM on DP-2 @ 2560x1440@143.973).
+Desktop (AMD Ryzen / RX 9070 XT). Dual monitors: Dell AW2724DM on DP-2 and Gigabyte M27Q — both at 2560x1440@143.
 
 ### void
-Laptop with dynamic monitor detection (built-in + external monitors).
+Laptop (Intel). LUKS full-disk encryption. Built-in display (eDP-1) plus external monitor support.
 
 ## Deployment
 
@@ -50,19 +51,24 @@ sudo nixos-rebuild switch --flake .#styx
 
 # Deploy to void
 sudo nixos-rebuild switch --flake .#void
+
+# Check for errors without switching
+nixos-rebuild build --flake .#styx
 ```
 
 ## Features
 
-- **Multi-host support:** Shared modules + host-specific configurations
-- **Niri compositor:** Wayland window manager with rounded corners, focus ring, workspace keybinds
-- **Theming:** System-wide Tokyo Night Dark via Stylix (GTK, Qt, app configs)
-- **Home Manager:** Per-user declarative config via NixOS module integration
-- **Gaming:** Steam, Lutris, gamemode, gamescope, Heroic, Minecraft Bedrock (mcpelauncher), XIV Launcher
+- **Multi-host:** Shared feature modules + host-specific configs; `import-tree` auto-loads all `.nix` files under `modules/`
+- **Niri compositor:** Wayland WM with rounded corners, blur, opacity, focus ring, workspace keybinds
+- **Theming:** Noctalia manages color schemes (Tokyo Night), wallpaper rotation, and GTK sync; Papirus-Dark icon theme
+- **User files:** Per-user dotfiles managed declaratively via `hjem` (kitty, btop, nvim, vscode, GTK)
+- **Gaming:** Steam, Lutris, gamemode, gamescope, Heroic, Minecraft Bedrock, XIV Launcher, lsfg-vk
 - **Audio:** PipeWire with low-latency gaming support, EasyEffects, mono mic loopback
-- **Browser:** Helium (privacy-focused Chromium) + Google Chrome
+- **Browser:** Helium (privacy-focused Chromium) set as system default
 - **Terminal:** Kitty
 - **Editor:** Neovim with LazyVim
-- **File Manager:** Nautilus with gvfs and terminal integration
-- **Local AI:** Ollama with ROCm (RX 9070 XT) + Open WebUI at localhost:8080
-- **Utilities:** Docker, Tailscale, Sunshine/Moonlight, Flatpak, NetworkManager
+- **File manager:** Nautilus with gvfs, terminal integration, hidden files, list view
+- **Local AI:** Ollama with ROCm (RX 9070 XT) + Open WebUI at `localhost:8080`
+- **Sync:** Insync (Google Drive) with inotify tuning for reliable background sync
+- **Utilities:** Docker, Tailscale, Sunshine/Moonlight, Flatpak, AppImage, NetworkManager
+- **Security:** Firewall enabled on both hosts; Sunshine ports opened via `openFirewall`
