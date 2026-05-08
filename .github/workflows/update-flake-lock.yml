@@ -11,6 +11,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v13
@@ -19,3 +20,13 @@ jobs:
           pr-title: "chore: update flake.lock"
           pr-labels: automated
           commit-msg: "chore: update flake.lock"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          gh issue create \
+            --title "Weekly flake.lock update failed" \
+            --body "The scheduled flake.lock update failed. [View run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
+            --label "bug"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
