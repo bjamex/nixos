@@ -1,8 +1,6 @@
 { ... }: {
 
   flake.nixosModules.llm = { pkgs, ... }: {
-    hardware.graphics.extraPackages = [ pkgs.rocmPackages.clr ];
-
     services.ollama = {
       enable = true;
       package = pkgs.ollama-rocm;

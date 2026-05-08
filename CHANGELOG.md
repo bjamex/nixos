@@ -2,6 +2,69 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [2.0] - 2026-05-08
+
+### Added
+
+- **insync.nix:** new dedicated module consolidating all Insync-related config
+  - inotify kernel tuning to fix sync stopping: `max_user_watches = 524288`, `max_user_instances = 512`, `max_queued_events = 131072`
+  - `insync` and `insync-nautilus` packages moved here from host configs
+  - Insync added to Niri `spawn-at-startup`
+
+- **Nautilus settings via dconf:** icon theme, hidden files, list view configured declaratively
+  - `programs.dconf` profile sets `org/gnome/desktop/interface icon-theme = Papirus-Dark`
+  - `org/gnome/nautilus/preferences`: `show-hidden-files = true`, `default-folder-viewer = list-view`
+  - `papirus-icon-theme` added to fileManager packages
+  - GTK 3.0 and GTK 4.0 `settings.ini` added via hjem to enforce Papirus-Dark (bypasses dconf override issues)
+
+- **Touchpad input (niri):** `tap`, `natural-scroll`, `accel-speed = 0.2` added to shared niri config
+
+- **Thunderbird focus-or-launch keybind:** `Mod+E` now runs a script using `niri msg --json windows` to focus an existing Thunderbird window, or launches Thunderbird if none is open
+
+- **Polkit agent:** `polkit-gnome-authentication-agent-1` added to Niri `spawn-at-startup`; `security.polkit.enable = true` added to void (was missing)
+
+- **Firewall enabled** on both hosts; `services.sunshine.openFirewall = true` added to both to keep remote desktop functional
+
+- **styx packages:** `teams-for-linux`, `rapidraw`, `impression`, `libreoffice`
+
+- **void — fully configured** (was a skeleton after v1.0):
+  - `theming`, `insync`, `swinHome` modules now imported
+  - `nixpkgs-pinned` stable overlay added
+  - Tailscale `extraUpFlags` synced with styx
+  - SANE scanning (`hardware.sane` + `epsonscan2`)
+  - Avahi with `nssmdns4` and `openFirewall`
+  - AppImage support, Flatpak, Sunshine with `openFirewall`
+  - User groups expanded to match styx (`render`, `video`, `scanner`, `lp`)
+  - `security.polkit.enable = true`
+  - Added packages: `gh`, `vscode-fhs`, `loupe`, `vlc`, `inkscape`, `pinta`, `davinci-resolve`, `impression`, `libreoffice`, `gnome-calculator`, `nethogs`, `linssid`, `moonlight-qt`, `lmstudio`
+
+- **void hardware config:** updated from placeholder UUIDs to real hardware
+  - Thunderbolt kernel module added
+  - LUKS full-disk encryption configured
+  - All partition UUIDs set to real values
+
+- **hjem dotfiles:** btop.conf, all nvim config files, GTK settings added to `swin.nix`
+
+- **Browser defaults on styx:** `xdg.mime.defaultApplications` and `BROWSER = "helium"` (was only set on void)
+
+### Changed
+
+- **Stylix removed** — replaced entirely by Noctalia color scheme management (`theming.nix` deleted, `stylix` input removed from `flake.nix` along with all transitive deps)
+- **ROCm consolidated:** `rocmPackages.clr.icd` in `gaming.nix` upgraded to full `rocmPackages.clr`; duplicate `hardware.graphics.extraPackages` removed from `llm.nix`
+- **Niri focus ring color:** `#CBA6F7` (Catppuccin purple) → `#7fc8ff` (blue)
+- **`Mod+F`:** `kitty yazi` → `nautilus`
+- **`Mod+E`:** `nautilus` → Thunderbird focus-or-launch
+- **`Mod+A`:** `google-chrome-stable --app=...` → `helium --app=...`
+- **GC retention:** 30 days → 14 days on both hosts
+- **Shell alias** `n = "nvim"` moved into both host configs
+
+### Removed
+
+- `google-chrome` from both hosts — replaced by `helium`
+- `discord`, `vesktop`, `google-earth-pro` from void
+- Empty `users.users.swin.packages = []` from both hosts
+- Stale `# --- Audio (see pipewire.nix) ---` and `# Misc` placeholder comments
+
 ## [1.9] - 2026-05-06
 
 ### Added

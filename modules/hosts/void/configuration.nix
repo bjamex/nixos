@@ -9,7 +9,6 @@
       self.nixosModules.fileManager
       self.nixosModules.kitty
       self.nixosModules.neovim
-      self.nixosModules.theming
       self.nixosModules.insync
       self.nixosModules.swinHome
     ];
@@ -20,7 +19,7 @@
     nix.gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 30d";
+      options = "--delete-older-than 14d";
     };
     nixpkgs.config.allowUnfree = true;
     nixpkgs.overlays = [
@@ -40,7 +39,7 @@
     # --- Networking ---
     networking.hostName = "void";
     networking.networkmanager.enable = true;
-    networking.firewall.enable = false;
+    networking.firewall.enable = true;
     services.openssh.enable = false;
     services.tailscale = {
       enable = true;
@@ -68,8 +67,6 @@
     hardware.bluetooth.powerOnBoot = true;
     services.blueman.enable = true;
 
-    # --- Audio (see pipewire.nix) ---
-
     # --- Scanning ---
     hardware.sane.enable = true;
     hardware.sane.extraBackends = [ pkgs.epsonscan2 ];
@@ -86,6 +83,7 @@
     programs.bash.shellAliases.n = "nvim";
 
     # --- Programs ---
+    security.polkit.enable = true;
     programs.appimage.enable = true;
     programs.appimage.binfmt = true;
 
@@ -94,6 +92,7 @@
       enable = true;
       autoStart = true;
       capSysAdmin = true;
+      openFirewall = true;
     };
 
     # --- Virtualisation ---
@@ -107,8 +106,8 @@
       isNormalUser = true;
       description = "Brett James";
       extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" ];
-      packages = with pkgs; [];
     };
+
 
     # --- Packages ---
     environment.systemPackages = with pkgs; [
@@ -165,8 +164,6 @@
 
       # AI
       lmstudio
-
-      # Misc
     ];
 
     xdg.mime.defaultApplications = {

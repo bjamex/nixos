@@ -10,7 +10,6 @@
       self.nixosModules.kitty
       self.nixosModules.neovim
       self.nixosModules.llm
-      self.nixosModules.theming
       self.nixosModules.insync
       self.nixosModules.swinHome
     ];
@@ -21,7 +20,7 @@
     nix.gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 30d";
+      options = "--delete-older-than 14d";
     };
     nixpkgs.config.allowUnfree = true;
     nixpkgs.overlays = [
@@ -42,7 +41,7 @@
     # --- Networking ---
     networking.hostName = "styx";
     networking.networkmanager.enable = true;
-    networking.firewall.enable = false;
+    networking.firewall.enable = true;
     services.openssh.enable = false;
     services.tailscale = {
       enable = true;
@@ -72,8 +71,6 @@
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
     services.blueman.enable = true;
-
-    # --- Audio (see pipewire.nix) ---
 
     # --- Scanning ---
     hardware.sane.enable = true;
@@ -111,6 +108,7 @@
       enable = true;
       autoStart = true;
       capSysAdmin = true;
+      openFirewall = true;
     };
 
     # --- Services ---
@@ -121,8 +119,8 @@
       isNormalUser = true;
       description = "Brett James";
       extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" "disk" ];
-      packages = with pkgs; [];
     };
+
 
     # --- Packages ---
     environment.systemPackages = with pkgs; [
@@ -151,6 +149,7 @@
       qbittorrent
       thunderbird
       nordpass
+      teams-for-linux
       localsend
 
       # Media & Creative
@@ -184,6 +183,16 @@
       lmstudio
 
     ];
+
+    # --- Browser ---
+    xdg.mime.defaultApplications = {
+      "text/html"                = "helium.desktop";
+      "x-scheme-handler/http"   = "helium.desktop";
+      "x-scheme-handler/https"  = "helium.desktop";
+      "x-scheme-handler/about"  = "helium.desktop";
+      "x-scheme-handler/unknown" = "helium.desktop";
+    };
+    environment.sessionVariables.BROWSER = "helium";
 
     # --- Storage ---
     fileSystems."/mnt/nvme0" = {
