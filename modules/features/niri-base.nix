@@ -20,6 +20,16 @@
   };
 
   perSystem = { pkgs, lib, self', ... }: let
+    thunderbirdFocusOrOpen = pkgs.writeShellScript "thunderbird-focus-or-open" ''
+      id=$(${lib.getExe pkgs.niri} msg --json windows 2>/dev/null | \
+        ${lib.getExe pkgs.jq} -r '[.[] | select(.app_id == "thunderbird")] | .[0].id // empty')
+      if [ -n "$id" ]; then
+        ${lib.getExe pkgs.niri} msg action focus-window --id "$id"
+      else
+        thunderbird
+      fi
+    '';
+
     micMuteToggle = pkgs.writeShellScript "mic-mute-toggle" ''
       ${lib.getExe pkgs.pamixer} --default-source -t
       if [ "$(${lib.getExe pkgs.pamixer} --default-source --get-mute)" = "true" ]; then
@@ -130,7 +140,7 @@
         "Mod+B".spawn-sh = "helium";
         "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
         "Mod+F".spawn-sh = "nautilus";
-        "Mod+E".spawn-sh = "nautilus";
+        "Mod+E".spawn-sh = "${thunderbirdFocusOrOpen}";
         "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
         "Mod+A".spawn-sh = "helium --app=https://gemini.google.com";
         "KP_Subtract".spawn-sh = "${micMuteToggle}";

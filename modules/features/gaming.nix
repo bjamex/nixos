@@ -4,7 +4,7 @@
 
     hardware.graphics.enable = lib.mkDefault true;
     hardware.graphics.enable32Bit = lib.mkDefault true;
-    hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr.icd ];
+    hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr ];
 
     programs = {
       gamemode.enable = true;
