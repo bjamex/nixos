@@ -1,0 +1,31 @@
+name: Check flake
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v13
+
+      - name: Check flake evaluates
+        run: nix flake check --no-build
+
+      - name: Dry-run build styx
+        run: nix build .#nixosConfigurations.styx.config.system.build.toplevel --dry-run
+
+      - name: Dry-run build void
+        run: nix build .#nixosConfigurations.void.config.system.build.toplevel --dry-run
+
+      - name: Auto-merge if automated PR
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'automated')
+        run: gh pr merge --squash "${{ github.event.pull_request.number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
