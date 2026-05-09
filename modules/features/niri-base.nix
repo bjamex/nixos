@@ -2,6 +2,8 @@
   flake.nixosModules.niriBase = { config, pkgs, lib, ... }: {
     programs.niri.enable = true;
 
+    environment.systemPackages = [ pkgs.brightnessctl pkgs.playerctl ];
+
     xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
     services.greetd = {
@@ -146,6 +148,21 @@
         "KP_Subtract".spawn-sh = "${micMuteToggle}";
         "Mod+WheelScrollDown".focus-workspace-down = _: {};
         "Mod+WheelScrollUp".focus-workspace-up = _: {};
+
+        "XF86AudioMute".spawn-sh = "${lib.getExe pkgs.pamixer} -t";
+        "XF86AudioLowerVolume".spawn-sh = "${lib.getExe pkgs.pamixer} -d 5";
+        "XF86AudioRaiseVolume".spawn-sh = "${lib.getExe pkgs.pamixer} -i 5";
+        "XF86AudioMicMute".spawn-sh = "${lib.getExe pkgs.pamixer} --default-source -t";
+        "XF86MonBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} set 5%-";
+        "XF86MonBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} set 5%+";
+        "XF86AudioPlay".spawn-sh = "${lib.getExe pkgs.playerctl} play-pause";
+        "XF86AudioNext".spawn-sh = "${lib.getExe pkgs.playerctl} next";
+        "XF86AudioPrev".spawn-sh = "${lib.getExe pkgs.playerctl} previous";
+        "XF86KbdBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%-";
+        "XF86KbdBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%+";
+        "XF86RFKill".spawn-sh = "rfkill toggle all";
+        "XF86Bluetooth".spawn-sh = "rfkill toggle bluetooth";
+        "XF86Sleep".spawn-sh = "systemctl suspend";
       };
     };
   in {
