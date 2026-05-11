@@ -20,7 +20,8 @@ require("lazy").setup({
     { import = "plugins" },
   },
   defaults = { lazy = false, version = false },
-  install = { colorscheme = { "tokyonight", "habamax" } },
+  install = { colorscheme = { "oxocarbon", "tokyonight", "habamax" } },
+  rocks = { hererocks = false },
   checker = { enabled = true, notify = false },
   performance = {
     rtp = {
