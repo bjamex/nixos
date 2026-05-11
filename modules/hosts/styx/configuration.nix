@@ -118,7 +118,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" "disk" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" "disk" "dialout" ];
     };
 
 
@@ -142,6 +142,7 @@
       fzf
       lazygit
       yazi
+      nvtopPackages.amd
 
       # Internet & Communication
       inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
