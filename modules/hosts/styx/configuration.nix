@@ -12,6 +12,8 @@
       self.nixosModules.llm
       self.nixosModules.insync
       self.nixosModules.swinHome
+      self.nixosModules.smb
+      self.nixosModules.starCitizen
     ];
 
     # --- Nix ---
@@ -179,6 +181,7 @@
       linssid
       moonlight-qt
       pamixer
+      cifs-utils
 
       # AI
       lmstudio
