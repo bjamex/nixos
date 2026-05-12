@@ -3,6 +3,7 @@
   flake.nixosModules.neovim = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
       neovim
+      wl-clipboard
       gcc
       tree-sitter
       ripgrep
@@ -11,9 +12,10 @@
       unzip
       trash-cli
 
-      # LSP servers (Mason can't install binaries on NixOS)
+      # LSP servers and linters (Mason can't install binaries on NixOS)
       nil                    # nil_ls  — Nix
       lua-language-server    # lua_ls  — Lua
+      statix                 # Nix linter / code actions
     ];
   };
 }

@@ -8,7 +8,8 @@
       directory = "/home/swin";
       files = {
         ".config/kitty/kitty.conf".source = ./dotfiles/kitty.conf;
-        ".config/btop/btop.conf".source = ./dotfiles/btop.conf;
+        ".config/btop/btop.conf".source = ./dotfiles/btop/btop.conf;
+        ".config/btop/themes/oxocarbon.theme".source = ./dotfiles/btop/themes/oxocarbon.theme;
         ".config/Code/User/settings.json".source = ./dotfiles/vscode/settings.json;
         ".config/nvim/init.lua".source = ./dotfiles/nvim/init.lua;
         ".config/nvim/lua/config/lazy.lua".source = ./dotfiles/nvim/lua/config/lazy.lua;
