@@ -103,8 +103,10 @@
             };
             opacity = 0.90;
             draw-border-with-background = false;
-            # open-maximized = true;
-
+          }
+          {
+            matches = [ { app-id = "screensaver"; } ];
+            open-fullscreen = true;
           }
           {
             matches = [

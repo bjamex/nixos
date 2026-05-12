@@ -165,9 +165,11 @@
         lazygit
         yazi
         nvtopPackages.amd
+        weathr
 
         # Internet & Communication
         inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
+
         # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
         qbittorrent
         thunderbird
@@ -217,6 +219,7 @@
         "x-scheme-handler/about" = "helium.desktop";
         "x-scheme-handler/unknown" = "helium.desktop";
       };
+
       environment.sessionVariables.BROWSER = "helium";
 
       # --- Storage ---
