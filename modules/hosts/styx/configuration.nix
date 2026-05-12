@@ -17,6 +17,7 @@
         self.nixosModules.swinHome
         self.nixosModules.smb
         self.nixosModules.starCitizen
+        self.nixosModules.thunderbird
       ];
 
       # --- Nix ---
@@ -172,7 +173,6 @@
 
         # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
         qbittorrent
-        thunderbird
         nordpass
         teams-for-linux
         localsend

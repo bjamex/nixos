@@ -4,7 +4,10 @@
 
     programs.rsi-launcher = {
       enable = true;
-      gamescope.enable = true;
+      gamescope = {
+        enable = true;
+        args = [ "--backend" "wayland" "-W" "2560" "-H" "1440" "-r" "144" "-f" ];
+      };
     };
 
     nix.settings = {
