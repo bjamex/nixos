@@ -18,6 +18,8 @@
         self.nixosModules.smb
         self.nixosModules.starCitizen
         self.nixosModules.thunderbird
+        self.nixosModules.exiledExchange
+        self.nixosModules.comfyui
       ];
 
       # --- Nix ---
@@ -167,6 +169,7 @@
         yazi
         nvtopPackages.amd
         weathr
+        tickrs
 
         # Internet & Communication
         inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
