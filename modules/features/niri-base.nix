@@ -109,6 +109,18 @@
             open-fullscreen = true;
           }
           {
+            matches = [ { app-id = "org.gnome.Calculator"; } ];
+            open-floating = true;
+          }
+          {
+            matches = [ { app-id = "exiled-exchange"; } ];
+            open-floating = true;
+            open-focused = false;
+            opacity = 1.0;
+            geometry-corner-radius = 0;
+            clip-to-geometry = false;
+          }
+          {
             matches = [
               {
                 app-id = "steam";
