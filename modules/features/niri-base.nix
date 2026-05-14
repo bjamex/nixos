@@ -105,6 +105,13 @@
             draw-border-with-background = false;
           }
           {
+            matches = [
+              { app-id = "thunderbird"; }
+              { app-id = "helium"; }
+            ];
+            opacity = 1.0;
+          }
+          {
             matches = [ { app-id = "screensaver"; } ];
             open-fullscreen = true;
           }
@@ -180,8 +187,9 @@
           "Mod+V".toggle-window-floating = _: { };
           "Mod+O".toggle-window-rule-opacity = _: { };
           "Mod+B".spawn-sh = "helium";
+          "Mod+Shift+V".spawn-sh = "vpn-toggle";
           "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
-          "Mod+F".spawn-sh = "nemo";
+          "Mod+F".spawn-sh = "nautilus";
           "Mod+E".spawn-sh = "${thunderbirdFocusOrOpen}";
           "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
           "Mod+A".spawn-sh = "helium --app=https://gemini.google.com";

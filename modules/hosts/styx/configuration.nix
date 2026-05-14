@@ -20,6 +20,8 @@
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
         self.nixosModules.comfyui
+        self.nixosModules.airvpn
+        self.nixosModules.tailscale
       ];
 
       # --- Nix ---
@@ -54,14 +56,6 @@
       networking.networkmanager.enable = true;
       networking.firewall.enable = true;
       services.openssh.enable = false;
-      services.tailscale = {
-        enable = true;
-        permitCertUid = "swin";
-        extraUpFlags = [
-          "--accept-routes=false"
-          "--snat-subnet-routes=false"
-        ];
-      };
 
       # --- Locale & Time ---
       time.timeZone = "Australia/Brisbane";
