@@ -70,6 +70,9 @@
             "usePadding": false
           },
           {
+            "id": "tamagotchi"
+          },
+          {
             "colorizeIcons": false,
             "hideMode": "hidden",
             "id": "ActiveWindow",
@@ -131,6 +134,37 @@
             "showIcon": false,
             "colorizeSystemText": "error",
             "textCommand": "m=$(pamixer --default-source --get-mute); [ \"$m\" = \"true\" ] && echo MUTED || echo LIVE"
+          },
+          {
+            "id": "CustomButton",
+            "ipcIdentifier": "vpn-status",
+            "textStream": false,
+            "textIntervalMs": 3000,
+            "hideMode": "expandWithOutput",
+            "showIcon": false,
+            "colorizeSystemText": "primary",
+            "textCommand": "ip link show airvpn &>/dev/null && echo 'VPN'",
+            "leftClickCommand": "vpn-toggle"
+          },
+          {
+            "id": "CustomButton",
+            "ipcIdentifier": "vpn-status",
+            "textStream": false,
+            "textIntervalMs": 3000,
+            "hideMode": "expandWithOutput",
+            "showIcon": false,
+            "colorizeSystemText": "error",
+            "textCommand": "ip link show airvpn &>/dev/null || echo 'VPN'",
+            "leftClickCommand": "vpn-toggle"
+          },
+          {
+            "id": "tailscale"
+          },
+          {
+            "id": "github-feed"
+          },
+          {
+            "id": "Bluetooth"
           },
           {
             "blacklist": [],

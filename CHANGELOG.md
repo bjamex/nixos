@@ -2,6 +2,41 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [2.1] - 2026-05-15
+
+### Added
+
+- **airvpn.nix:** new module for AirVPN via WireGuard
+  - `networking.wg-quick.interfaces.airvpn` with `autostart = false`; reads config from `/etc/wireguard/airvpn.conf`
+  - `vpn-toggle` shell script: brings interface up/down by checking `ip link show airvpn`
+  - NOPASSWD sudo rule for `wg-quick` so toggle works without password prompt
+
+- **tailscale.nix:** Tailscale extracted from `configuration.nix` into its own feature module
+  - `services.tailscale` with `permitCertUid = "swin"` and routing flags preserved (`--accept-routes=false`, `--snat-subnet-routes=false`)
+  - `ts-toggle` shell script: brings Tailscale up/down by checking `ip link show tailscale0`
+  - NOPASSWD sudo rule for `tailscale` binary
+
+- **Noctalia widgets:** several new widgets added to `noctalia.json`
+  - Tamagotchi widget
+  - VPN status: two `CustomButton` widgets polling `ip link show airvpn` every 3s — shows `VPN` in primary color when up, error color when down; left-click runs `vpn-toggle`
+  - Tailscale widget
+  - GitHub feed widget
+  - Bluetooth widget
+
+### Changed
+
+- **fileManager.nix:** switched back to Nautilus from Nemo; Thunar removed
+  - `nemo-with-extensions` and `xfce.thunar` removed
+  - `nautilus` + `nautilus-python` reinstated
+  - `programs.nautilus-open-any-terminal` re-enabled with `terminal = "kitty"`
+  - dconf settings updated: `org/nemo/preferences` and cinnamon terminal exec removed; `org/gnome/nautilus/preferences` (`show-hidden-files`, `default-folder-viewer = list-view`) restored
+
+- **`Mod+F`:** `nemo` → `nautilus`
+
+- **comfyui.nix:** PyTorch ROCm index URL bumped from `rocm6.4` → `rocm6.5`
+
+- **configuration.nix:** inline `services.tailscale` block removed (now in `tailscale.nix`); `airvpn` and `tailscale` module imports added
+
 ## [2.0] - 2026-05-08
 
 ### Added

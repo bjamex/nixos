@@ -19,10 +19,10 @@
   in {
     services.gvfs.enable = true;
 
-    # programs.nautilus-open-any-terminal = {
-    #   enable = true;
-    #   terminal = "kitty";
-    # };
+    programs.nautilus-open-any-terminal = {
+      enable = true;
+      terminal = "kitty";
+    };
 
     programs.dconf.enable = true;
     programs.dconf.profiles.user.databases = [{
@@ -32,24 +32,16 @@
           gtk-theme = "oxocarbon";
           color-scheme = "prefer-dark";
         };
-        # "org/gnome/nautilus/preferences" = {
-        #   show-hidden-files = true;
-        #   default-folder-viewer = "list-view";
-        # };
-        "org/nemo/preferences" = {
+        "org/gnome/nautilus/preferences" = {
           show-hidden-files = true;
           default-folder-viewer = "list-view";
-        };
-        "org/cinnamon/desktop/default-applications/terminal" = {
-          exec = "kitty";
-          exec-arg = "";
         };
       };
     }];
 
     environment.systemPackages = with pkgs; [
-      # nautilus
-      nemo-with-extensions
+      nautilus
+      nautilus-python
       xdg-utils
       papirus-icon-theme
       oxocarbon-gtk-theme
