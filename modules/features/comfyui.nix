@@ -17,7 +17,7 @@
           echo "Creating venv and installing PyTorch ROCm 6.4..."
           ${pkgs.python312}/bin/python -m venv "$VENV_DIR"
           "$VENV_DIR/bin/pip" install --quiet torch torchvision torchaudio \
-            --index-url https://download.pytorch.org/whl/rocm6.4
+            --index-url https://download.pytorch.org/whl/rocm6.5
           echo "Installing ComfyUI requirements..."
           "$VENV_DIR/bin/pip" install --quiet -r "$COMFYUI_DIR/requirements.txt"
         fi

@@ -30,6 +30,9 @@ modules/
     fileManager.nix       # Nautilus with dconf settings and Papirus-Dark icons
     llm.nix               # Ollama (ROCm) + Open WebUI
     insync.nix            # Insync Google Drive sync + inotify tuning
+    airvpn.nix            # AirVPN via WireGuard (wg-quick, vpn-toggle script)
+    tailscale.nix         # Tailscale with ts-toggle script
+    comfyui.nix           # ComfyUI with PyTorch ROCm
   users/
     swin.nix              # hjem user file management (dotfiles)
     dotfiles/             # Managed dotfiles (kitty, btop, nvim, vscode, gtk)
@@ -70,5 +73,7 @@ nixos-rebuild build --flake .#styx
 - **File manager:** Nautilus with gvfs, terminal integration, hidden files, list view
 - **Local AI:** Ollama with ROCm (RX 9070 XT) + Open WebUI at `localhost:8080`
 - **Sync:** Insync (Google Drive) with inotify tuning for reliable background sync
-- **Utilities:** Docker, Tailscale, Sunshine/Moonlight, Flatpak, AppImage, NetworkManager
+- **VPN:** AirVPN via WireGuard (`vpn-toggle` script, NOPASSWD sudo); Tailscale with `ts-toggle` script; both shown in Noctalia bar
+- **AI image gen:** ComfyUI with PyTorch ROCm (RX 9070 XT)
+- **Utilities:** Docker, Sunshine/Moonlight, Flatpak, AppImage, NetworkManager
 - **Security:** Firewall enabled on both hosts; Sunshine ports opened via `openFirewall`
