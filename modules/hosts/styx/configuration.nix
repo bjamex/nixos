@@ -81,8 +81,10 @@
       services.blueman.enable = true;
 
       # --- Scanning ---
-      hardware.sane.enable = true;
-      hardware.sane.extraBackends = [ pkgs.epsonscan2 ];
+      hardware.sane = {
+        enable = true;
+        extraBackends = [ pkgs.epsonscan2 ];
+      };
 
       # --- Printing ---
       services.printing.enable = true;
@@ -110,15 +112,17 @@
 
       # --- Programs ---
       security.polkit.enable = true;
-      programs.appimage.enable = true;
-      programs.appimage.binfmt = true;
+      programs.appimage = {
+        enable = true;
+        binfmt = true;
+      };
 
-      # --- Remote Access ---
       services.sunshine = {
+        # --- Remote Access ---
+        openFirewall = true;
         enable = true;
         autoStart = true;
         capSysAdmin = true;
-        openFirewall = true;
       };
 
       # --- Services ---
@@ -144,6 +148,7 @@
       # --- Packages ---
       environment.systemPackages = with pkgs; [
         # Shell utilities
+
         (writeShellScriptBin "nwhich" "readlink -f $(which $1)")
         (writeShellScriptBin "cnwhich" "cat $(readlink -f $(which $1))")
         (writeShellScriptBin "md" "mkdir -p \"$1\" && cd \"$1\"")
@@ -173,7 +178,6 @@
         nordpass
         teams-for-linux
         localsend
-
         # Media & Creative
         rapidraw
         obs-studio
@@ -184,7 +188,9 @@
         inkscape
         pinta
         xournalpp
-        davinci-resolve
+        # davinci-resolve
+        freecad
+        blender
 
         # Productivity
         impression
@@ -192,6 +198,7 @@
         gnome-calculator
         pdfarranger
         freecad
+        bambu-studio
         epsonscan2
         cisco-packet-tracer_9
         typora
@@ -204,7 +211,7 @@
         cifs-utils
 
         # AI
-        lmstudio
+        # lmstudio
 
       ];
 

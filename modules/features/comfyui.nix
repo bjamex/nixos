@@ -3,8 +3,16 @@
   flake.nixosModules.comfyui =
     { pkgs, ... }:
     let
+      libPath = pkgs.lib.makeLibraryPath [
+        pkgs.stdenv.cc.cc.lib
+        pkgs.zlib
+        pkgs.zstd
+        pkgs.xz
+        pkgs.bzip2
+      ];
       startScript = pkgs.writeShellScript "comfyui-start" ''
         set -e
+        export LD_LIBRARY_PATH="${libPath}"
         COMFYUI_DIR="/var/lib/comfyui/ComfyUI"
         VENV_DIR="/var/lib/comfyui/venv"
 
@@ -20,10 +28,12 @@
             --index-url https://download.pytorch.org/whl/rocm6.5
           echo "Installing ComfyUI requirements..."
           "$VENV_DIR/bin/pip" install --quiet -r "$COMFYUI_DIR/requirements.txt"
+          echo "Installing ComfyUI Manager..."
+          "$VENV_DIR/bin/pip" install --quiet -U --pre comfyui-manager
         fi
 
         exec "$VENV_DIR/bin/python" "$COMFYUI_DIR/main.py" \
-          --listen 127.0.0.1 --port 8188
+          --listen 127.0.0.1 --port 8188 --enable-manager
       '';
     in
     {
@@ -43,16 +53,10 @@
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
         wantedBy = [ "multi-user.target" ];
+        path = [ pkgs.uv ];
         environment = {
           HSA_OVERRIDE_GFX_VERSION = "12.0.1";
           PYTORCH_ROCM_ARCH = "gfx1201";
-          LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
-            pkgs.stdenv.cc.cc.lib  # libstdc++.so.6
-            pkgs.zlib              # libz.so.1
-            pkgs.zstd              # libzstd.so.1
-            pkgs.xz                # liblzma.so.5
-            pkgs.bzip2             # libbz2.so.1
-          ];
         };
         serviceConfig = {
           Type = "simple";
