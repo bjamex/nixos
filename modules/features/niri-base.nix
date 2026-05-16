@@ -87,7 +87,7 @@
         input.mouse.accel-profile = "flat";
         input.focus-follows-mouse = { };
         input.warp-mouse-to-focus = { };
-        layout.gaps = 8;
+        layout.gaps = 4;
         layout.focus-ring = {
           width = 3;
           active-color = "#7fc8ff";
