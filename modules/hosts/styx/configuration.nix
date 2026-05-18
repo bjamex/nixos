@@ -5,6 +5,7 @@
     { pkgs, lib, ... }:
     {
       imports = [
+        inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.styxHardware
         self.nixosModules.niriStyx
         self.nixosModules.gaming
@@ -23,6 +24,7 @@
         self.nixosModules.airvpn
         self.nixosModules.tailscale
         self.nixosModules.website
+        self.nixosModules.budslink
       ];
 
       # --- Nix ---
@@ -191,7 +193,6 @@
         pinta
         xournalpp
         # davinci-resolve
-        freecad
         blender
 
         # Productivity
