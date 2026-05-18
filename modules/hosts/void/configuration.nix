@@ -2,6 +2,7 @@
 
   flake.nixosModules.voidConfiguration = { pkgs, lib, ... }: {
     imports = [
+      inputs.lix-module.nixosModules.lixFromNixpkgs
       self.nixosModules.voidHardware
       self.nixosModules.niriVoid
       self.nixosModules.gaming
@@ -107,7 +108,7 @@
     users.users.swin = {
       isNormalUser = true;
       description = "Brett James";
-      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" ];
+      extraGroups = [ "networkmanager" "wheel" "render" "video" "docker" "scanner" "lp" "disk" "dialout" ];
     };
 
     # --- Packages ---
