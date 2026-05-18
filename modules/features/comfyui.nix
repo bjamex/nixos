@@ -9,6 +9,8 @@
         pkgs.zstd
         pkgs.xz
         pkgs.bzip2
+        pkgs.libGL
+        pkgs.glib
       ];
       startScript = pkgs.writeShellScript "comfyui-start" ''
         set -e
@@ -22,7 +24,7 @@
         fi
 
         if [ ! -d "$VENV_DIR" ]; then
-          echo "Creating venv and installing PyTorch ROCm 6.4..."
+          echo "Creating venv and installing PyTorch ROCm 6.5..."
           ${pkgs.python312}/bin/python -m venv "$VENV_DIR"
           "$VENV_DIR/bin/pip" install --quiet torch torchvision torchaudio \
             --index-url https://download.pytorch.org/whl/rocm6.5
@@ -32,7 +34,9 @@
           "$VENV_DIR/bin/pip" install --quiet -U --pre comfyui-manager
         fi
 
-        exec "$VENV_DIR/bin/python" "$COMFYUI_DIR/main.py" \
+        export VIRTUAL_ENV="$VENV_DIR"
+        export PATH="$VENV_DIR/bin:$PATH"
+        exec python "$COMFYUI_DIR/main.py" \
           --listen 127.0.0.1 --port 8188 --enable-manager
       '';
     in
@@ -53,10 +57,11 @@
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
         wantedBy = [ "multi-user.target" ];
-        path = [ pkgs.uv ];
+        path = [ pkgs.uv pkgs.git ];
         environment = {
           HSA_OVERRIDE_GFX_VERSION = "12.0.1";
           PYTORCH_ROCM_ARCH = "gfx1201";
+          HOME = "/var/lib/comfyui";
         };
         serviceConfig = {
           Type = "simple";
