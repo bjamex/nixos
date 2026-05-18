@@ -87,9 +87,9 @@
         input.mouse.accel-profile = "flat";
         input.focus-follows-mouse = { };
         input.warp-mouse-to-focus = { };
-        layout.gaps = 4;
+        layout.gaps = 7;
         layout.focus-ring = {
-          width = 3;
+          width = 2;
           active-color = "#7fc8ff";
           inactive-color = "#45475A";
         };
@@ -210,7 +210,6 @@
           "XF86KbdBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%+";
           "XF86RFKill".spawn-sh = "rfkill toggle all";
           "XF86Bluetooth".spawn-sh = "rfkill toggle bluetooth";
-          "XF86Sleep".spawn-sh = "systemctl suspend";
         };
       };
     in

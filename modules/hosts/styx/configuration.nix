@@ -22,6 +22,7 @@
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
+        self.nixosModules.website
       ];
 
       # --- Nix ---
@@ -111,6 +112,7 @@
       programs.bash.shellAliases.n = "nvim";
 
       # --- Programs ---
+      programs.nix-ld.enable = true;
       security.polkit.enable = true;
       programs.appimage = {
         enable = true;
