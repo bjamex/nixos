@@ -39,6 +39,24 @@
       };
     }];
 
+    programs.yazi = {
+      enable = true;
+      plugins = { inherit (pkgs.yaziPlugins) bookmarks; };
+      initLua = pkgs.writeText "init.lua" ''
+        require("bookmarks"):setup({
+          persist = "all",
+          desc_format = "full",
+          notify = { enable = true, timeout = 1 },
+        })
+      '';
+      settings.keymap.mgr.prepend_keymap = [
+        { on = ["m"];        run = "plugin bookmarks save";       desc = "Save bookmark"; }
+        { on = ["'"];        run = "plugin bookmarks jump";       desc = "Jump to bookmark"; }
+        { on = ["b" "d"];    run = "plugin bookmarks delete";     desc = "Delete bookmark"; }
+        { on = ["b" "D"];    run = "plugin bookmarks delete_all"; desc = "Delete all bookmarks"; }
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
       nautilus
       nautilus-python

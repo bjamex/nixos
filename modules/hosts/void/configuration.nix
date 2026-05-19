@@ -178,6 +178,7 @@
         pdfarranger
         freecad
         epsonscan2
+        obsidian
 
         # Networking & Monitoring
         nethogs
