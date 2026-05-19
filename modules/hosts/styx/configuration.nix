@@ -162,6 +162,7 @@
         gh
         vscode-fhs
         claude-code
+        nh
 
         # Terminal & System
         btop
