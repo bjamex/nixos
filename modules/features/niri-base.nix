@@ -158,7 +158,8 @@
           "Mod+Shift+Right".move-column-right = _: { };
           "Mod+Shift+Up".move-window-up = _: { };
           "Mod+Shift+Down".move-window-down = _: { };
-          "Mod+Shift+F".fullscreen-window = _: { };
+          "Mod+Shift+F".spawn-sh = "nautilus";
+          "Mod+Shift+M".fullscreen-window = _: { };
           "Mod+M".maximize-column = _: { };
           "Mod+C".center-column = _: { };
           "Mod+Comma".consume-window-into-column = _: { };
@@ -189,7 +190,7 @@
           "Mod+B".spawn-sh = "helium";
           "Mod+Shift+V".spawn-sh = "vpn-toggle";
           "Mod+semicolon".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call wallpaper toggle";
-          "Mod+F".spawn-sh = "nautilus";
+          "Mod+F".spawn-sh = "kitty yazi";
           "Mod+E".spawn-sh = "${thunderbirdFocusOrOpen}";
           "Mod+D".spawn-sh = "flatpak run com.discordapp.Discord";
           "Mod+A".spawn-sh = "helium --app=https://gemini.google.com";

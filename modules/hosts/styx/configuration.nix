@@ -39,6 +39,7 @@
         options = "--delete-older-than 14d";
       };
       nixpkgs.config.allowUnfree = true;
+      environment.etc."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
       nixpkgs.overlays = [
         (final: prev: {
           stable = import inputs.nixpkgs-pinned {
@@ -170,7 +171,6 @@
         baobab
         fzf
         lazygit
-        yazi
         nvtopPackages.amd
         weathr
         tickrs
@@ -204,8 +204,10 @@
         freecad
         bambu-studio
         epsonscan2
+        simple-scan
         cisco-packet-tracer_9
         typora
+        obsidian
 
         # Networking & Monitoring
         nethogs
