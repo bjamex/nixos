@@ -52,6 +52,7 @@
       # --- Boot ---
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
+      boot.loader.timeout = 0;
       boot.kernelPackages = pkgs.linuxPackages_latest;
       boot.kernelModules = [ "igc" ];
 
@@ -208,6 +209,7 @@
         cisco-packet-tracer_9
         typora
         obsidian
+        affine
 
         # Networking & Monitoring
         nethogs
