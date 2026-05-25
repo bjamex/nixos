@@ -36,6 +36,21 @@
       rusty-path-of-building
     ];
 
+    services.sunshine = {
+      openFirewall = true;
+      enable = true;
+      autoStart = true;
+      capSysAdmin = true;
+      applications = {
+        apps = [
+          {
+            name = "Steam Big Picture";
+            detached = [ "setsid steam -gamepadui" ];
+          }
+        ];
+      };
+    };
+
     nix.settings = {
       substituters = [ "https://nix-gaming.cachix.org" ];
       trusted-public-keys = [ "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];

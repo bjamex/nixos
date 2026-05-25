@@ -17,13 +17,16 @@
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb
-        self.nixosModules.starCitizen
+        # self.nixosModules.starCitizen  # broken: dxvk cross-compilation fails on nixpkgs f83fc3c
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
+        self.nixosModules.awakenedPoeTrade
+        self.nixosModules.pathoftrading
+        self.nixosModules.hyprland
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
-        self.nixosModules.website
+        # self.nixosModules.website
         self.nixosModules.budslink
       ];
 
@@ -123,14 +126,6 @@
         binfmt = true;
       };
 
-      services.sunshine = {
-        # --- Remote Access ---
-        openFirewall = true;
-        enable = true;
-        autoStart = true;
-        capSysAdmin = true;
-      };
-
       # --- Services ---
       services.flatpak.enable = true;
 
@@ -148,6 +143,7 @@
           "lp"
           "disk"
           "dialout"
+          "input"
         ];
       };
 
@@ -206,7 +202,7 @@
         bambu-studio
         epsonscan2
         simple-scan
-        cisco-packet-tracer_9
+        # cisco-packet-tracer_9  # requires manual deb download; re-add after fetching
         typora
         obsidian
         affine
