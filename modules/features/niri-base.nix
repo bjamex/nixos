@@ -23,12 +23,8 @@
         enable = true;
         settings = {
           default_session = {
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd niri-session";
+            command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
             user = "greeter";
-          };
-          initial_session = {
-            command = "niri-session";
-            user = "swin";
           };
         };
       };
@@ -103,7 +99,7 @@
             background-effect = {
               blur = true;
             };
-            opacity = 0.90;
+            opacity = 1.0;
             draw-border-with-background = false;
           }
           {
@@ -123,6 +119,14 @@
           }
           {
             matches = [ { app-id = "exiled-exchange"; } ];
+            open-floating = true;
+            open-focused = false;
+            opacity = 1.0;
+            geometry-corner-radius = 0;
+            clip-to-geometry = false;
+          }
+          {
+            matches = [ { app-id = "awakened-poe-trade"; } ];
             open-floating = true;
             open-focused = false;
             opacity = 1.0;
@@ -199,6 +203,8 @@
           "KP_Subtract".spawn-sh = "${micMuteToggle}";
           "Mod+WheelScrollDown".focus-workspace-down = _: { };
           "Mod+WheelScrollUp".focus-workspace-up = _: { };
+
+          "Ctrl+Alt+D".spawn-sh = "pathoftrading";
 
           "XF86AudioMute".spawn-sh = "${lib.getExe pkgs.pamixer} -t";
           "XF86AudioLowerVolume".spawn-sh = "${lib.getExe pkgs.pamixer} -d 5";
