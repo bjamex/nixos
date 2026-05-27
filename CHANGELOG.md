@@ -2,6 +2,34 @@
 
 All notable changes to this NixOS configuration are documented in this file.
 
+## [2.2] - 2026-05-27
+
+### Added
+
+- **gtk-4.0/gtk.css:** Oxocarbon libadwaita CSS overrides for GTK4 apps (Nautilus, etc.)
+  - Defines full Oxocarbon palette via CSS variables: window/view/headerbar/card/sidebar/popover backgrounds, accent (`#78a9ff`), destructive (`#ee5396`), success (`#25be6a`)
+  - Deployed via hjem to `~/.config/gtk-4.0/gtk.css`
+
+### Changed
+
+- **fileManager.nix:** GTK theming fixed for GTK4/libadwaita apps
+  - Replaced `oxocarbon-gtk-theme` (GTK3 only) with `adw-gtk3` (proper GTK4/libadwaita support)
+  - dconf `gtk-theme` updated from `oxocarbon` → `adw-gtk3-dark`
+  - `gtk-3.0/settings.ini` and `gtk-4.0/settings.ini` updated to match
+
+- **gaming.nix:** removed redundant `gamescope` from `systemPackages`; `programs.gamescope.enable = true` already provides it
+
+- **configuration.nix:** removed `i18n.extraLocaleSettings` — all 9 categories were `en_AU.UTF-8`, identical to `i18n.defaultLocale`
+
+- **noctalia.json:** bar widget cleanup
+  - Removed `SystemMonitor` and `ActiveWindow` from left bar
+  - Removed `Brightness` from right bar
+  - Moved `Bluetooth` to immediately left of `Volume` in right bar
+
+### Updated
+
+- `flake.lock`: nixpkgs, nix-citizen, nix-gaming, wrapper-modules, lix-module
+
 ## [2.1] - 2026-05-15
 
 ### Added

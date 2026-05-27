@@ -1,0 +1,54 @@
+/* Oxocarbon palette for libadwaita */
+@define-color accent_color #78a9ff;
+@define-color accent_bg_color #0f62fe;
+@define-color accent_fg_color #ffffff;
+
+@define-color destructive_color #ee5396;
+@define-color destructive_bg_color #ee5396;
+@define-color destructive_fg_color #161616;
+
+@define-color success_color #25be6a;
+@define-color success_bg_color #25be6a;
+@define-color success_fg_color #161616;
+
+@define-color warning_color #ffe97b;
+@define-color warning_bg_color #ffe97b;
+@define-color warning_fg_color #161616;
+
+@define-color error_color #ee5396;
+@define-color error_bg_color #ee5396;
+@define-color error_fg_color #161616;
+
+@define-color window_bg_color #161616;
+@define-color window_fg_color #f4f4f4;
+
+@define-color view_bg_color #262626;
+@define-color view_fg_color #f4f4f4;
+
+@define-color headerbar_bg_color #161616;
+@define-color headerbar_fg_color #f4f4f4;
+@define-color headerbar_border_color rgba(244, 244, 244, 0.1);
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color headerbar_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color card_bg_color #262626;
+@define-color card_fg_color #f4f4f4;
+@define-color card_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color dialog_bg_color #161616;
+@define-color dialog_fg_color #f4f4f4;
+
+@define-color popover_bg_color #262626;
+@define-color popover_fg_color #f4f4f4;
+@define-color popover_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color sidebar_bg_color #1a1a1a;
+@define-color sidebar_fg_color #f4f4f4;
+@define-color sidebar_backdrop_color #161616;
+@define-color sidebar_shade_color rgba(0, 0, 0, 0.36);
+
+@define-color thumbnail_bg_color #262626;
+@define-color thumbnail_fg_color #f4f4f4;
+
+@define-color shade_color rgba(0, 0, 0, 0.36);
+@define-color scrollbar_outline_color rgba(0, 0, 0, 0.5);

@@ -38,7 +38,7 @@
           settings = {
             "org/gnome/desktop/interface" = {
               icon-theme = "Papirus-Dark";
-              gtk-theme = "oxocarbon";
+              gtk-theme = "adw-gtk3-dark";
               color-scheme = "prefer-dark";
             };
             "org/gnome/nautilus/preferences" = {
@@ -94,7 +94,7 @@
         nautilus-python
         xdg-utils
         papirus-icon-theme
-        oxocarbon-gtk-theme
+        adw-gtk3
         sushi
       ];
     };
