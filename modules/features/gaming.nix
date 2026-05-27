@@ -19,7 +19,6 @@
       pkgs.stable.lutris
       steam-run
       dxvk
-      gamescope
       mangohud
       r2modman
       heroic

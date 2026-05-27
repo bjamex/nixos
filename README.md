@@ -63,14 +63,14 @@ nixos-rebuild build --flake .#styx
 
 - **Multi-host:** Shared feature modules + host-specific configs; `import-tree` auto-loads all `.nix` files under `modules/`
 - **Niri compositor:** Wayland WM with rounded corners, blur, opacity, focus ring, workspace keybinds
-- **Theming:** Noctalia manages color schemes (Tokyo Night), wallpaper rotation, and GTK sync; Papirus-Dark icon theme
+- **Theming:** Noctalia manages color schemes (Oxocarbon), wallpaper rotation, and GTK sync; `adw-gtk3-dark` with Oxocarbon libadwaita CSS overrides; Papirus-Dark icon theme
 - **User files:** Per-user dotfiles managed declaratively via `hjem` (kitty, btop, nvim, vscode, GTK)
 - **Gaming:** Steam, Lutris, gamemode, gamescope, Heroic, Minecraft Bedrock, XIV Launcher, lsfg-vk
 - **Audio:** PipeWire with low-latency gaming support, EasyEffects, mono mic loopback
 - **Browser:** Helium (privacy-focused Chromium) set as system default
 - **Terminal:** Kitty
 - **Editor:** Neovim with LazyVim
-- **File manager:** Nautilus with gvfs, terminal integration, hidden files, list view
+- **File manager:** Nautilus with gvfs, terminal integration, hidden files, list view; Oxocarbon GTK4 theming via `adw-gtk3-dark` + custom libadwaita CSS
 - **Local AI:** Ollama with ROCm (RX 9070 XT) + Open WebUI at `localhost:8080`
 - **Sync:** Insync (Google Drive) with inotify tuning for reliable background sync
 - **VPN:** AirVPN via WireGuard (`vpn-toggle` script, NOPASSWD sudo); Tailscale with `ts-toggle` script; both shown in Noctalia bar

@@ -19,6 +19,7 @@
         ".config/nvim/lua/plugins/init.lua".source = ./dotfiles/nvim/lua/plugins/init.lua;
         ".config/gtk-3.0/settings.ini".source = ./dotfiles/gtk-3.0/settings.ini;
         ".config/gtk-4.0/settings.ini".source = ./dotfiles/gtk-4.0/settings.ini;
+        ".config/gtk-4.0/gtk.css".source = ./dotfiles/gtk-4.0/gtk.css;
         ".local/share/applications/nvim.desktop".text = ''
           [Desktop Entry]
           Name=Neovim wrapper
