@@ -28,6 +28,7 @@
         self.nixosModules.tailscale
         # self.nixosModules.website
         self.nixosModules.budslink
+        self.nixosModules.shell
       ];
 
       # --- Nix ---
@@ -78,10 +79,7 @@
       services.blueman.enable = true;
 
       # --- Scanning ---
-      hardware.sane = {
-        enable = true;
-        extraBackends = [ pkgs.epsonscan2 ];
-      };
+      hardware.sane.enable = true;
 
       # --- Printing ---
       services.printing.enable = true;
@@ -174,6 +172,7 @@
         obs-studio
         darktable
         jellyfin-tui
+        ani-cli
         loupe
         vlc
         inkscape
@@ -189,7 +188,6 @@
         pdfarranger
         freecad
         bambu-studio
-        epsonscan2
         simple-scan
         # cisco-packet-tracer_9  # requires manual deb download; re-add after fetching
         typora

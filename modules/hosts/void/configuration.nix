@@ -81,7 +81,6 @@
 
       # --- Scanning ---
       hardware.sane.enable = true;
-      hardware.sane.extraBackends = [ pkgs.epsonscan2 ];
 
       # --- Printing ---
       services.printing.enable = true;
@@ -179,7 +178,6 @@
         gnome-calculator
         pdfarranger
         freecad
-        epsonscan2
         obsidian
 
         # Networking & Monitoring
