@@ -16,6 +16,7 @@
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb
+        self.nixosModules.shell
       ];
 
       # --- Nix ---
@@ -165,6 +166,7 @@
         obs-studio
         darktable
         jellyfin-tui
+        ani-cli
         loupe
         vlc
         inkscape
