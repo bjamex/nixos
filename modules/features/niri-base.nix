@@ -64,6 +64,7 @@
           (lib.getExe self'.packages.myNoctalia)
           "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
           "insync"
+          "${pkgs.wl-clipboard}/bin/wl-paste --primary --watch ${pkgs.wl-clipboard}/bin/wl-copy"
         ];
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
@@ -99,7 +100,7 @@
             background-effect = {
               blur = true;
             };
-            opacity = 1.0;
+            opacity = 0.9;
             draw-border-with-background = false;
           }
           {
@@ -119,14 +120,6 @@
           }
           {
             matches = [ { app-id = "exiled-exchange"; } ];
-            open-floating = true;
-            open-focused = false;
-            opacity = 1.0;
-            geometry-corner-radius = 0;
-            clip-to-geometry = false;
-          }
-          {
-            matches = [ { app-id = "awakened-poe-trade"; } ];
             open-floating = true;
             open-focused = false;
             opacity = 1.0;
@@ -167,6 +160,7 @@
           "Mod+Shift+F".spawn-sh = "nautilus";
           "Mod+Shift+M".fullscreen-window = _: { };
           "Mod+M".maximize-column = _: { };
+          "Mod+H".set-column-width = "50%";
           "Mod+C".center-column = _: { };
           "Mod+Comma".consume-window-into-column = _: { };
           "Mod+Period".expel-window-from-column = _: { };

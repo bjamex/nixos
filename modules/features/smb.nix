@@ -2,7 +2,7 @@
 {
   flake.nixosModules.smb = { ... }: {
     fileSystems."/mnt/data" = {
-      device = "//192.168.0.100/data";
+      device = "//192.168.0.100/data"; # NAS static IP — update if it changes
       fsType = "cifs";
       options = [
         "credentials=/etc/smb-credentials"

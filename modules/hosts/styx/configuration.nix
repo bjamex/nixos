@@ -18,11 +18,11 @@
         self.nixosModules.swinHome
         self.nixosModules.smb
         # self.nixosModules.starCitizen  # broken: dxvk cross-compilation fails on nixpkgs f83fc3c
+        self.nixosModules.kde
+        self.nixosModules.awakenedPoeTrade
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
-        self.nixosModules.awakenedPoeTrade
         self.nixosModules.pathoftrading
-        self.nixosModules.hyprland
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
@@ -43,9 +43,9 @@
         options = "--delete-older-than 14d";
       };
       nixpkgs.config.allowUnfree = true;
-      environment.etc."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
       nixpkgs.overlays = [
         (final: prev: {
+          # pkgs.stable pinned for lutris — unstable broke it around 2025-06
           stable = import inputs.nixpkgs-pinned {
             system = final.stdenv.hostPlatform.system;
             config.allowUnfree = true;
@@ -59,6 +59,7 @@
       boot.loader.timeout = 0;
       boot.kernelPackages = pkgs.linuxPackages_latest;
       boot.kernelModules = [ "igc" ];
+      boot.kernelParams = [ "split_lock_detect=off" ];
 
       # --- Networking ---
       networking.hostName = "styx";
@@ -162,7 +163,7 @@
         # Internet & Communication
         inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
 
-        # mcp-nixos  # broken: aioboto3 dependency issue in nixpkgs
+        mcp-nixos
         qbittorrent
         nordpass
         teams-for-linux
@@ -178,7 +179,6 @@
         inkscape
         pinta
         xournalpp
-        # davinci-resolve
         blender
 
         # Productivity
@@ -187,9 +187,8 @@
         gnome-calculator
         pdfarranger
         freecad
-        bambu-studio
+        orca-slicer
         simple-scan
-        # cisco-packet-tracer_9  # requires manual deb download; re-add after fetching
         typora
         obsidian
         affine
@@ -201,8 +200,6 @@
         pamixer
         cifs-utils
 
-        # AI
-        # lmstudio
 
       ];
 

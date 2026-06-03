@@ -1,5 +1,18 @@
 { self, inputs, ... }: {
-  flake.nixosModules.gaming = { pkgs, lib, ... }: {
+  flake.nixosModules.gaming = { pkgs, lib, ... }:
+  let
+    rusty-path-of-building = pkgs.rusty-path-of-building.overrideAttrs (_: {
+      version = "0.2.18";
+      src = pkgs.fetchzip {
+        url = "https://github.com/meehl/rusty-path-of-building/archive/refs/tags/v0.2.18.tar.gz";
+        hash = "sha256-9YHXTUtTJO3GPf+NqASEkxf+a94doBGTjLyYruuxRg4=";
+      };
+      cargoDeps = pkgs.rustPlatform.importCargoLock {
+        lockFile = ./rusty-path-of-building-Cargo.lock;
+      };
+    });
+  in
+  {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
     hardware.graphics.enable = lib.mkDefault true;
@@ -15,7 +28,7 @@
       };
     };
 
-    environment.systemPackages = with pkgs; [
+    environment.systemPackages = (with pkgs; [
       pkgs.stable.lutris
       steam-run
       dxvk
@@ -23,7 +36,7 @@
       r2modman
       heroic
       er-patcher
-      # bottles  # broken: openldap test failure in nixpkgs
+      bottles
       steamtinkerlaunch
       prismlauncher
       mcpelauncher-client
@@ -32,8 +45,7 @@
       lsfg-vk-ui
       faugus-launcher
       xivlauncher
-      rusty-path-of-building
-    ];
+    ]) ++ [ rusty-path-of-building ];
 
     services.sunshine = {
       openFirewall = true;

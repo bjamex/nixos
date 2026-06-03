@@ -116,9 +116,9 @@
                   libxtst
                   libxt
                   libxkbcommon
-                  xorg.libX11
-                  xorg.libXi
-                  xorg.libXinerama
+                  libx11
+                  libxi
+                  libxinerama
                 ]
               )
             }"
