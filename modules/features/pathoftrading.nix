@@ -22,6 +22,7 @@
         installPhase = ''
           mkdir -p $out/share/pathoftrading
           cp backend.py PathofTrading.qml $out/share/pathoftrading/
+          sed -i 's/PanelWindow {/PanelWindow {\n    aboveWindows: true/' $out/share/pathoftrading/PathofTrading.qml
         '';
       };
 
@@ -35,8 +36,12 @@
     {
       programs.ydotool.enable = true;
 
+      systemd.user.services.ydotool.wantedBy = [ "default.target" ];
+
       environment.systemPackages = [
         pkgs.quickshell
+        pkgs.wl-clipboard
+        pkgs.xclip
         pathoftrading
       ];
     };

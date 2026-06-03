@@ -51,7 +51,16 @@
 
       programs.yazi = {
         enable = true;
-        plugins = { inherit (pkgs.yaziPlugins) bookmarks; };
+        plugins = {
+          inherit (pkgs.yaziPlugins) drag;
+          bookmarks = pkgs.yaziPlugins.bookmarks.overrideAttrs (old: {
+            postInstall = (old.postInstall or "") + ''
+              substituteInPlace $out/main.lua \
+                --replace-fail 'ya.mgr_emit' 'ya.emit'
+            '';
+          });
+        };
+        settings.yazi.opener.edit = [{ run = "nvim \"$@\""; block = true; }];
         initLua = pkgs.writeText "init.lua" ''
           require("bookmarks"):setup({
             persist = "all",
@@ -60,6 +69,11 @@
           })
         '';
         settings.keymap.mgr.prepend_keymap = [
+          {
+            on = [ "<C-d>" ];
+            run = "plugin drag";
+            desc = "Drag selected files";
+          }
           {
             on = [ "m" ];
             run = "plugin bookmarks save";
@@ -96,6 +110,7 @@
         papirus-icon-theme
         adw-gtk3
         sushi
+        ripdrag
       ];
     };
 }

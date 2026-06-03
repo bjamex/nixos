@@ -23,7 +23,7 @@
           ${pkgs.git}/bin/git clone https://github.com/comfyanonymous/ComfyUI "$COMFYUI_DIR"
         fi
 
-        if [ ! -d "$VENV_DIR" ]; then
+        if [ ! -f "$VENV_DIR/.installed" ]; then
           echo "Creating venv and installing PyTorch ROCm 6.5..."
           ${pkgs.python312}/bin/python -m venv "$VENV_DIR"
           "$VENV_DIR/bin/pip" install --quiet torch torchvision torchaudio \
@@ -32,6 +32,7 @@
           "$VENV_DIR/bin/pip" install --quiet -r "$COMFYUI_DIR/requirements.txt"
           echo "Installing ComfyUI Manager..."
           "$VENV_DIR/bin/pip" install --quiet -U --pre comfyui-manager
+          touch "$VENV_DIR/.installed"
         fi
 
         export VIRTUAL_ENV="$VENV_DIR"
