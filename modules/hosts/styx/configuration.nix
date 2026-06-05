@@ -61,6 +61,13 @@
       boot.kernelModules = [ "igc" ];
       boot.kernelParams = [ "split_lock_detect=off" ];
 
+      # dbus-broker uses Type=notify so systemd waits 90s for a READY signal
+      # that never arrives. Cap the timeout so rebuilds fail fast instead of hanging.
+      systemd.user.services.dbus-broker.serviceConfig = {
+        ExecReload = "${pkgs.coreutils}/bin/true";
+        TimeoutReloadSec = "5";
+      };
+
       # --- Networking ---
       networking.hostName = "styx";
       networking.networkmanager.enable = true;

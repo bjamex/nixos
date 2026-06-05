@@ -8,6 +8,53 @@
       ...
     }:
     let
+      googleDriveMimeTypes = pkgs.stdenv.mkDerivation {
+        name = "google-drive-mime-types";
+        dontUnpack = true;
+        installPhase = ''
+          mkdir -p $out/share/mime/packages
+          cp ${pkgs.writeText "google-drive.xml" ''
+            <?xml version="1.0" encoding="UTF-8"?>
+            <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+              <mime-type type="application/x-google-sheets">
+                <comment>Google Sheets</comment>
+                <glob pattern="*.gdsheet"/>
+              </mime-type>
+              <mime-type type="application/x-google-doc">
+                <comment>Google Doc</comment>
+                <glob pattern="*.gdoc"/>
+              </mime-type>
+              <mime-type type="application/x-google-slides">
+                <comment>Google Slides</comment>
+                <glob pattern="*.gslides"/>
+              </mime-type>
+            </mime-info>
+          ''} $out/share/mime/packages/google-drive.xml
+        '';
+      };
+
+      gdocOpener = pkgs.makeDesktopItem {
+        name = "gdoc-opener";
+        desktopName = "Google Drive Opener";
+        # Also handles application/json so yazi can route .gdsheet (detected as json) here.
+        # Falls back to kitty+nvim for regular JSON files.
+        exec = "${pkgs.writeShellScript "gdoc-open" ''
+          url=$(${lib.getExe pkgs.jq} -r '.url // empty' "$1" 2>/dev/null)
+          if [ -n "$url" ]; then
+            helium "$url"
+          else
+            kitty nvim "$1"
+          fi
+        ''} %f";
+        mimeTypes = [
+          "application/x-google-sheets"
+          "application/x-google-doc"
+          "application/x-google-slides"
+          "application/json"
+        ];
+        noDisplay = true;
+      };
+
       oxocarbon-gtk-theme = pkgs.stdenv.mkDerivation {
         pname = "oxocarbon-gtk-theme";
         version = "unstable-2023";
@@ -60,7 +107,17 @@
             '';
           });
         };
-        settings.yazi.opener.edit = [{ run = "nvim \"$@\""; block = true; }];
+        settings.yazi = {
+          opener = {
+            edit = [{ run = ''nvim "$@"'';        block = true;  desc = "nvim"; }];
+            open = [{ run = ''xdg-open "$@"'';    orphan = true; desc = "xdg-open"; }];
+          };
+          open.prepend_rules = [
+            { mime = "text/*";        use = "edit"; }
+            { mime = "inode/x-empty"; use = "edit"; }
+            { mime = "*/*";           use = "open"; }
+          ];
+        };
         initLua = pkgs.writeText "init.lua" ''
           require("bookmarks"):setup({
             persist = "all",
@@ -111,6 +168,18 @@
         adw-gtk3
         sushi
         ripdrag
+        googleDriveMimeTypes
+        gdocOpener
+        jq
       ];
+
+      xdg.mime.defaultApplications = {
+        "application/pdf"             = "com.github.xournalpp.xournalpp.desktop";
+        "application/x-xopp"          = "com.github.xournalpp.xournalpp.desktop";
+        "application/x-google-sheets" = "gdoc-opener.desktop";
+        "application/x-google-doc"    = "gdoc-opener.desktop";
+        "application/x-google-slides" = "gdoc-opener.desktop";
+        "application/json"            = "gdoc-opener.desktop";
+      };
     };
 }
