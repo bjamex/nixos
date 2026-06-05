@@ -16,6 +16,7 @@
       ];
 
       services.gnome.gnome-keyring.enable = true;
+      security.pam.services.greetd.enableGnomeKeyring = true;
 
       xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
@@ -100,7 +101,7 @@
             background-effect = {
               blur = true;
             };
-            opacity = 0.9;
+            opacity = 0.95;
             draw-border-with-background = false;
           }
           {
@@ -213,6 +214,7 @@
           "XF86KbdBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%+";
           "XF86RFKill".spawn-sh = "rfkill toggle all";
           "XF86Bluetooth".spawn-sh = "rfkill toggle bluetooth";
+          "Mod+Shift+F12".spawn-sh = "niri msg action quit --skip-confirmation";
         };
       };
     in
