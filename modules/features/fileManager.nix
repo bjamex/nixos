@@ -127,6 +127,11 @@
         '';
         settings.keymap.mgr.prepend_keymap = [
           {
+            on = [ "O" ];
+            run = ''shell --block 'handlr open --ask "$@"' '';
+            desc = "Open with...";
+          }
+          {
             on = [ "<C-d>" ];
             run = "plugin drag";
             desc = "Drag selected files";
@@ -171,6 +176,7 @@
         googleDriveMimeTypes
         gdocOpener
         jq
+        handlr-regex
       ];
 
       xdg.mime.defaultApplications = {
