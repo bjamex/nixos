@@ -33,6 +33,22 @@
         '';
       };
 
+      oxocarbon-gtk-theme = pkgs.stdenv.mkDerivation {
+        pname = "oxocarbon-gtk-theme";
+        version = "unstable-2023";
+        src = pkgs.fetchzip {
+          url = "https://git.sr.ht/~ved/oxocarbon-gtk/archive/0cf0eb35a927bffcb797db8a074ce240823d92de.tar.gz";
+          hash = "sha256-URuoDJVRQ05S+u7mkz1EN5HWquhTC4OqY8MqAbl0crk=";
+        };
+        nativeBuildInputs = [ pkgs.dart-sass ];
+        buildPhase = "sass scss:.";
+        installPhase = ''
+          install -d $out/share/themes/oxocarbon
+          install -m 0644 index.theme $out/share/themes/oxocarbon/
+          cp -r assets gtk-3.0 $out/share/themes/oxocarbon/
+        '';
+      };
+
       gdocOpener = pkgs.makeDesktopItem {
         name = "gdoc-opener";
         desktopName = "Google Drive Opener";
@@ -54,43 +70,39 @@
         ];
         noDisplay = true;
       };
-
-      oxocarbon-gtk-theme = pkgs.stdenv.mkDerivation {
-        pname = "oxocarbon-gtk-theme";
-        version = "unstable-2023";
-        src = pkgs.fetchzip {
-          url = "https://git.sr.ht/~ved/oxocarbon-gtk/archive/0cf0eb35a927bffcb797db8a074ce240823d92de.tar.gz";
-          hash = "sha256-URuoDJVRQ05S+u7mkz1EN5HWquhTC4OqY8MqAbl0crk=";
-        };
-        nativeBuildInputs = [ pkgs.dart-sass ];
-        buildPhase = "sass scss:.";
-        installPhase = ''
-          install -d $out/share/themes/oxocarbon
-          install -m 0644 index.theme $out/share/themes/oxocarbon/
-          cp -r assets gtk-3.0 $out/share/themes/oxocarbon/
-        '';
-      };
     in
     {
       services.gvfs.enable = true;
-
-      programs.nautilus-open-any-terminal = {
-        enable = true;
-        terminal = "kitty";
-      };
 
       programs.dconf.enable = true;
       programs.dconf.profiles.user.databases = [
         {
           settings = {
+            "org/nemo/list-view" = {
+              default-visible-columns = [ "name" "size" "mime_type" "date_modified" ];
+              enable-folder-expansion = true;
+            };
+            "org/nemo/preferences" = {
+              default-folder-viewer = "list-view";
+              show-hidden-files = true;
+              date-format-monospace = true;
+              thumbnail-limit = lib.gvariant.mkUint64 (100 * 1024 * 1024);
+            };
+            "org/nemo/window-state" = {
+              sidebar-bookmark-breakpoint = lib.gvariant.mkInt32 0;
+              sidebar-width = lib.gvariant.mkInt32 180;
+            };
+            "org/nemo/preferences/menu-config" = {
+              selection-menu-make-link = true;
+              selection-menu-copy-to = true;
+              selection-menu-move-to = true;
+              background-menu-open-in-terminal = false;
+              selection-menu-open-in-terminal = false;
+            };
             "org/gnome/desktop/interface" = {
               icon-theme = "Papirus-Dark";
-              gtk-theme = "adw-gtk3-dark";
+              gtk-theme = "oxocarbon";
               color-scheme = "prefer-dark";
-            };
-            "org/gnome/nautilus/preferences" = {
-              show-hidden-files = true;
-              default-folder-viewer = "list-view";
             };
           };
         }
@@ -109,13 +121,34 @@
         };
         settings.yazi = {
           opener = {
-            edit = [{ run = ''nvim "$@"'';        block = true;  desc = "nvim"; }];
-            open = [{ run = ''xdg-open "$@"'';    orphan = true; desc = "xdg-open"; }];
+            edit = [
+              {
+                run = "nvim %s";
+                block = true;
+                desc = "nvim";
+              }
+            ];
+            open = [
+              {
+                run = "xdg-open %s";
+                orphan = true;
+                desc = "xdg-open";
+              }
+            ];
           };
           open.prepend_rules = [
-            { mime = "text/*";        use = "edit"; }
-            { mime = "inode/x-empty"; use = "edit"; }
-            { mime = "*/*";           use = "open"; }
+            {
+              mime = "text/*";
+              use = "edit";
+            }
+            {
+              mime = "inode/x-empty";
+              use = "edit";
+            }
+            {
+              mime = "*/*";
+              use = "open";
+            }
           ];
         };
         initLua = pkgs.writeText "init.lua" ''
@@ -128,7 +161,7 @@
         settings.keymap.mgr.prepend_keymap = [
           {
             on = [ "O" ];
-            run = ''shell --block 'handlr open --ask "$@"' '';
+            run = "shell --block 'handlr open --ask %s'";
             desc = "Open with...";
           }
           {
@@ -165,13 +198,27 @@
         ];
       };
 
+      hjem.users.swin.files = {
+        ".local/share/nemo/actions/open-in-terminal.nemo_action".text = ''
+          [Nemo Action]
+          Name=Open in Terminal
+          Comment=Open kitty in this location
+          Exec=kitty --directory %F
+          Icon-Name=utilities-terminal
+          Selection=Any
+          Extensions=dir;
+        '';
+      };
+
       environment.systemPackages = with pkgs; [
-        nautilus
-        nautilus-python
+        nemo-with-extensions
+        nemo-fileroller
+        file-roller
+        webp-pixbuf-loader
         xdg-utils
         papirus-icon-theme
         adw-gtk3
-        sushi
+        oxocarbon-gtk-theme
         ripdrag
         googleDriveMimeTypes
         gdocOpener
@@ -180,12 +227,18 @@
       ];
 
       xdg.mime.defaultApplications = {
-        "application/pdf"             = "com.github.xournalpp.xournalpp.desktop";
-        "application/x-xopp"          = "com.github.xournalpp.xournalpp.desktop";
+        "inode/directory"                    = "nemo.desktop";
+        "application/zip"                    = "org.gnome.FileRoller.desktop";
+        "application/vnd.rar"                = "org.gnome.FileRoller.desktop";
+        "application/x-7z-compressed"        = "org.gnome.FileRoller.desktop";
+        "application/x-bzip2-compressed-tar" = "org.gnome.FileRoller.desktop";
+        "application/x-tar"                  = "org.gnome.FileRoller.desktop";
+        "application/pdf" = "com.github.xournalpp.xournalpp.desktop";
+        "application/x-xopp" = "com.github.xournalpp.xournalpp.desktop";
         "application/x-google-sheets" = "gdoc-opener.desktop";
-        "application/x-google-doc"    = "gdoc-opener.desktop";
+        "application/x-google-doc" = "gdoc-opener.desktop";
         "application/x-google-slides" = "gdoc-opener.desktop";
-        "application/json"            = "gdoc-opener.desktop";
+        "application/json" = "gdoc-opener.desktop";
       };
     };
 }
