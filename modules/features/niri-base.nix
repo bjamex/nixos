@@ -220,9 +220,13 @@
           "XF86AudioMicMute".spawn-sh = "${lib.getExe pkgs.pamixer} --default-source -t";
           "XF86MonBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} set 5%-";
           "XF86MonBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} set 5%+";
-          "XF86AudioPlay".spawn-sh = "${lib.getExe pkgs.playerctl} play-pause";
-          "XF86AudioNext".spawn-sh = "${lib.getExe pkgs.playerctl} next";
-          "XF86AudioPrev".spawn-sh = "${lib.getExe pkgs.playerctl} previous";
+          # Media controls drive jellyfin-tui and YouTube Music (Helium/chromium) together via MPRIS
+          "XF86AudioPlay".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui play-pause; $p -p chromium play-pause";
+          "XF86AudioNext".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui next; $p -p chromium next";
+          "XF86AudioPrev".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui previous; $p -p chromium previous";
+          "Mod+backslash".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui play-pause; $p -p chromium play-pause";
+          "Mod+bracketright".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui next; $p -p chromium next";
+          "Mod+bracketleft".spawn-sh = "p=${lib.getExe pkgs.playerctl}; $p -p jellyfin-tui previous; $p -p chromium previous";
           "XF86KbdBrightnessDown".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%-";
           "XF86KbdBrightnessUp".spawn-sh = "${lib.getExe pkgs.brightnessctl} -d '*kbd_backlight*' set 10%+";
           "XF86RFKill".spawn-sh = "rfkill toggle all";
