@@ -172,11 +172,11 @@
           "Mod+Shift+Right".move-column-right = _: { };
           "Mod+Shift+Up".move-window-up = _: { };
           "Mod+Shift+Down".move-window-down = _: { };
-          "Mod+Shift+F".spawn-sh = "nautilus";
+          "Mod+Shift+F".spawn-sh = "nemo";
           "Mod+Shift+M".fullscreen-window = _: { };
           "Mod+M".maximize-column = _: { };
           "Mod+H".set-column-width = "50%";
-          "Mod+C".center-column = _: { };
+          "Mod+C".spawn-sh = "gnome-calculator";
           "Mod+Comma".consume-window-into-column = _: { };
           "Mod+Period".expel-window-from-column = _: { };
           "Mod+Tab".toggle-overview = _: { };
