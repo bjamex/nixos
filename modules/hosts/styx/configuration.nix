@@ -8,6 +8,8 @@
         inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.styxHardware
         self.nixosModules.niriStyx
+        self.nixosModules.hyprland      # secondary compositor — gaming + PoE idle inhibit
+        self.nixosModules.kde           # emergency fallback session
         self.nixosModules.gaming
         self.nixosModules.pipewire
         self.nixosModules.fileManager
@@ -18,7 +20,6 @@
         self.nixosModules.swinHome
         self.nixosModules.smb
         # self.nixosModules.starCitizen  # broken: dxvk cross-compilation fails on nixpkgs f83fc3c
-        self.nixosModules.kde
         self.nixosModules.awakenedPoeTrade
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
@@ -219,7 +220,12 @@
         "x-scheme-handler/unknown" = "helium.desktop";
       };
 
-      environment.sessionVariables.BROWSER = "helium";
+      environment.sessionVariables = {
+        BROWSER = "helium";
+        # Wayland-native hints for Electron/Chromium + Qt apps (mirrors iynaix's wm module).
+        NIXOS_OZONE_WL = "1";
+        QT_QPA_PLATFORM = "wayland";
+      };
 
       # --- Storage ---
       fileSystems."/mnt/nvme0" = {
