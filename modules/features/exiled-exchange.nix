@@ -1,78 +1,142 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.exiledExchange = { pkgs, ... }:
-  let
-    src = pkgs.fetchurl {
-      url = "https://github.com/Kvan7/Exiled-Exchange-2/releases/download/v0.15.2/exiled-exchange-2-0.15.2.AppImage";
-      hash = "sha256-LNXiVZvPIrPbrmpiS4g+iBGi0+Jn2lott8fsy+uJnfw=";
-    };
+# Built from source so uiohook-napi links against the SYSTEM X11 libs (libxtst/libx11/
+# libxi/...) via LD_LIBRARY_PATH. The upstream AppImage bundles its own X11 libs that are
+# incompatible with Hyprland's XWayland — uiohook then fails ("XkbGetKeyboard failed to
+# locate a valid keyboard") and the price-check hotkeys barely register (need holding for
+# seconds). Mirrors awakened-poe-trade.nix.
+#
+# To update to a new version:
+# 1. nix run nixpkgs#nix-prefetch-github -- Kvan7 Exiled-Exchange-2 --rev <tag>
+# 2. Update rev, hash, version below
+# 3. Set outputHash to lib.fakeHash
+# 4. nixos-rebuild build --flake .#styx
+# 5. Copy the "got: sha256-..." from the error into outputHash
+# 6. Build again
 
-    extracted = pkgs.appimageTools.extract {
+{ self, inputs, ... }:
+{
+  flake.nixosModules.exiledExchange =
+    { pkgs, lib, ... }:
+    let
       pname = "exiled-exchange-2";
-      version = "0.15.2";
-      inherit src;
-    };
+      version = "0.15.4";
+      electron = pkgs.electron_40;
 
-    desktopFile = pkgs.writeText "exiled-exchange-2.desktop" ''
-      [Desktop Entry]
-      Name=Exiled Exchange 2
-      Exec=exiled-exchange-2
-      Terminal=false
-      Type=Application
-      Icon=exiled-exchange-2
-      StartupWMClass=Exiled Exchange 2
-      Categories=Utility;
-    '';
+      src = pkgs.fetchFromGitHub {
+        owner = "Kvan7";
+        repo = "Exiled-Exchange-2";
+        rev = "v0.15.4";
+        hash = "sha256-c0598C7VzXWa7uYr1aw8h4+tTQI0sGJBdUeTqPPdtYk=";
+      };
 
-    # Patch clipboard poller: Kc=48 (poll interval ms) → Kc=75, yk=500 (timeout ms) → yk=1e3.
-    # Same-length binary replacements preserve asar offset table integrity.
-    # yk=1e3 = 1000ms — slight buffer over default 500ms for Wine/Proton→X11 clipboard sync.
-    patched = pkgs.runCommand "exiled-exchange-2-0.15.2-patched" {
-      nativeBuildInputs = [ pkgs.python3 ];
-    } ''
-      cp -r ${extracted} $out
-      chmod -R u+w $out
-      python3 -c "
-import sys
-asar = sys.argv[1]
-d = open(asar, 'rb').read()
-d = d.replace(b'Kc=48', b'Kc=75')
-d = d.replace(b'yk=500', b'yk=1e3')
-open(asar, 'wb').write(d)
-" $out/resources/app.asar
-    '';
+      builtApp = pkgs.stdenv.mkDerivation {
+        pname = "${pname}-built";
+        inherit version src;
 
-    appimage = pkgs.appimageTools.wrapAppImage {
-      pname = "exiled-exchange-2";
-      version = "0.15.2";
-      src = patched;
-      # Mount nvme drives — bubblewrap's --bind /mnt /mnt does not propagate submounts
-      extraBwrapArgs = [
-        "--bind" "/mnt/nvme0" "/mnt/nvme0"
-        "--bind" "/mnt/nvme2" "/mnt/nvme2"
-        "--bind" "/mnt/nvme3" "/mnt/nvme3"
-      ];
-      extraInstallCommands = ''
-        install -Dm644 ${desktopFile} $out/share/applications/exiled-exchange-2.desktop
-        install -Dm644 ${extracted}/usr/share/icons/hicolor/256x256/apps/exiled-exchange-2.png \
-          $out/share/icons/hicolor/256x256/apps/exiled-exchange-2.png
-      '';
-    };
-  in {
-    environment.systemPackages = [
-      # Force X11 mode — no native Wayland support yet, XDG_SESSION_TYPE=x11
-      # lets global hotkeys and the overlay work via xwayland-satellite
-      (pkgs.symlinkJoin {
-        name = "exiled-exchange-2";
-        paths = [ appimage ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/exiled-exchange-2 \
-            --set XDG_SESSION_TYPE x11 \
-            --set GDK_BACKEND x11 \
-            --set GTK_THEME Adwaita \
-            --add-flags "--ozone-platform=x11 --enable-transparent-visuals"
+        nativeBuildInputs = with pkgs; [
+          nodejs
+          cacert
+        ];
+
+        outputHashAlgo = "sha256";
+        outputHashMode = "recursive";
+        outputHash = "sha256-JwwgRlFjsUzOfjFAyrXSjHQ8F3qaRqlZV0XD1eCSFSM=";
+
+        buildPhase = ''
+          export HOME=$TMPDIR
+          export npm_config_cache=$TMPDIR/.npm
+          cd renderer
+          npm ci
+          patchShebangs node_modules
+          npm run make-index-files
+          npm run build
+          cd ..
+          cd main
+          npm install --ignore-scripts
+          patchShebangs node_modules
+          echo "${electron}/bin/electron" > node_modules/electron/path.txt
+          npm run build
+          cd ..
         '';
-      })
-    ];
-  };
+
+        installPhase = ''
+          mkdir -p $out
+          cp main/dist/main.js $out/
+          cp main/dist/vision.js $out/
+          cp -r renderer/dist $out/renderer
+          cd main
+          rm -rf node_modules
+          npm install --omit=dev --ignore-scripts
+          cp -r node_modules $out/node_modules
+          rm -rf $out/node_modules/.bin
+          cd ..
+        '';
+      };
+
+      exiledExchange2 = pkgs.stdenv.mkDerivation {
+        inherit pname version;
+
+        dontUnpack = true;
+        dontConfigure = true;
+        dontBuild = true;
+
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+
+        installPhase = ''
+          runHook preInstall
+
+          mkdir -p $out/share/${pname} $out/share/applications $out/bin
+
+          cp ${builtApp}/main.js $out/share/${pname}/
+          cp ${builtApp}/vision.js $out/share/${pname}/
+          cp -r ${builtApp}/renderer/* $out/share/${pname}/
+          cp -r ${builtApp}/node_modules $out/share/${pname}/
+
+          echo '{"name":"exiled-exchange-2","version":"${version}","main":"main.js"}' \
+            > $out/share/${pname}/package.json
+
+          cat > $out/share/applications/${pname}.desktop << 'EOF'
+          [Desktop Entry]
+          Name=Exiled Exchange 2
+          Comment=Path of Exile 2 trading macro
+          Exec=exiled-exchange-2
+          Icon=exiled-exchange-2
+          Type=Application
+          Categories=Game;Utility;
+          StartupWMClass=Exiled Exchange 2
+          EOF
+
+          runHook postInstall
+        '';
+
+        postFixup = ''
+          makeWrapper ${lib.getExe electron} $out/bin/${pname} \
+            --add-flags $out/share/${pname} \
+            --add-flags "--ozone-platform=x11 --enable-transparent-visuals" \
+            --prefix LD_LIBRARY_PATH : "${
+              lib.makeLibraryPath (
+                with pkgs;
+                [
+                  libxtst
+                  libxt
+                  libxkbcommon
+                  libx11
+                  libxi
+                  libxinerama
+                ]
+              )
+            }"
+        '';
+
+        meta = {
+          description = "Source-built Exiled Exchange 2 with Hyprland/XWayland hotkey fix";
+          homepage = "https://github.com/Kvan7/Exiled-Exchange-2";
+          license = lib.licenses.mit;
+          platforms = lib.platforms.linux;
+          mainProgram = pname;
+        };
+      };
+    in
+    {
+      environment.systemPackages = [ exiledExchange2 ];
+    };
 }

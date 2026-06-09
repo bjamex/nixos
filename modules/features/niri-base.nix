@@ -120,9 +120,23 @@
             open-floating = true;
           }
           {
-            matches = [ { app-id = "exiled-exchange"; } ];
+            matches = [
+              { title = "^Path of Exile( 2)?$"; }
+              { app-id = "^steam_app_(238960|2694490)$"; }
+            ];
+            open-on-workspace = "5";
+            open-fullscreen = true;
+          }
+          {
+            matches = [
+              { app-id = "exiled-exchange"; }
+              { title = "^Awakened PoE Trade$"; }
+              # Scalpel (verify app-id/title with `niri msg windows`; adjust if it differs)
+              { app-id = "[Ss]calpel"; }
+              { title = "^Scalpel$"; }
+            ];
             open-floating = true;
-            open-focused = false;
+            open-focused = true;
             opacity = 1.0;
             geometry-corner-radius = 0;
             clip-to-geometry = false;
@@ -199,7 +213,6 @@
           "Mod+WheelScrollDown".focus-workspace-down = _: { };
           "Mod+WheelScrollUp".focus-workspace-up = _: { };
 
-          "Ctrl+Alt+D".spawn-sh = "pathoftrading";
 
           "XF86AudioMute".spawn-sh = "${lib.getExe pkgs.pamixer} -t";
           "XF86AudioLowerVolume".spawn-sh = "${lib.getExe pkgs.pamixer} -d 5";

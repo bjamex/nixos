@@ -22,7 +22,7 @@
         self.nixosModules.awakenedPoeTrade
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
-        self.nixosModules.pathoftrading
+        self.nixosModules.scalpel       # alternative PoE2 overlay/price checker
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
