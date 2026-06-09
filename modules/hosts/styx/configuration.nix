@@ -59,7 +59,7 @@
       boot.loader.efi.canTouchEfiVariables = true;
       boot.loader.timeout = 0;
       boot.kernelPackages = pkgs.linuxPackages_latest;
-      boot.kernelModules = [ "igc" ];
+      boot.kernelModules = [ "igc" "snd_usb_audio" ];
       boot.kernelParams = [ "split_lock_detect=off" ];
 
       # dbus-broker uses Type=notify so systemd waits 90s for a READY signal
