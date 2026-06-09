@@ -1,10 +1,13 @@
-{ ... }: {
+{ inputs, ... }: {
 
-  flake.nixosModules.llm = { pkgs, ... }: {
+  flake.nixosModules.llm = { pkgs, ... }:
+  let
+    pkgs-ollama = inputs.nixpkgs-ollama.legacyPackages.${pkgs.system};
+  in {
     services.ollama = {
       enable = true;
-      package = pkgs.ollama-rocm;
-      rocmOverrideGfx = "12.0.1"; # RX 9070 XT (RDNA4 / gfx1201)
+      package = pkgs-ollama.ollama-rocm;
+      rocmOverrideGfx = "11.0.0"; # gfx1201 has no Tensile library yet; RDNA3 kernels work on RDNA4
       host = "127.0.0.1";
     };
 
