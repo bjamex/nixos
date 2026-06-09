@@ -1,0 +1,14 @@
+# <scope>: <summary>   (≤50 chars, imperative: "add", not "added")
+#
+# Why is this change needed? (the part the diff can't tell you later)
+#
+#
+# How does it address it? Any caveats / follow-ups?
+#
+#
+# --- guide (lines starting with # are stripped) ---
+# scope = the feature/area touched, e.g.:
+#   niri, yazi, gaming, pipewire, llm, hyprland, flake, hosts/styx
+# One logical change per commit. Split unrelated changes.
+# Summary: imperative mood, no trailing period, lowercase after scope.
+# Wrap the body at ~72 cols. Explain WHY, not WHAT (git diff shows what).
