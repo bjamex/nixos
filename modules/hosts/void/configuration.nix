@@ -7,7 +7,8 @@
       imports = [
         inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.voidHardware
-        self.nixosModules.niriVoid
+        self.nixosModules.login
+        self.nixosModules.hyprland
         self.nixosModules.gaming
         self.nixosModules.pipewire
         self.nixosModules.fileManager
