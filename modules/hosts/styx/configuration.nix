@@ -30,6 +30,7 @@
         # self.nixosModules.website
         self.nixosModules.budslink
         self.nixosModules.shell
+        self.nixosModules.rapidraw     # AppImage overlay — stays current with upstream
       ];
 
       # --- Nix ---
