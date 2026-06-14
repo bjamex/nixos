@@ -164,6 +164,7 @@
         localsend
 
         # Media & Creative
+        komikku
         rapidraw
         obs-studio
         darktable
