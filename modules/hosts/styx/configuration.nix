@@ -7,9 +7,8 @@
       imports = [
         inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.styxHardware
-        self.nixosModules.niriStyx
-        self.nixosModules.hyprland      # secondary compositor — gaming + PoE idle inhibit
-        self.nixosModules.kde           # emergency fallback session
+        self.nixosModules.login
+        self.nixosModules.hyprland
         self.nixosModules.gaming
         self.nixosModules.pipewire
         self.nixosModules.fileManager
@@ -221,12 +220,10 @@
         "x-scheme-handler/unknown" = "helium.desktop";
       };
 
-      environment.sessionVariables = {
-        BROWSER = "helium";
-        # Wayland-native hints for Electron/Chromium + Qt apps (mirrors iynaix's wm module).
-        NIXOS_OZONE_WL = "1";
-        QT_QPA_PLATFORM = "wayland";
-      };
+      environment.sessionVariables.BROWSER = "helium";
+
+      # Single Gigabyte M27Q desktop monitor; Hyprland base auto-detects otherwise.
+      myHyprland.monitorLua = ''hl.monitor({ output = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q", mode = "2560x1440@143.856", position = "0x0", scale = 1 })'';
 
       # --- Storage ---
       fileSystems."/mnt/nvme0" = {

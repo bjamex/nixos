@@ -1,8 +1,40 @@
 { self, ... }:
 {
   flake.nixosModules.hyprland =
-    { pkgs, lib, ... }:
+    { pkgs, lib, config, ... }:
+    let
+      # Focus an existing Thunderbird window if one is open, else launch it.
+      # Ported from niri-base.nix (niri msg -> hyprctl).
+      thunderbirdFocusOrOpen = pkgs.writeShellScript "thunderbird-focus-or-open" ''
+        addr=$(${config.programs.hyprland.package}/bin/hyprctl -j clients | \
+          ${lib.getExe pkgs.jq} -r '[.[] | select(.class == "thunderbird")] | .[0].address // empty')
+        if [ -n "$addr" ]; then
+          ${config.programs.hyprland.package}/bin/hyprctl dispatch focuswindow "address:$addr"
+        else
+          thunderbird
+        fi
+      '';
+
+      # Toggle mic mute with a sound cue and refresh Noctalia's mic indicator.
+      # Ported from niri-base.nix.
+      micMuteToggle = pkgs.writeShellScript "mic-mute-toggle" ''
+        ${lib.getExe pkgs.pamixer} --default-source -t
+        if [ "$(${lib.getExe pkgs.pamixer} --default-source --get-mute)" = "true" ]; then
+          ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
+        else
+          ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
+        fi
+        ${lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia} ipc call cb refresh mic-status
+      '';
+    in
     {
+      options.myHyprland.monitorLua = lib.mkOption {
+        type = lib.types.lines;
+        default = ''hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })'';
+        description = "Per-host hl.monitor(...) Lua calls. Default auto-detects all outputs.";
+      };
+
+      config = {
       programs.hyprland = {
         enable = true;
         package = pkgs.hyprland.overrideAttrs (o: {
@@ -30,13 +62,8 @@
 
       hjem.users.swin.files = {
         ".config/hypr/hyprland.lua".text = ''
-          -- Monitor
-          hl.monitor({
-            output   = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q",
-            mode     = "2560x1440@143.856",
-            position = "0x0",
-            scale    = 1,
-          })
+          -- Monitor (host-specific; see myHyprland.monitorLua)
+          ${config.myHyprland.monitorLua}
 
           -- Startup
           hl.on("hyprland.start", function()
@@ -135,9 +162,6 @@
             no_blur    = true,
             no_shadow  = true,
             border_size = 0,
-            -- pin keeps the price-check overlay above the (fake-)fullscreen game so it
-            -- never opens behind Path of Exile.
-            pin        = true,
           })
 
           -- Calculator
@@ -157,13 +181,13 @@
           hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nemo"))
           hl.bind(mod .. " + B",            hl.dsp.exec_cmd("helium"))
           hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
-          hl.bind(mod .. " + E",            hl.dsp.exec_cmd("thunderbird"))
+          hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
           hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
           hl.bind(mod .. " + A",            hl.dsp.exec_cmd("helium --app=https://gemini.google.com"))
           hl.bind(mod .. " + semicolon",    hl.dsp.exec_cmd("noctalia-shell ipc call wallpaper toggle"))
           hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
           hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exit())
-          hl.bind("Print",                  hl.dsp.exec_cmd("grimblast copy area"))
+          hl.bind("Print",                  hl.dsp.exec_cmd("grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
 
           -- Window management
           hl.bind(mod .. " + SHIFT + M", hl.dsp.window.fullscreen({ type = "fullscreen" }))
@@ -200,12 +224,25 @@
           hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("pamixer -t"),                    { locked = true })
           hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("pamixer -d 5"),                  { locked = true })
           hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("pamixer -i 5"),                  { locked = true })
-          hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("pamixer --default-source -t"),   { locked = true })
-          hl.bind("XF86AudioPlay",         hl.dsp.exec_cmd("playerctl play-pause"),           { locked = true })
-          hl.bind("XF86AudioNext",         hl.dsp.exec_cmd("playerctl next"),                 { locked = true })
-          hl.bind("XF86AudioPrev",         hl.dsp.exec_cmd("playerctl previous"),             { locked = true })
+          hl.bind("XF86AudioMicMute",      hl.dsp.exec_cmd("${micMuteToggle}"),              { locked = true })
+          hl.bind("KP_Subtract",           hl.dsp.exec_cmd("${micMuteToggle}"),              { locked = true })
           hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),          { locked = true })
           hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"),          { locked = true })
+
+          -- Media controls drive jellyfin-tui and YouTube Music (Helium/chromium) together via MPRIS.
+          -- Plain playerctl only hits one player, so send to both explicitly.
+          local pctl       = "${lib.getExe pkgs.playerctl}"
+          local play_pause = pctl .. " -p jellyfin-tui play-pause; " .. pctl .. " -p chromium play-pause"
+          local next_song  = pctl .. " -p jellyfin-tui next; "       .. pctl .. " -p chromium next"
+          local prev_song  = pctl .. " -p jellyfin-tui previous; "   .. pctl .. " -p chromium previous"
+
+          hl.bind("XF86AudioPlay",          hl.dsp.exec_cmd(play_pause), { locked = true })
+          hl.bind("XF86AudioNext",          hl.dsp.exec_cmd(next_song),  { locked = true })
+          hl.bind("XF86AudioPrev",          hl.dsp.exec_cmd(prev_song),  { locked = true })
+          -- Chords for keyboards without media keys
+          hl.bind(mod .. " + backslash",    hl.dsp.exec_cmd(play_pause))
+          hl.bind(mod .. " + bracketright", hl.dsp.exec_cmd(next_song))
+          hl.bind(mod .. " + bracketleft",  hl.dsp.exec_cmd(prev_song))
         '';
 
         ".config/hypr/hypridle.conf".text = ''
@@ -260,6 +297,7 @@
             valign      = center
           }
         '';
+      };
       };
     };
 }
