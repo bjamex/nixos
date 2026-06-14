@@ -189,6 +189,7 @@
         teams-for-linux
         localsend
         # Media & Creative
+        komikku
         rapidraw
         obs-studio
         darktable

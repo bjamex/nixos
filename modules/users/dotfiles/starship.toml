@@ -1,12 +1,17 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = "$username$hostname $directory$git_branch$git_status$nix_shell$character"
+format = "$username$hostname$directory$git_branch$git_status$nix_shell$cmd_duration$character"
 
 [username]
 show_always = true
-format = "[$user]($style)"
+format = "[$user]($style)@"
 style_user = "bold #be95ff"
 
+[hostname]
+ssh_symbol = " "
+ssh_only = false
+format = "[$ssh_symbol$hostname]($style) "
+style = "bold #be95ff"
 
 [character]
 success_symbol = " [❯](bold green)"
@@ -65,12 +70,6 @@ symbol = " "
 
 [helm]
 symbol = "⎈ "
-
-[hostname]
-ssh_only = false
-ssh_symbol = " "
-format = "[@$hostname]($style) "
-style = "bold #be95ff"
 
 [java]
 symbol = " "
