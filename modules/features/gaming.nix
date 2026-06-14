@@ -47,6 +47,12 @@
       xivlauncher
     ]) ++ [ rusty-path-of-building ];
 
+    # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
+    # processes it spawns (Proton, the game), which doesn't exist on NixOS — so
+    # name-based TZ lookups fall back to UTC and games show the wrong time.
+    # Symlink it to the real tzdata so e.g. Path of Exile reads the right zone.
+    systemd.tmpfiles.rules = [ "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo" ];
+
     services.sunshine = {
       openFirewall = true;
       enable = true;
