@@ -159,8 +159,8 @@
             border_size = 0,
           })
 
-          -- Calculator
-          hl.window_rule({ match = { class = "org.gnome.Calculator" }, float = true })
+          -- Calculator — float at a sane size instead of full monitor height
+          hl.window_rule({ match = { class = "org.gnome.Calculator" }, float = true, size = { 360, 540 }, center = true })
 
           -- Steam notifications — float, no focus steal
           hl.window_rule({ match = { title = "notificationtoasts_.*_desktop" }, float = true, no_focus = true })
