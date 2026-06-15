@@ -26,6 +26,21 @@
         fi
         ${lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia} ipc call cb refresh mic-status
       '';
+
+      # Toggle global window transparency: flip active/inactive opacity between
+      # the themed 0.95 and fully opaque 1.0 (e.g. for accurate photo editing).
+      transparencyToggle = pkgs.writeShellScript "transparency-toggle" ''
+        hyprctl=${config.programs.hyprland.package}/bin/hyprctl
+        cur=$("$hyprctl" getoption decoration:active_opacity -j | ${lib.getExe pkgs.jq} -r '.float')
+        # Lua-config Hyprland rejects `keyword`; runtime changes go via `eval`.
+        # Opaque when current >= 0.99, so toggle to transparent; else opaque.
+        if ${lib.getExe' pkgs.gawk "awk"} "BEGIN { exit !($cur >= 0.99) }"; then
+          o=0.95
+        else
+          o=1.0
+        fi
+        "$hyprctl" eval "hl.config({ decoration = { active_opacity = $o, inactive_opacity = $o } })"
+      '';
     in
     {
       options.myHyprland.monitorLua = lib.mkOption {
@@ -174,7 +189,7 @@
           hl.bind(mod .. " + W",            hl.dsp.window.close())
           hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia-shell ipc call launcher toggle"))
           hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nemo"))
-          hl.bind(mod .. " + B",            hl.dsp.exec_cmd("helium"))
+          hl.bind(mod .. " + B",            hl.dsp.exec_cmd("zen-beta"))
           hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
           hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
           hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
@@ -189,6 +204,7 @@
           hl.bind(mod .. " + M",         hl.dsp.window.fullscreen({ type = "maximize" }))
           hl.bind(mod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
           hl.bind(mod .. " + C",         hl.dsp.exec_cmd("gnome-calculator"))
+          hl.bind(mod .. " + O",         hl.dsp.exec_cmd("${transparencyToggle}"))
           hl.bind(mod .. " + H",         hl.dsp.exec_cmd("hyprctl dispatch resizeactive -640 0"))
 
           -- Workspace navigation
