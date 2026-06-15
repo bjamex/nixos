@@ -20,7 +20,7 @@
               nativeBuildInputs = with prev; [
                 dpkg
                 autoPatchelfHook
-                libsForQt5.qt5.wrapQtAppsHook
+                libsForQt5.wrapQtAppsHook
               ];
               buildInputs = with prev; [
                 alsa-lib
@@ -28,7 +28,7 @@
                 lz4
                 libgcrypt
                 libthai
-                libsForQt5.qt5.qtvirtualkeyboard
+                libsForQt5.qtvirtualkeyboard
               ];
               installPhase = ''
                 runHook preInstall
