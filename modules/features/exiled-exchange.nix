@@ -35,11 +35,17 @@
         nativeBuildInputs = with pkgs; [
           nodejs
           cacert
+          jq
         ];
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-JwwgRlFjsUzOfjFAyrXSjHQ8F3qaRqlZV0XD1eCSFSM=";
+        outputHash = "sha256-4WZ5/sgOkBRgGgaFOGlUeRY1JV6sMxN3hsa9mOZza+g=";
+
+        # Pure download content: don't let fixupPhase shrink RPATHs of the
+        # prebuilt *.node binaries, which would bake /nix/store refs into the
+        # FOD (forbidden). Runtime libs come from the wrapper's LD_LIBRARY_PATH.
+        dontFixup = true;
 
         buildPhase = ''
           export HOME=$TMPDIR
@@ -50,6 +56,14 @@
           npm run make-index-files
           npm run build
           cd ..
+          # Force uiohook-napi 1.5.5: the upstream lock pins 1.5.4, whose
+          # XkbGetKeyboard call is rejected by current XWayland (breaks the
+          # price-check hotkey + synthetic copy). 1.5.5 drops that call. Drop
+          # main's lock so the new pin resolves on install.
+          jq '.dependencies."uiohook-napi" = "1.5.5" | .overrides."uiohook-napi" = "1.5.5"' \
+            main/package.json > main/package.json.tmp
+          mv main/package.json.tmp main/package.json
+          rm -f main/package-lock.json
           cd main
           npm install --ignore-scripts
           patchShebangs node_modules
