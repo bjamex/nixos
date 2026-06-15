@@ -37,14 +37,9 @@
       config = {
       programs.hyprland = {
         enable = true;
-        package = pkgs.hyprland.overrideAttrs (o: {
-          patches = (o.patches or [ ]) ++ [
-            (pkgs.fetchpatch {
-              url  = "https://github.com/hyprwm/Hyprland/pull/14897.patch";
-              hash = "sha256-54azRNuiWige+j638Ijjaq17DMAV5E7Q2ufy5q1gGUw=";
-            })
-          ];
-        });
+        # PR #14897 was carried as a patch when Hyprland was on 0.55.x; it is
+        # now merged upstream (0.55.3+), so the override was dropped — applying
+        # it again fails with "previously applied".
       };
 
       xdg.portal.config.hyprland = {
@@ -69,7 +64,7 @@
           hl.on("hyprland.start", function()
             hl.exec_cmd("noctalia-shell -d")
             hl.exec_cmd("${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1")
-            hl.exec_cmd("insync")
+            hl.exec_cmd("insync start")
             hl.exec_cmd("${pkgs.wl-clipboard}/bin/wl-paste --primary --watch ${pkgs.wl-clipboard}/bin/wl-copy")
             hl.exec_cmd("hypridle")
           end)
