@@ -18,6 +18,9 @@
 
       services.greetd = {
         enable = true;
+        # Stop systemd boot/service-startup messages from scribbling over the
+        # tuigreet TUI on first boot (adjusts the greetd unit's console wiring).
+        useTextGreeter = true;
         settings = {
           default_session = {
             command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions";
