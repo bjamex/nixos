@@ -2,7 +2,7 @@
 
   flake.nixosModules.llm = { pkgs, ... }:
   let
-    pkgs-ollama = inputs.nixpkgs-ollama.legacyPackages.${pkgs.system};
+    pkgs-ollama = inputs.nixpkgs-ollama.legacyPackages.${pkgs.stdenv.hostPlatform.system};
   in {
     services.ollama = {
       enable = true;
