@@ -31,6 +31,7 @@
         self.nixosModules.shell
         self.nixosModules.rapidraw     # AppImage overlay — stays current with upstream
         self.nixosModules.zen          # Zen Browser (trial) — Oxocarbon-themed
+        self.nixosModules.matcha       # matcha.email — TUI email client
       ];
 
       # --- Nix ---
