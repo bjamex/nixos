@@ -18,6 +18,7 @@
         self.nixosModules.swinHome
         self.nixosModules.smb
         self.nixosModules.shell
+        self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
       ];
 
       # --- Nix ---
@@ -173,7 +174,6 @@
         inkscape
         pinta
         xournalpp
-        davinci-resolve
 
         # Productivity
         impression
