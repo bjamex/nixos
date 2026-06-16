@@ -79,8 +79,9 @@
       # --- Bluetooth ---
       hardware.bluetooth.enable = true;
       hardware.bluetooth.powerOnBoot = true;
+      hardware.bluetooth.settings.Policy.JustWorksRepairing = "always";
+      hardware.bluetooth.settings.General.Experimental = true;
       services.blueman.enable = true;
-      systemd.services.bluetooth.serviceConfig.CapabilityBoundingSet = lib.mkForce [ "CAP_NET_ADMIN" "CAP_NET_BIND_SERVICE" ];
 
       # --- Scanning ---
       hardware.sane.enable = true;

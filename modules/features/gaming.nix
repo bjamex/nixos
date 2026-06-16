@@ -19,6 +19,8 @@
     hardware.graphics.enable32Bit = lib.mkDefault true;
     hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr ];
 
+    hardware.xpadneo.enable = true;
+
     programs = {
       gamemode.enable = true;
       gamescope.enable = true;
