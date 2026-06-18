@@ -131,7 +131,7 @@
 
       # --- Services ---
       services.flatpak.enable = true;
-
+      services.ratbagd.enable = true;
       # --- Users ---
       users.users.swin = {
         isNormalUser = true;
@@ -147,6 +147,7 @@
           "disk"
           "dialout"
           "input"
+          "ratbagd"
         ];
       };
 
@@ -167,6 +168,7 @@
 
         # Mouse
         piper
+        solaar
 
         # Terminal & System
         btop
