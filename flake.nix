@@ -11,7 +11,10 @@
     };
     import-tree.url = "github:vic/import-tree";
 
-    wrapper-modules.url = "github:BirdeeHub/nix-wrapper-modules";
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
