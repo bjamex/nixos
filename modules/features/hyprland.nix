@@ -1,4 +1,4 @@
-{ self, ... }:
+{ self, inputs, ... }:
 {
   flake.nixosModules.hyprland =
     {
@@ -29,9 +29,6 @@
         else
           ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
         fi
-        ${
-          lib.getExe self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia
-        } ipc call cb refresh mic-status
       '';
 
       # Toggle global window transparency: flip active/inactive opacity between
@@ -78,7 +75,7 @@
           hyprpaper
           grimblast
           wl-clip-persist
-          self.packages.${pkgs.stdenv.hostPlatform.system}.myNoctalia
+          inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         ];
 
         hjem.users.swin.files = {
@@ -88,7 +85,7 @@
 
             -- Startup
             hl.on("hyprland.start", function()
-              hl.exec_cmd("noctalia-shell -d")
+              hl.exec_cmd("noctalia")
               hl.exec_cmd("${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1")
               hl.exec_cmd("insync start")
               hl.exec_cmd("${pkgs.wl-clip-persist}/bin/wl-clip-persist --clipboard regular")
@@ -198,14 +195,14 @@
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty"))
             hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
-            hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia-shell ipc call launcher toggle"))
+            hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
             hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nemo"))
             hl.bind(mod .. " + B",            hl.dsp.exec_cmd("helium"))
             hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
             hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
             hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
             hl.bind(mod .. " + A",            hl.dsp.exec_cmd("helium --app=https://gemini.google.com"))
-            hl.bind(mod .. " + semicolon",    hl.dsp.exec_cmd("noctalia-shell ipc call wallpaper toggle"))
+            hl.bind(mod .. " + semicolon",    hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exit())
             hl.bind("Print",                  hl.dsp.exec_cmd("grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))

@@ -4,6 +4,10 @@
 
     hjem.clobberByDefault = true;
 
+    # Noctalia v5 ships its own hjem module exposing
+    # `hjem.users.<name>.programs.noctalia` (config in modules/features/noctalia.nix).
+    hjem.extraModules = [ inputs.noctalia.hjemModules.default ];
+
     hjem.users.swin = {
       directory = "/home/swin";
       files = {
@@ -17,6 +21,7 @@
         ".config/nvim/lua/config/keymaps.lua".source = ./dotfiles/nvim/lua/config/keymaps.lua;
         ".config/nvim/lua/config/autocmds.lua".source = ./dotfiles/nvim/lua/config/autocmds.lua;
         ".config/nvim/lua/plugins/init.lua".source = ./dotfiles/nvim/lua/plugins/init.lua;
+        ".config/nvim/lua/plugins/claudecode.lua".source = ./dotfiles/nvim/lua/plugins/claudecode.lua;
         ".config/gtk-3.0/settings.ini".source = ./dotfiles/gtk-3.0/settings.ini;
         ".config/gtk-4.0/settings.ini".source = ./dotfiles/gtk-4.0/settings.ini;
         ".config/gtk-4.0/gtk.css".source = ./dotfiles/gtk-4.0/gtk.css;

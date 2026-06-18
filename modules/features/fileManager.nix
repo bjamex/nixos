@@ -111,7 +111,7 @@
       programs.yazi = {
         enable = true;
         plugins = {
-          inherit (pkgs.yaziPlugins) drag;
+          inherit (pkgs.yaziPlugins) drag mediainfo;
           bookmarks = pkgs.yaziPlugins.bookmarks.overrideAttrs (old: {
             postInstall = (old.postInstall or "") + ''
               substituteInPlace $out/main.lua \
@@ -120,6 +120,19 @@
           });
         };
         settings.yazi = {
+          # Route media through the mediainfo plugin: it renders the usual
+          # image/video preview AND a metadata block in the preview pane.
+          # Needs the `mediainfo` CLI on PATH (added to systemPackages below).
+          plugin = {
+            prepend_previewers = [
+              { mime = "{audio,video,image}/*"; run = "mediainfo"; }
+              { mime = "application/subrip"; run = "mediainfo"; }
+            ];
+            prepend_preloaders = [
+              { mime = "{audio,video,image}/*"; run = "mediainfo"; }
+              { mime = "application/subrip"; run = "mediainfo"; }
+            ];
+          };
           opener = {
             edit = [
               {
@@ -220,6 +233,7 @@
         adw-gtk3
         oxocarbon-gtk-theme
         ripdrag
+        mediainfo
         googleDriveMimeTypes
         gdocOpener
         jq

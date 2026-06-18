@@ -9,6 +9,7 @@
         self.nixosModules.styxHardware
         self.nixosModules.login
         self.nixosModules.hyprland
+        self.nixosModules.noctalia
         self.nixosModules.gaming
         self.nixosModules.pipewire
         self.nixosModules.fileManager
@@ -22,16 +23,17 @@
         self.nixosModules.awakenedPoeTrade
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
-        self.nixosModules.scalpel       # alternative PoE2 overlay/price checker
+        self.nixosModules.scalpel # alternative PoE2 overlay/price checker
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
         # self.nixosModules.website
         self.nixosModules.budslink
         self.nixosModules.shell
-        self.nixosModules.rapidraw     # AppImage overlay — stays current with upstream
-        self.nixosModules.zen          # Zen Browser (trial) — Oxocarbon-themed
-        self.nixosModules.matcha       # matcha.email — TUI email client
+        self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
+        self.nixosModules.zen # Zen Browser (trial) — Oxocarbon-themed
+        self.nixosModules.matcha # matcha.email — TUI email client
+        self.nixosModules.zed # Zed editor + Claude Code via ACP
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
       ];
 
@@ -62,7 +64,10 @@
       boot.loader.efi.canTouchEfiVariables = true;
       boot.loader.timeout = 0;
       boot.kernelPackages = pkgs.linuxPackages_latest;
-      boot.kernelModules = [ "igc" "snd_usb_audio" ];
+      boot.kernelModules = [
+        "igc"
+        "snd_usb_audio"
+      ];
       boot.kernelParams = [ "split_lock_detect=off" ];
 
       # dbus-broker uses Type=notify so systemd waits 90s for a READY signal
@@ -161,6 +166,9 @@
         claude-code
         nh
 
+        # Mouse
+        piper
+
         # Terminal & System
         btop
         ncdu
@@ -210,7 +218,6 @@
         moonlight-qt
         pamixer
         cifs-utils
-
 
       ];
 
