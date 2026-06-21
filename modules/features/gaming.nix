@@ -47,6 +47,8 @@
       lsfg-vk-ui
       faugus-launcher
       xivlauncher
+      shadps4
+      appimage-run
     ]) ++ [ rusty-path-of-building ];
 
     # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
