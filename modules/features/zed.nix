@@ -39,8 +39,7 @@
         ui_font_size = 15;
         buffer_font_size = 14;
 
-        # You drive Neovim already (`n` alias) — flip this to true for modal
-        # editing inside Zed if the muscle memory carries over.
+        # Flip this to true for modal (vim-style) editing inside Zed.
         vim_mode = false;
       };
     };
