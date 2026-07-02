@@ -20,15 +20,14 @@
         fi
       '';
 
-      # Toggle mic mute with a sound cue and refresh Noctalia's mic indicator.
-      # Ported from niri-base.nix.
+      # Toggle mic mute with a sound cue. Route the toggle through Noctalia
+      # (`msg mic-mute`) rather than pamixer so Noctalia performs the change
+      # itself: this pops the correct microphone OSD (pamixer fires Noctalia's
+      # generic speaker OSD) and uses the wpctl mute-flag path that doesn't
+      # clobber mic volume on unmute (see widget.mic_button in noctalia.nix).
       micMuteToggle = pkgs.writeShellScript "mic-mute-toggle" ''
-        ${lib.getExe pkgs.pamixer} --default-source -t
-        if [ "$(${lib.getExe pkgs.pamixer} --default-source --get-mute)" = "true" ]; then
-          ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
-        else
-          ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
-        fi
+        noctalia msg mic-mute
+        ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
       '';
 
       # Toggle global window transparency: flip active/inactive opacity between
@@ -74,7 +73,7 @@
           hypridle
           hyprpaper
           grimblast
-          wl-clip-persist
+          wl-clipboard # grimblast copy* needs wl-copy (was provided by the removed neovim module)
           inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         ];
 
@@ -88,7 +87,11 @@
               hl.exec_cmd("noctalia")
               hl.exec_cmd("${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1")
               hl.exec_cmd("insync start")
-              hl.exec_cmd("${pkgs.wl-clip-persist}/bin/wl-clip-persist --clipboard regular")
+              -- wl-clip-persist removed: it drained every Wayland selection, and
+              -- Hyprland leaks a pipe fd per transfer. EE2's price-check hotkey
+              -- (synthetic Ctrl+C) fired these rapidly in PoE2, exhausting
+              -- Hyprland's RLIMIT_NOFILE (524288) → 40% CPU busy-loop + sluggish
+              -- desktop. See exiled-exchange.nix "synthetic copy" comment.
               hl.exec_cmd("hypridle")
             end)
 
@@ -193,7 +196,7 @@
 
             -- Apps
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty"))
-            hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
+            hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty ec"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
             hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nemo"))
@@ -206,6 +209,7 @@
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exit())
             hl.bind("Print",                  hl.dsp.exec_cmd("grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
+            hl.bind(mod .. " + SHIFT + N",    hl.dsp.exec_cmd("emacs"))
 
             -- Window management
             hl.bind(mod .. " + SHIFT + M", hl.dsp.window.fullscreen({ type = "fullscreen" }))

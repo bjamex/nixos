@@ -13,7 +13,7 @@
         self.nixosModules.pipewire
         self.nixosModules.fileManager
         self.nixosModules.kitty
-        self.nixosModules.neovim
+        self.nixosModules.emacs
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb
@@ -95,7 +95,9 @@
       };
 
       # --- Shell ---
-      programs.bash.shellAliases.n = "nvim";
+      # `ec` = emacsclient terminal frame on the daemon (see emacs.nix), with a
+      # self-start fallback. Plain `emacs` is still the standalone instance.
+      programs.bash.shellAliases.n = "ec";
 
       # --- Programs ---
       security.polkit.enable = true;

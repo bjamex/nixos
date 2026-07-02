@@ -18,14 +18,14 @@
     { pkgs, lib, ... }:
     let
       pname = "exiled-exchange-2";
-      version = "0.15.4";
+      version = "0.15.8";
       electron = pkgs.electron_40;
 
       src = pkgs.fetchFromGitHub {
         owner = "Kvan7";
         repo = "Exiled-Exchange-2";
-        rev = "v0.15.4";
-        hash = "sha256-c0598C7VzXWa7uYr1aw8h4+tTQI0sGJBdUeTqPPdtYk=";
+        rev = "v0.15.8";
+        hash = "sha256-+ghWAH5fijwOJRC5GssHNnEfHe+RDNUOJmoJ2Ddgt7M=";
       };
 
       builtApp = pkgs.stdenv.mkDerivation {
@@ -40,7 +40,7 @@
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-4WZ5/sgOkBRgGgaFOGlUeRY1JV6sMxN3hsa9mOZza+g=";
+        outputHash = "sha256-yJnuT7+/FHQ1Pj70nIR5xRNT/24JtveZR5Ap87sutew=";
 
         # Pure download content: don't let fixupPhase shrink RPATHs of the
         # prebuilt *.node binaries, which would bake /nix/store refs into the

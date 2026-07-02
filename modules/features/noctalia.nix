@@ -119,6 +119,7 @@
             end = [
               "mic_button"
               "vpn_button"
+              "tailscale_button"
               "tray"
               "notifications"
               "battery"
@@ -144,6 +145,16 @@
             glyph = "shield-lock";
             tooltip = "Toggle AirVPN";
             command = "vpn-toggle";
+          };
+          # Plain toggle (no live status) — replaces the broken upstream
+          # tailscale plugin whose bar widget ran `tailscale up/down` without
+          # root, so it silently no-op'd. ts-toggle (tailscale.nix) reads the
+          # daemon BackendState and flips it via sudo NOPASSWD.
+          widget.tailscale_button = {
+            type = "custom_button";
+            glyph = "cloud-network";
+            tooltip = "Toggle Tailscale";
+            command = "ts-toggle";
           };
 
           widget.clock = {

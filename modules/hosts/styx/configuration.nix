@@ -14,7 +14,7 @@
         self.nixosModules.pipewire
         self.nixosModules.fileManager
         self.nixosModules.kitty
-        self.nixosModules.neovim
+        self.nixosModules.emacs
         self.nixosModules.llm
         self.nixosModules.insync
         self.nixosModules.swinHome
@@ -33,7 +33,10 @@
         self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
         self.nixosModules.matcha # matcha.email — TUI email client
         self.nixosModules.zed # Zed editor + Claude Code via ACP
-        self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
+        # self.nixosModules.davinciResolve  # blackmagic source download broken after nixpkgs bump 2026-06-30
+
+        self.nixosModules.focus # Pomodoro focus timer TUI
+        self.nixosModules.focusWidget # Pomodoro focus timer — Noctalia bar widget
       ];
 
       # --- Nix ---
@@ -119,7 +122,9 @@
       virtualisation.docker.enable = true;
 
       # --- Shell ---
-      programs.bash.shellAliases.n = "nvim";
+      # `ec` = emacsclient terminal frame on the daemon (see emacs.nix), with a
+      # self-start fallback. Plain `emacs` is still the standalone instance.
+      programs.bash.shellAliases.n = "ec";
 
       # --- Programs ---
       programs.nix-ld.enable = true;
@@ -201,7 +206,7 @@
         pinta
         xournalpp
         blender
-
+        ## bambu-studio
         # Productivity
         impression
         libreoffice

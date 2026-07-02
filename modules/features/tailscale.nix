@@ -23,7 +23,12 @@
 
     environment.systemPackages = [
       (pkgs.writeShellScriptBin "ts-toggle" ''
-        if ip link show tailscale0 &>/dev/null; then
+        # The tailscale0 interface persists after `tailscale down`, so checking
+        # for it always reports "up". Read the daemon's BackendState instead
+        # ("Running" when connected, "Stopped"/"NeedsLogin" otherwise).
+        state=$(${pkgs.tailscale}/bin/tailscale status --json 2>/dev/null \
+          | ${pkgs.jq}/bin/jq -r '.BackendState // "Stopped"')
+        if [ "$state" = "Running" ]; then
           sudo ${pkgs.tailscale}/bin/tailscale down
         else
           sudo ${pkgs.tailscale}/bin/tailscale up --accept-routes=false --snat-subnet-routes=false
