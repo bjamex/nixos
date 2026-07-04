@@ -40,7 +40,7 @@
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-yJnuT7+/FHQ1Pj70nIR5xRNT/24JtveZR5Ap87sutew=";
+        outputHash = "sha256-BwzebVf2yyXQ7NSyOACImetGfp5+hIMOL8wAjLRh/2Q=";
 
         # Pure download content: don't let fixupPhase shrink RPATHs of the
         # prebuilt *.node binaries, which would bake /nix/store refs into the
