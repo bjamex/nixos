@@ -20,13 +20,15 @@
         fi
       '';
 
-      # Toggle mic mute with a sound cue. Route the toggle through Noctalia
-      # (`msg mic-mute`) rather than pamixer so Noctalia performs the change
-      # itself: this pops the correct microphone OSD (pamixer fires Noctalia's
-      # generic speaker OSD) and uses the wpctl mute-flag path that doesn't
-      # clobber mic volume on unmute (see widget.mic_button in noctalia.nix).
+      # Toggle mic mute with a sound cue via wpctl's mute-flag path — the same
+      # call widget.mic_button uses in noctalia.nix. This flips *only* the mute
+      # flag: mic volume stays pinned at 150% and the output sink is never
+      # touched. We deliberately avoid `noctalia msg mic-mute`: that internal
+      # path copies the live mic volume onto the default speaker sink, so with
+      # mic at 150% + overdrive the speakers get slammed to 150% on (un)mute.
+      # Trade-off: no dedicated Noctalia mic OSD popup, but the bind is correct.
       micMuteToggle = pkgs.writeShellScript "mic-mute-toggle" ''
-        noctalia msg mic-mute
+        ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
         ${lib.getExe' pkgs.pipewire "pw-play"} ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/audio-volume-change.oga
       '';
 
@@ -50,6 +52,18 @@
         type = lib.types.lines;
         default = ''hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })'';
         description = "Per-host hl.monitor(...) Lua calls. Default auto-detects all outputs.";
+      };
+
+      options.myHyprland.autoSuspend = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether hypridle suspends the machine after the idle timeout. Disable on always-on desktops.";
+      };
+
+      options.myHyprland.idleLock = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Whether hypridle locks the screen after the idle timeout. Disable on trusted always-on desktops.";
       };
 
       config = {
@@ -275,15 +289,17 @@
               after_sleep_cmd  = hyprctl dispatch dpms on
             }
 
-            listener {
-              timeout  = 300
-              on-timeout = hyprlock
-            }
+            ${lib.optionalString config.myHyprland.idleLock ''
+              listener {
+                timeout  = 300
+                on-timeout = hyprlock
+              }''}
+            ${lib.optionalString config.myHyprland.autoSuspend ''
 
-            listener {
-              timeout  = 1800
-              on-timeout = systemctl suspend
-            }
+              listener {
+                timeout  = 1800
+                on-timeout = systemctl suspend
+              }''}
           '';
 
           ".config/hypr/hyprlock.conf".text = ''

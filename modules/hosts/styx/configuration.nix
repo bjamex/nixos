@@ -225,7 +225,7 @@
         moonlight-qt
         pamixer
         cifs-utils
-
+        baobab
       ];
 
       # --- Browser ---
@@ -241,6 +241,10 @@
 
       # Single Gigabyte M27Q desktop monitor; Hyprland base auto-detects otherwise.
       myHyprland.monitorLua = ''hl.monitor({ output = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q", mode = "2560x1440@143.856", position = "0x0", scale = 1 })'';
+
+      # Always-on desktop: don't auto-suspend or auto-lock on idle.
+      myHyprland.autoSuspend = false;
+      myHyprland.idleLock = false;
 
       # --- Storage ---
       fileSystems."/mnt/nvme0" = {
