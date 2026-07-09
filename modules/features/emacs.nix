@@ -27,6 +27,20 @@
       startWithGraphical = false;
     };
 
+    # Doom's UI icons need the Nerd Font symbol glyphs ("Symbols Nerd Font Mono").
+    # This replaces `M-x nerd-icons-install-fonts` so the font is declarative.
+    fonts.packages = [ pkgs.nerd-fonts.symbols-only ];
+
+    # Doom's user config (init/config/packages.el) is delivered through hjem so
+    # both hosts stay in sync. NOTE: these become read-only /nix/store symlinks —
+    # edit the repo copies under modules/users/dotfiles/doom, then rebuild +
+    # `doom sync`. The doom *install* (~/.config/emacs) stays imperative.
+    hjem.users.swin.files = {
+      ".config/doom/init.el".source = "${self}/modules/users/dotfiles/doom/init.el";
+      ".config/doom/config.el".source = "${self}/modules/users/dotfiles/doom/config.el";
+      ".config/doom/packages.el".source = "${self}/modules/users/dotfiles/doom/packages.el";
+    };
+
     environment.systemPackages = with pkgs; [
       emacs-pgtk
 
@@ -54,6 +68,15 @@
       nodejs                   # many LSP/format modules
       shellcheck               # :checkers
       pandoc                   # :lang org export
+
+      # :lang module formatters/linters (silences `doom doctor`)
+      nixfmt                   # :lang nix — nix-format-buffer (matches `nix fmt`)
+      python3                  # :lang python — interpreter on PATH
+      isort                    # :lang python — import sorting
+      python3Packages.pytest   # :lang python — test runner
+      html-tidy                # :lang web  — HTML formatting
+      stylelint                # :lang web  — CSS linting
+      js-beautify              # :lang web  — JS/CSS/HTML formatting
     ];
   };
 }
