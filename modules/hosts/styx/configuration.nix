@@ -85,6 +85,9 @@
       networking.firewall.enable = true;
       services.openssh.enable = false;
 
+      # KDE Connect: installs kdeconnect-kde and opens TCP/UDP 1714-1764
+      programs.kdeconnect.enable = true;
+
       # --- Locale & Time ---
       time.timeZone = "Australia/Brisbane";
       i18n.defaultLocale = "en_AU.UTF-8";
@@ -160,6 +163,7 @@
       environment.systemPackages = with pkgs; [
         # Shell utilities
 
+        unzip
         (writeShellScriptBin "nwhich" "readlink -f $(which $1)")
         (writeShellScriptBin "cnwhich" "cat $(readlink -f $(which $1))")
         (writeShellScriptBin "md" "mkdir -p \"$1\" && cd \"$1\"")
@@ -187,7 +191,6 @@
 
         # Internet & Communication
         inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
-
         mcp-nixos
         qbittorrent
         nordpass
@@ -226,6 +229,9 @@
         pamixer
         cifs-utils
         baobab
+
+        # Containers (uses the docker backend already enabled above)
+        distrobox
       ];
 
       # --- Browser ---

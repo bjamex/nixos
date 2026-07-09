@@ -224,6 +224,7 @@
       };
 
       environment.systemPackages = with pkgs; [
+        nautilus # default file manager again as of 2026-07-09 (crashes appear fixed)
         nemo-with-extensions
         nemo-fileroller
         file-roller
@@ -241,7 +242,7 @@
       ];
 
       xdg.mime.defaultApplications = {
-        "inode/directory"                    = "nemo.desktop";
+        "inode/directory"                    = "org.gnome.Nautilus.desktop";
         "application/zip"                    = "org.gnome.FileRoller.desktop";
         "application/vnd.rar"                = "org.gnome.FileRoller.desktop";
         "application/x-7z-compressed"        = "org.gnome.FileRoller.desktop";
