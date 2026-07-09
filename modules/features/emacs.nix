@@ -39,6 +39,9 @@
       ".config/doom/init.el".source = "${self}/modules/users/dotfiles/doom/init.el";
       ".config/doom/config.el".source = "${self}/modules/users/dotfiles/doom/config.el";
       ".config/doom/packages.el".source = "${self}/modules/users/dotfiles/doom/packages.el";
+      # config.el sets `doom-theme 'swin-dark`; without the theme file synced, Doom
+      # fails to load it on startup. Keep it alongside the other doom files.
+      ".config/doom/themes/swin-dark-theme.el".source = "${self}/modules/users/dotfiles/doom/themes/swin-dark-theme.el";
     };
 
     environment.systemPackages = with pkgs; [
