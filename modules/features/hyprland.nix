@@ -46,6 +46,52 @@
         fi
         "$hyprctl" eval "hl.config({ decoration = { active_opacity = $o, inactive_opacity = $o } })"
       '';
+
+      # Toggle a simple screen recording with wf-recorder. First press asks
+      # slurp for a region and starts recording to ~/Videos/Recordings; a second
+      # press SIGINTs the running wf-recorder, which finalizes the mp4 cleanly.
+      screenRecordToggle = pkgs.writeShellScript "screen-record-toggle" ''
+        notify=${lib.getExe' pkgs.libnotify "notify-send"}
+        # If a recording is already running, stop it (SIGINT flushes the file).
+        if ${lib.getExe' pkgs.procps "pkill"} -INT -x wf-recorder; then
+          "$notify" "Screen recording" "Stopped — saved to ~/Videos/Recordings"
+          exit 0
+        fi
+        dir="$HOME/Videos/Recordings"
+        mkdir -p "$dir"
+        file="$dir/$(date +%Y-%m-%d_%H-%M-%S).mp4"
+        geom=$(${lib.getExe pkgs.slurp}) || exit 1
+        "$notify" "Screen recording" "Recording started"
+        ${lib.getExe pkgs.wf-recorder} -g "$geom" -f "$file"
+      '';
+
+      # Shadowplay-style rolling replay buffer via gpu-screen-recorder. Started
+      # at login (see hyprland.start); it keeps the last 5 min encoded in RAM
+      # (VAAPI on this AMD GPU, near-zero cost) and writes nothing until saved.
+      # Heads-up: the in-RAM buffer costs a few hundred MB — tune -r/-q if needed.
+      gpuReplayDaemon = pkgs.writeShellScript "gpu-replay-daemon" ''
+        dir="$HOME/Videos/Replays"
+        mkdir -p "$dir"
+        exec ${lib.getExe pkgs.gpu-screen-recorder} \
+          -w screen \
+          -f 60 \
+          -a default_output \
+          -c mp4 \
+          -r 300 \
+          -o "$dir"
+      '';
+
+      # Flush the current 5-min buffer to disk. gpu-screen-recorder saves the
+      # replay on SIGUSR1. Match with -f: its /proc comm is truncated to 15
+      # chars, so -x against the full name would never hit.
+      gpuReplaySave = pkgs.writeShellScript "gpu-replay-save" ''
+        notify=${lib.getExe' pkgs.libnotify "notify-send"}
+        if ${lib.getExe' pkgs.procps "pkill"} -USR1 -f gpu-screen-recorder; then
+          "$notify" "Replay saved" "Last 5 min → ~/Videos/Replays"
+        else
+          "$notify" "Replay buffer not running" "gpu-screen-recorder is not active"
+        fi
+      '';
     in
     {
       options.myHyprland.monitorLua = lib.mkOption {
@@ -87,6 +133,9 @@
           hypridle
           hyprpaper
           grimblast
+          wf-recorder # simple Wayland screen recorder (see screenRecordToggle bind)
+          gpu-screen-recorder # GPU-encoded capture + replay buffer (see gpuReplay* )
+          slurp # region picker for wf-recorder / grimblast
           wl-clipboard # grimblast copy* needs wl-copy (was provided by the removed neovim module)
           inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         ];
@@ -107,6 +156,7 @@
               -- Hyprland's RLIMIT_NOFILE (524288) → 40% CPU busy-loop + sluggish
               -- desktop. See exiled-exchange.nix "synthetic copy" comment.
               hl.exec_cmd("hypridle")
+              hl.exec_cmd("${gpuReplayDaemon}")
             end)
 
             -- Animation curves
@@ -213,7 +263,7 @@
             hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty ec"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
-            hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nemo"))
+            hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nautilus"))
             hl.bind(mod .. " + B",            hl.dsp.exec_cmd("helium"))
             hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
             hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
@@ -223,6 +273,8 @@
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exit())
             hl.bind("Print",                  hl.dsp.exec_cmd("grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
+            hl.bind(mod .. " + SHIFT + R",    hl.dsp.exec_cmd("${screenRecordToggle}"))
+            hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
             hl.bind(mod .. " + SHIFT + N",    hl.dsp.exec_cmd("emacs"))
 
             -- Window management
