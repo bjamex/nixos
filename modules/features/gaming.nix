@@ -9,6 +9,26 @@
 
     hardware.xpadneo.enable = true;
 
+    # Xbox controllers over Bluetooth misbehave on the Intel combo adapter:
+    #  - ERTM must be disabled or the controller connects but no input device
+    #    is created;
+    #  - btusb autosuspend must be off or the radio suspends when the pad idles,
+    #    dropping the link every ~20s (endless flashing/reconnect loop).
+    boot.extraModprobeConfig = ''
+      options bluetooth disable_ertm=Y
+      options btusb enable_autosuspend=N
+    '';
+
+    # BlueZ settings that make the Xbox controller pair cleanly and stay
+    # connected (solid light, no ~90s BLE reconnect loop). JustWorksRepairing
+    # + FastConnectable are the key ones for the controller's HOGP link.
+    hardware.bluetooth.settings.General = {
+      Privacy = "device";
+      JustWorksRepairing = "always";
+      Class = "0x000100";
+      FastConnectable = "true";
+    };
+
     programs = {
       gamemode.enable = true;
       gamescope.enable = true;
