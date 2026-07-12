@@ -13,6 +13,7 @@
         self.nixosModules.gaming
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
         self.nixosModules.beammp # BeamNG.drive multiplayer launcher
+        self.nixosModules.virtualisation # libvirt/KVM + virt-manager
         self.nixosModules.pipewire
         self.nixosModules.fileManager
         self.nixosModules.kitty
