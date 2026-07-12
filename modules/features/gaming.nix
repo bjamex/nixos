@@ -29,6 +29,16 @@
       FastConnectable = "true";
     };
 
+    # The Series pad connects over BLE/HOGP but doesn't advertise usable
+    # connection parameters, so BlueZ defaults let it drop every ~60-90s.
+    # Pin the interval to ~8.75-11.25ms to match its 100Hz protocol. Per
+    # xpadneo TROUBLESHOOTING; BlueZ may still let the pad override these.
+    hardware.bluetooth.settings.LE = {
+      MinConnectionInterval = 7;
+      MaxConnectionInterval = 9;
+      ConnectionLatency = 0;
+    };
+
     programs = {
       gamemode.enable = true;
       gamescope.enable = true;
