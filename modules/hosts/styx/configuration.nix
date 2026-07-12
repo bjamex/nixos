@@ -11,6 +11,8 @@
         self.nixosModules.hyprland
         self.nixosModules.noctalia
         self.nixosModules.gaming
+        self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
+        self.nixosModules.beammp # BeamNG.drive multiplayer launcher
         self.nixosModules.pipewire
         self.nixosModules.fileManager
         self.nixosModules.kitty

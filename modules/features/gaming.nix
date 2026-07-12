@@ -1,17 +1,5 @@
 { self, inputs, ... }: {
   flake.nixosModules.gaming = { pkgs, lib, ... }:
-  let
-    rusty-path-of-building = pkgs.rusty-path-of-building.overrideAttrs (_: {
-      version = "0.2.18";
-      src = pkgs.fetchzip {
-        url = "https://github.com/meehl/rusty-path-of-building/archive/refs/tags/v0.2.18.tar.gz";
-        hash = "sha256-9YHXTUtTJO3GPf+NqASEkxf+a94doBGTjLyYruuxRg4=";
-      };
-      cargoDeps = pkgs.rustPlatform.importCargoLock {
-        lockFile = ./rusty-path-of-building-Cargo.lock;
-      };
-    });
-  in
   {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
@@ -49,7 +37,7 @@
       xivlauncher
       shadps4
       appimage-run
-    ]) ++ [ rusty-path-of-building ];
+    ]);
 
     # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
     # processes it spawns (Proton, the game), which doesn't exist on NixOS — so
