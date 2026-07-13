@@ -9,6 +9,8 @@
         self.nixosModules.hadesDisk
         self.nixosModules.tailscale
         self.nixosModules.secretspec # secrets wiring for migrated services
+        self.nixosModules.caddy # reverse proxy for *.swinlab.net (tailnet-only)
+        self.nixosModules.uptimeKuma # pilot service behind Caddy
       ];
 
       # --- Nix ---
