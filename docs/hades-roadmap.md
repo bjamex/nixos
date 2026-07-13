@@ -158,19 +158,40 @@ Then set/rotate values (for setting you'll want a broader role like
   since each feature module only gets imported by the hosts that want it.
 - Infrastructure only for now — no services actually migrated yet.
 
-**Phase 4 — Pilot migration**
-- Migrate one low-risk, low-state service first (e.g. Pi-hole/AdGuard or Uptime
-  Kuma) — not the media stack. Validates the full pipeline: storage mount,
-  secrets, networking, reverse proxy, backups. Document the process as a template.
-  Run in parallel with the Proxmox original during a burn-in period.
+**Phase 4 — Reverse proxy + pilot migration** — in progress
+- Reverse proxy brought forward from Phase 6: it's foundational, since every
+  migrated service sits behind it. **Caddy** chosen over nginx and the current
+  Nginx Proxy Manager box — NPM keeps its proxy hosts as imperative GUI/DB
+  state, the opposite of the declarative goal; Caddy declares every vhost in the
+  flake with far less boilerplate.
+  - `modules/features/caddy.nix` (`caddy` module): Caddy built via
+    `withPlugins` with `caddy-dns/cloudflare@v0.2.4`. Services are **tailnet-only**
+    (Cloudflare A records point at hades' Tailscale IP), so certs use **ACME
+    DNS-01** against Cloudflare — HTTP-01 can't reach a tailnet host. The
+    Cloudflare API token is the first real secret through the GCSM pipeline
+    (`CLOUDFLARE_API_TOKEN`, prefix `CLOUDFLARE_`). 80/443 are opened *only* on
+    `tailscale0`; no ACME email is set (kept out of the repo).
+  - Each service adds its own `services.caddy.virtualHosts.<host>.swinlab.net`.
+- Pilot service: **Uptime Kuma** (`modules/features/uptime-kuma.nix`) — an
+  oci-container bound to loopback, persistent volume at `/var/lib/uptime-kuma`,
+  fronted by `status.swinlab.net`. Chosen over AdGuard because it's HTTP-native
+  (actually exercises the proxy) and low-stakes. **AdGuard is deferred** to its
+  own DNS mini-project later — DNS is foundational/risky given the existing
+  tailnet-DNS + swinlab.net search-domain interactions, and doesn't test the
+  proxy.
+- Together the two validate the pipeline end-to-end: GCSM secret → Caddy env,
+  oci-container + persistent volume, tailnet-only reverse proxy with a real
+  `*.swinlab.net` cert. Run in parallel with any Proxmox original during burn-in.
 
 **Phase 5 — Expand in waves**
 - Migrate remaining services in small batches, ordered by risk/complexity.
 - Track RAM budget; explicitly decide what stays on Proxmox vs. moves to hades.
+- First service that needs its own secret (e.g. an *arr API key) exercises the
+  oci-container + secret combo (Uptime Kuma needed no secret of its own).
 
-**Phase 6 — Networking/reverse proxy**
-- Reverse proxy (Caddy/nginx, native module) + internal DNS so hostnames stay
-  consistent as services move between hosts.
+**Phase 6 — Internal DNS** (reverse proxy done in Phase 4)
+- Internal DNS so hostnames stay consistent as services move between hosts; fold
+  in the deferred AdGuard here if it becomes the DNS provider.
 
 **Phase 7 — Backups & rollback**
 - NixOS generations handle config rollback for free; still need real data backups

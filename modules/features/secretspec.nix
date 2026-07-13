@@ -1,13 +1,20 @@
 { self, inputs, ... }:
 {
-  # Reusable SecretSpec wiring for services (primarily oci-containers).
+  # Reusable SecretSpec wiring for services (oci-containers and native).
   #
   # SecretSpec (https://secretspec.dev) keeps the *declaration* of required
   # secrets in the repo (`secretspec.toml`, non-secret: names + descriptions)
   # while the *values* live in a provider backend, never committed. This module
-  # turns that into per-service systemd glue: a privileged ExecStartPre resolves
-  # the secrets a unit needs into a root-only env file, which the unit then
-  # loads via `environmentFiles` (podman `--env-file`).
+  # turns that into per-service systemd glue: for each consuming unit it creates
+  # a `secretspec-<unit>` oneshot, ordered *before* that unit, which resolves the
+  # secrets the unit needs into a root-only env file. The consuming unit then
+  # loads that file via `environmentFiles` (oci-containers, podman `--env-file`)
+  # or `environmentFile`/`EnvironmentFile` (native services).
+  #
+  # A separate oneshot (rather than an ExecStartPre on the unit itself) is used
+  # so the env file exists *before* the consumer starts — native services read
+  # `EnvironmentFile=` for every Exec* line, so an in-unit ExecStartPre would run
+  # before its own file existed.
   #
   # See docs/hades-roadmap.md (Phases 3-4) for the migration workflow.
   flake.nixosModules.secretspec =
@@ -56,10 +63,12 @@
         secrets = lib.mkOption {
           default = { };
           description = ''
-            Map of systemd unit name (e.g. "podman-adguard") -> secret wiring.
-            Each entry adds a privileged ExecStartPre that resolves the declared
-            secrets whose env names start with `prefix` into the root-only file
-            at `.envFile`; point the unit's `environmentFiles` at that path.
+            Map of consuming systemd unit name (e.g. "caddy" or
+            "podman-uptime-kuma") -> secret wiring. Each entry creates a
+            `secretspec-<unit>` oneshot, ordered before the unit, that resolves
+            the declared secrets whose env names start with `prefix` into the
+            root-only file at `.envFile`. Point the unit's `environmentFiles`
+            (oci) or `environmentFile` (native) at that path.
           '';
           type = lib.types.attrsOf (
             lib.types.submodule (
@@ -75,7 +84,7 @@
                     type = lib.types.str;
                     readOnly = true;
                     default = "/run/secretspec/${name}.env";
-                    description = "Resolved env-file path; set the unit's `environmentFiles` to this.";
+                    description = "Resolved env-file path; set the unit's `environmentFiles`/`environmentFile` to this.";
                   };
                 };
               }
@@ -97,10 +106,10 @@
           ++ lib.optional isDotenv "d ${builtins.dirOf dotenvPath} 0700 root root - -"
         );
 
-        systemd.services = lib.mapAttrs (
+        systemd.services = lib.mapAttrs' (
           unit: opts:
           let
-            resolve = pkgs.writeShellScript "secretspec-${unit}" ''
+            resolve = pkgs.writeShellScript "secretspec-resolve-${unit}" ''
               set -euo pipefail
               umask 077
               mkdir -p /run/secretspec
@@ -115,10 +124,21 @@
                 > ${opts.envFile}
             '';
           in
-          {
-            # "+" runs the resolver as root regardless of the unit's User=, so it
-            # can read the provider and write into /run/secretspec.
-            serviceConfig.ExecStartPre = [ "+${resolve}" ];
+          lib.nameValuePair "secretspec-${unit}" {
+            description = "Resolve SecretSpec secrets for ${unit}.service";
+            # Remote providers (GCSM, Vault, …) need the network up first.
+            after = [ "network-online.target" ];
+            wants = [ "network-online.target" ];
+            # Run before, and be required by, the consuming unit — so its env
+            # file exists before it starts and it fails loudly if a secret is
+            # missing.
+            before = [ "${unit}.service" ];
+            requiredBy = [ "${unit}.service" ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              ExecStart = resolve;
+            };
           }
         ) cfg.secrets;
       };
