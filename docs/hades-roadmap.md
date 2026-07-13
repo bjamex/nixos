@@ -40,12 +40,59 @@ for now; mount it into NixOS declaratively via NFS in `fileSystems`. Don't try t
 fit media/bulk data on the 256GB SSD.
 
 **Secrets:** [SecretSpec](https://secretspec.dev) — declare required secrets per
-service in `secretspec.toml` (root of this repo, `name = "hades"`), values stored
-in a provider backend (system keyring for a single-box setup). No official NixOS
-module exists yet, so secrets get resolved via an `ExecStartPre` on the systemd
-unit `oci-containers`/native services generate, writing a resolved env file that
-`environmentFiles` then points at (see the Phase 3 example below once a real
-service is added).
+service in `secretspec.toml` (root of this repo, `name = "hades"`, non-secret:
+names + descriptions only). `pkgs.secretspec` is now in nixpkgs (≥0.12), so no
+`buildRustPackage` needed.
+
+- **Provider:** **Google Cloud Secret Manager** (`gcsm://<project-id>`). Chosen
+  over dotenv/keyring for managed rotation + versioning + IAM + audit logging,
+  and to build transferable GCP experience. The nixpkgs `secretspec` build
+  already includes the `gcsm` feature (verified). `keyring` was rejected (needs
+  an unlocked D-Bus Secret Service — impractical headless).
+  - **Tradeoff accepted:** secrets resolve at container start / boot, so a
+    service won't start if GCP/internet is unreachable at that moment. Fine for
+    this setup; revisit if offline-boot resilience becomes important.
+  - **Auth:** Application Default Credentials via a service-account JSON key at
+    `/var/lib/secretspec/gcp-sa.json` (root-only, placed out-of-band — e.g.
+    `nixos-anywhere --extra-files` — never committed). Wired via
+    `services.secretspec.providerEnvironment.GOOGLE_APPLICATION_CREDENTIALS`.
+- **Wiring:** `modules/features/secretspec.nix` (the `secretspec` module,
+  already imported by hades) turns this into reusable glue. A service declares
+  what it needs via `services.secretspec.secrets.<unit>.prefix = "FOO_"`; the
+  module adds a privileged `ExecStartPre` that runs `secretspec run` to resolve
+  those secrets into a root-only `/run/secretspec/<unit>.env`, exposed as
+  `.envFile` for the unit's `environmentFiles`. Automated access passes a
+  `--reason` (SecretSpec ≥0.12 requires one for agent access; recorded in the
+  audit log).
+
+### GCP one-time setup (before the pilot service)
+
+Do this once, from any machine with `gcloud` (or the Cloud Console):
+
+1. **Create a project** (id must be globally unique), and note it — this is the
+   `<project-id>` in `services.secretspec.provider` (currently a `REPLACE-…`
+   placeholder in `modules/hosts/hades/configuration.nix`):
+   `gcloud projects create <project-id>` (and link a billing account — Secret
+   Manager has a free tier; beyond it, pennies/month at home scale).
+2. **Enable the API:** `gcloud services enable secretmanager.googleapis.com --project <project-id>`
+3. **Create a service account** for hades to read secrets:
+   `gcloud iam service-accounts create hades-secrets --project <project-id>`
+4. **Grant it read-only access** (accessor, *not* admin):
+   ```
+   gcloud projects add-iam-policy-binding <project-id> \
+     --member "serviceAccount:hades-secrets@<project-id>.iam.gserviceaccount.com" \
+     --role roles/secretmanager.secretAccessor
+   ```
+5. **Create a key** and keep it safe (this file is the one bootstrap secret):
+   `gcloud iam service-accounts keys create gcp-sa.json --iam-account hades-secrets@<project-id>.iam.gserviceaccount.com`
+6. **Place it on hades** as `/var/lib/secretspec/gcp-sa.json`, `chmod 600`, owned
+   by root (the `secretspec` module's tmpfiles rule creates the dir). At install
+   time this is easiest via `nixos-anywhere --extra-files`.
+
+Then set/rotate values (for setting you'll want a broader role like
+`secretmanager.admin` on your own user, not the hades accessor SA):
+`secretspec set FOO_TOKEN --provider gcsm://<project-id> --reason "…"`, and
+`secretspec check --provider gcsm://<project-id>` to confirm the spec is met.
 
 ## Phased roadmap
 
@@ -55,9 +102,15 @@ service is added).
 
 **Phase 1 — Base install & config skeleton** — in progress
 - `modules/hosts/hades/{default,configuration,hardware-configuration}.nix`
-  scaffolded, matching the styx/void convention. Still needed before deploy:
-  - Add SSH public key(s) to `modules/hosts/hades/configuration.nix`
-    (`users.users.swin.openssh.authorizedKeys.keys` is empty)
+  scaffolded, matching the styx/void convention.
+- ✅ SSH public key added (`users.users.swin.openssh.authorizedKeys.keys`).
+- ✅ disko layout added (`modules/hosts/hades/disko.nix`, `hadesDisk` module):
+  single-disk GPT, 512M ESP → `/boot` + ext4 `/`. disko now owns `fileSystems`,
+  so the placeholder `hardware-configuration.nix` no longer declares them.
+- ✅ zram swap enabled to stretch the 16GB RAM.
+- Still needed before deploy:
+  - Confirm the SSD device path in `disko.nix` (`/dev/sda` placeholder) — run
+    `lsblk` on the OptiPlex live installer; it may be `/dev/nvme0n1` instead.
   - Firm up static IP / DHCP reservation once the network layout is known
   - Once the OptiPlex is in hand: boot it into a live Linux env with SSH enabled,
     then from another machine run
@@ -78,31 +131,31 @@ service is added).
 **Phase 3 — Services module pattern**
 - `virtualisation.oci-containers` already wired (podman backend).
 - Each migrated service becomes its own self-registering file under
-  `modules/features/`, e.g. `modules/features/adguard.nix`:
+  `modules/features/`. Secrets are handled by the shared `secretspec` module
+  (see the Secrets section above) — declare the prefix, reference its env file,
+  no hand-rolled ExecStartPre. e.g. `modules/features/adguard.nix`:
   ```nix
   { ... }:
   {
-    flake.nixosModules.adguard = { config, pkgs, ... }:
+    flake.nixosModules.adguard =
+      { config, ... }:
       {
+        services.secretspec.secrets.podman-adguard.prefix = "ADGUARD_";
         virtualisation.oci-containers.containers.adguard = {
           image = "adguard/adguardhome";
           ports = [ "53:53/tcp" "53:53/udp" "3000:3000/tcp" ];
           volumes = [ "/var/lib/adguard/work:/opt/adguardhome/work" ];
-          environmentFiles = [ "/run/secretspec/adguard.env" ];
+          # env file that the secretspec module resolves at start:
+          environmentFiles = [ config.services.secretspec.secrets.podman-adguard.envFile ];
         };
-        systemd.services.podman-adguard.serviceConfig.ExecStartPre = [
-          "${pkgs.coreutils}/bin/mkdir -p /run/secretspec"
-          "${pkgs.bash}/bin/bash -c '${pkgs.secretspec}/bin/secretspec run --provider keyring -- env | grep ^ADGUARD_ > /run/secretspec/adguard.env'"
-        ];
       };
   }
   ```
-  Then add `self.nixosModules.adguard` to `modules/hosts/hades/configuration.nix`'s
-  `imports` list — same direct-inclusion style styx/void already use, no
-  enable-flag toggles needed since each feature module only gets imported by the
-  hosts that actually want it.
-  (`pkgs.secretspec` isn't in nixpkgs yet — pull it from its own flake output or
-  `buildRustPackage` until it lands.)
+  Then declare `ADGUARD_ADMIN_PASSWORD = { ... }` under `[profiles.default]` in
+  `secretspec.toml`, and add `self.nixosModules.adguard` to
+  `modules/hosts/hades/configuration.nix`'s `imports` list — same
+  direct-inclusion style styx/void already use, no enable-flag toggles needed
+  since each feature module only gets imported by the hosts that want it.
 - Infrastructure only for now — no services actually migrated yet.
 
 **Phase 4 — Pilot migration**

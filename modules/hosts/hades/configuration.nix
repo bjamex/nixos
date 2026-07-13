@@ -6,7 +6,9 @@
     {
       imports = [
         self.nixosModules.hadesHardware
+        self.nixosModules.hadesDisk
         self.nixosModules.tailscale
+        self.nixosModules.secretspec # secrets wiring for migrated services
       ];
 
       # --- Nix ---
@@ -39,6 +41,19 @@
       time.timeZone = "Australia/Brisbane";
       i18n.defaultLocale = "en_AU.UTF-8";
 
+      # --- Memory ---
+      # Only 16GB RAM (vs. Proxmox's 128GB), so lean on zram to stretch it
+      # before revisiting a hardware upgrade — see docs/hades-roadmap.md.
+      zramSwap.enable = true;
+
+      # --- Secrets ---
+      # Google Cloud Secret Manager. Auth via a service-account key placed
+      # root-only on the box (out-of-band, never committed) — see the GCP
+      # setup steps in docs/hades-roadmap.md.
+      services.secretspec.provider = "gcsm://REPLACE-WITH-GCP-PROJECT-ID"; # TODO: real project id
+      services.secretspec.providerEnvironment.GOOGLE_APPLICATION_CREDENTIALS =
+        "/var/lib/secretspec/gcp-sa.json";
+
       # --- Virtualisation ---
       # podman backend for oci-containers, used to migrate services off the
       # Proxmox Docker host (see docs/hades-roadmap.md).
@@ -49,9 +64,9 @@
         isNormalUser = true;
         description = "Brett James";
         extraGroups = [ "wheel" ];
-        openssh.authorizedKeys.keys = [
-          # TODO: add your SSH public key(s) here before first deploy
-        ];
+        # SSH key is injected at deploy time, not committed here — see
+        # docs/hades-roadmap.md (Phase 1).
+        openssh.authorizedKeys.keys = [ ];
       };
 
       # --- Packages ---
