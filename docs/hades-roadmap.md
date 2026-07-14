@@ -44,55 +44,62 @@ service in `secretspec.toml` (root of this repo, `name = "hades"`, non-secret:
 names + descriptions only). `pkgs.secretspec` is now in nixpkgs (≥0.12), so no
 `buildRustPackage` needed.
 
-- **Provider:** **Google Cloud Secret Manager** (`gcsm://<project-id>`). Chosen
-  over dotenv/keyring for managed rotation + versioning + IAM + audit logging,
-  and to build transferable GCP experience. The nixpkgs `secretspec` build
-  already includes the `gcsm` feature (verified). `keyring` was rejected (needs
-  an unlocked D-Bus Secret Service — impractical headless).
-  - **Tradeoff accepted:** secrets resolve at container start / boot, so a
-    service won't start if GCP/internet is unreachable at that moment. Fine for
-    this setup; revisit if offline-boot resilience becomes important.
-  - **Auth:** Application Default Credentials via a service-account JSON key at
-    `/var/lib/secretspec/gcp-sa.json` (root-only, placed out-of-band — e.g.
-    `nixos-anywhere --extra-files` — never committed). Wired via
-    `services.secretspec.providerEnvironment.GOOGLE_APPLICATION_CREDENTIALS`.
+- **Provider:** **`pass`** (GPG-encrypted Unix password-store on the box).
+  Chosen after GCP/AWS Secret Manager both required attaching a payment method
+  just to enable the API — not worth it for a home lab. `pass` is free, needs no
+  account/card, keeps hades self-contained (no boot-time external dependency),
+  encrypts at rest, and rotates easily. `keyring` was rejected earlier (needs an
+  unlocked D-Bus Secret Service — impractical headless).
+  - **How it's wired:** `services.secretspec.provider = "pass"`, with
+    `providerEnvironment` pointing `PASSWORD_STORE_DIR`
+    (`/var/lib/secretspec/password-store`) and `GNUPGHOME`
+    (`/var/lib/secretspec/gnupg`) at root-only dirs, and `providerPackages =
+    [ pkgs.pass pkgs.gnupg ]` so the resolver unit can shell out to them.
+  - **Bootstrap secret:** the GPG private key in `GNUPGHOME`. Passphraseless so
+    the resolver can decrypt unattended at boot — meaning a root compromise can
+    read secrets (same practical threat model as any single-box setup), but you
+    still get encryption-at-rest and clean rotation. Neither the key nor the
+    store is ever committed.
 - **Wiring:** `modules/features/secretspec.nix` (the `secretspec` module,
   already imported by hades) turns this into reusable glue. A service declares
   what it needs via `services.secretspec.secrets.<unit>.prefix = "FOO_"`; the
-  module adds a privileged `ExecStartPre` that runs `secretspec run` to resolve
-  those secrets into a root-only `/run/secretspec/<unit>.env`, exposed as
-  `.envFile` for the unit's `environmentFiles`. Automated access passes a
-  `--reason` (SecretSpec ≥0.12 requires one for agent access; recorded in the
-  audit log).
+  module creates a `secretspec-<unit>` oneshot, ordered before the unit, that
+  runs `secretspec run` to resolve those secrets into a root-only
+  `/run/secretspec/<unit>.env`, exposed as `.envFile` for the unit's
+  `environmentFiles`/`environmentFile`. Access passes a `--reason` (SecretSpec
+  ≥0.12 requires one for agent access; recorded in the audit log).
 
-### GCP one-time setup (before the pilot service)
+### `pass` one-time setup (on hades, at/after first boot)
 
-Do this once, from any machine with `gcloud` (or the Cloud Console):
+Everything lives on the box, so this runs on hades as root (SSH in after the
+first deploy). The `secretspec` module already creates `/var/lib/secretspec`.
 
-1. **Create a project** (id must be globally unique), and note it — this is the
-   `<project-id>` in `services.secretspec.provider` (currently a `REPLACE-…`
-   placeholder in `modules/hosts/hades/configuration.nix`):
-   `gcloud projects create <project-id>` (and link a billing account — Secret
-   Manager has a free tier; beyond it, pennies/month at home scale).
-2. **Enable the API:** `gcloud services enable secretmanager.googleapis.com --project <project-id>`
-3. **Create a service account** for hades to read secrets:
-   `gcloud iam service-accounts create hades-secrets --project <project-id>`
-4. **Grant it read-only access** (accessor, *not* admin):
-   ```
-   gcloud projects add-iam-policy-binding <project-id> \
-     --member "serviceAccount:hades-secrets@<project-id>.iam.gserviceaccount.com" \
-     --role roles/secretmanager.secretAccessor
-   ```
-5. **Create a key** and keep it safe (this file is the one bootstrap secret):
-   `gcloud iam service-accounts keys create gcp-sa.json --iam-account hades-secrets@<project-id>.iam.gserviceaccount.com`
-6. **Place it on hades** as `/var/lib/secretspec/gcp-sa.json`, `chmod 600`, owned
-   by root (the `secretspec` module's tmpfiles rule creates the dir). At install
-   time this is easiest via `nixos-anywhere --extra-files`.
+```bash
+sudo -i
+export GNUPGHOME=/var/lib/secretspec/gnupg
+export PASSWORD_STORE_DIR=/var/lib/secretspec/password-store
+install -d -m700 "$GNUPGHOME"
 
-Then set/rotate values (for setting you'll want a broader role like
-`secretmanager.admin` on your own user, not the hades accessor SA):
-`secretspec set FOO_TOKEN --provider gcsm://<project-id> --reason "…"`, and
-`secretspec check --provider gcsm://<project-id>` to confirm the spec is met.
+# 1. Generate a passphraseless GPG key (unattended decryption at boot)
+gpg --batch --pinentry-mode loopback --passphrase "" \
+    --quick-generate-key "hades-secrets <hades@local>" default default never
+KEYID=$(gpg --list-keys --with-colons | awk -F: '/^fpr:/{print $10; exit}')
+
+# 2. Initialise the store for that key
+pass init "$KEYID"
+
+# 3. Store the Cloudflare token (paste when prompted)
+secretspec set CLOUDFLARE_API_TOKEN --provider pass --reason "provisioning"
+
+# 4. Confirm the spec is satisfied
+secretspec check --provider pass
+```
+
+Optional but recommended: `git init` inside `$PASSWORD_STORE_DIR` (`pass git
+init`) for rotation history. To **rotate**, re-run `secretspec set …`, then
+`systemctl restart secretspec-<unit> <unit>` so the service picks up the new
+value. Back up `$GNUPGHOME` + the store somewhere safe — losing the GPG key
+means losing every secret (they'd need re-entering).
 
 ## Phased roadmap
 
@@ -168,7 +175,7 @@ Then set/rotate values (for setting you'll want a broader role like
     `withPlugins` with `caddy-dns/cloudflare@v0.2.4`. Services are **tailnet-only**
     (Cloudflare A records point at hades' Tailscale IP), so certs use **ACME
     DNS-01** against Cloudflare — HTTP-01 can't reach a tailnet host. The
-    Cloudflare API token is the first real secret through the GCSM pipeline
+    Cloudflare API token is the first real secret through the `pass` pipeline
     (`CLOUDFLARE_API_TOKEN`, prefix `CLOUDFLARE_`). 80/443 are opened *only* on
     `tailscale0`; no ACME email is set (kept out of the repo).
   - Each service adds its own `services.caddy.virtualHosts.<host>.swinlab.net`.
@@ -179,7 +186,7 @@ Then set/rotate values (for setting you'll want a broader role like
   own DNS mini-project later — DNS is foundational/risky given the existing
   tailnet-DNS + swinlab.net search-domain interactions, and doesn't test the
   proxy.
-- Together the two validate the pipeline end-to-end: GCSM secret → Caddy env,
+- Together the two validate the pipeline end-to-end: `pass` secret → Caddy env,
   oci-container + persistent volume, tailnet-only reverse proxy with a real
   `*.swinlab.net` cert. Run in parallel with any Proxmox original during burn-in.
 
