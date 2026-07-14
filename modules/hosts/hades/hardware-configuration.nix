@@ -15,7 +15,7 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  # `/` and `/boot` are declared by disko (see disko.nix), not here.
+  # `/`, `/boot`, `/nix`, `/var` are declared by disko (see disko.nix), not here.
 
   swapDevices = [ ];
 
