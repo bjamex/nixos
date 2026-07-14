@@ -55,8 +55,19 @@
           description = ''
             Extra environment variables exported before `secretspec` runs, for
             provider auth. Values are non-secret (paths, endpoints) — the actual
-            credential (e.g. the GCP service-account key file) lives at the
+            credential (e.g. the GPG key, or a cloud key file) lives at the
             referenced path on the host, out-of-band and never committed.
+          '';
+        };
+
+        providerPackages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = [ ];
+          example = lib.literalExpression "[ pkgs.pass pkgs.gnupg ]";
+          description = ''
+            Packages added to the resolver's PATH. Some providers shell out to
+            external tools — e.g. the `pass` provider needs `pass` (which needs
+            `gnupg`) on PATH, which a bare systemd unit doesn't provide.
           '';
         };
 
@@ -126,7 +137,10 @@
           in
           lib.nameValuePair "secretspec-${unit}" {
             description = "Resolve SecretSpec secrets for ${unit}.service";
-            # Remote providers (GCSM, Vault, …) need the network up first.
+            # Tools some providers shell out to (e.g. pass/gnupg).
+            path = cfg.providerPackages;
+            # Remote providers (Vault, cloud SMs, …) need the network up first;
+            # harmless for local providers like pass.
             after = [ "network-online.target" ];
             wants = [ "network-online.target" ];
             # Run before, and be required by, the consuming unit — so its env

@@ -49,12 +49,19 @@
       zramSwap.enable = true;
 
       # --- Secrets ---
-      # Google Cloud Secret Manager. Auth via a service-account key placed
-      # root-only on the box (out-of-band, never committed) — see the GCP
-      # setup steps in docs/hades-roadmap.md.
-      services.secretspec.provider = "gcsm://REPLACE-WITH-GCP-PROJECT-ID"; # TODO: real project id
-      services.secretspec.providerEnvironment.GOOGLE_APPLICATION_CREDENTIALS =
-        "/var/lib/secretspec/gcp-sa.json";
+      # `pass` (GPG-encrypted Unix password-store) on the box — no cloud, no
+      # account, no boot-time external dependency. The encrypted store and the
+      # GPG key live under /var/lib/secretspec (root-only, never committed); see
+      # the pass setup steps in docs/hades-roadmap.md.
+      services.secretspec.provider = "pass";
+      services.secretspec.providerEnvironment = {
+        PASSWORD_STORE_DIR = "/var/lib/secretspec/password-store";
+        GNUPGHOME = "/var/lib/secretspec/gnupg";
+      };
+      services.secretspec.providerPackages = [
+        pkgs.pass
+        pkgs.gnupg
+      ];
 
       # --- Virtualisation ---
       # podman backend for oci-containers, used to migrate services off the
