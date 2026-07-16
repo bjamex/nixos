@@ -41,6 +41,9 @@
 
         self.nixosModules.focus # Pomodoro focus timer TUI
         self.nixosModules.focusWidget # Pomodoro focus timer — Noctalia bar widget
+
+        self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
+        self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
       ];
 
       # --- Nix ---
