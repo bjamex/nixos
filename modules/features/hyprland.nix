@@ -112,6 +112,19 @@
         description = "Whether hypridle locks the screen after the idle timeout. Disable on trusted always-on desktops.";
       };
 
+      options.myHyprland.extraStartupExec = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        description = ''
+          Extra commands (store paths or plain executables) run via `hl.exec_cmd`
+          on `hyprland.start`, alongside the built-ins below. Use this instead of
+          editing the Lua block directly so other feature modules (e.g. the voice
+          satellite) can hook into session startup and inherit Hyprland's
+          WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — a systemd user service
+          on default.target does not have these (see emacs.nix).
+        '';
+      };
+
       config = {
         programs.hyprland = {
           enable = true;
@@ -157,6 +170,7 @@
               -- desktop. See exiled-exchange.nix "synthetic copy" comment.
               hl.exec_cmd("hypridle")
               hl.exec_cmd("${gpuReplayDaemon}")
+              ${lib.concatMapStringsSep "\n              " (cmd: ''hl.exec_cmd("${cmd}")'') config.myHyprland.extraStartupExec}
             end)
 
             -- Animation curves

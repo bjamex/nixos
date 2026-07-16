@@ -19,6 +19,7 @@
         self.nixosModules.smb
         self.nixosModules.shell
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
+        self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR on styx -> local commands
       ];
 
       # --- Nix ---
@@ -80,7 +81,6 @@
       hardware.bluetooth.enable = true;
       hardware.bluetooth.powerOnBoot = true;
       hardware.bluetooth.settings.Policy.JustWorksRepairing = "always";
-      hardware.bluetooth.settings.General.Experimental = true;
       services.blueman.enable = true;
 
       # --- Scanning ---
