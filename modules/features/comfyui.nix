@@ -23,6 +23,15 @@
           ${pkgs.git}/bin/git clone https://github.com/comfyanonymous/ComfyUI "$COMFYUI_DIR"
         fi
 
+        # A venv's bin/python symlinks into /nix/store; a `nix flake update` or GC
+        # can leave that interpreter path gone, dangling the symlink (exec: python:
+        # not found). If the interpreter no longer resolves, nuke the venv so the
+        # block below rebuilds it from scratch (this also clears .installed).
+        if [ -e "$VENV_DIR" ] && ! "$VENV_DIR/bin/python" --version >/dev/null 2>&1; then
+          echo "venv python is broken (interpreter GC'd?), recreating..."
+          rm -rf "$VENV_DIR"
+        fi
+
         if [ ! -f "$VENV_DIR/.installed" ]; then
           echo "Creating venv and installing PyTorch ROCm 6.5..."
           ${pkgs.python312}/bin/python -m venv "$VENV_DIR"
