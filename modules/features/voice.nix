@@ -56,6 +56,10 @@
         ];
         text = ''
           mkdir -p "$HOME/.local/state"
+          ${lib.optionalString (cfg.micDevice != null) ''
+            # Pin capture to a specific PipeWire source (see voice.satellite.micDevice).
+            export PIPEWIRE_NODE=${lib.escapeShellArg cfg.micDevice}
+          ''}
           while true; do
             python3 ${./voice-satellite.py} \
               --whisper-uri "${cfg.whisperUri}" \
@@ -90,6 +94,24 @@
           '';
         };
 
+        micDevice = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
+          description = ''
+            PipeWire node.name to capture from, exported as PIPEWIRE_NODE so
+            both wake detection and command recording target this exact source.
+
+            When null the satellite follows the system default source, which is
+            fragile on a multi-device desktop: a Bluetooth headset connecting
+            can hijack the default, and if that default is muted the mic just
+            reads digital silence. Pin a fixed mic here on always-on hosts.
+            Find the node name with:
+              wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep node.name
+            or list all sources with `pw-cli list-objects Node`.
+          '';
+        };
+
         commands = lib.mkOption {
           type = lib.types.listOf (
             lib.types.submodule {
@@ -111,17 +133,23 @@
           );
           default = [
             {
-              pattern = "\\bmic\\b";
+              # Must precede the speaker-mute rule below: "microphone"/"mike"
+              # also contain "mute"/"unmute", so the mic rule has to win first.
+              pattern = "\\b(mic|mike|microphone)\\b";
               description = "Toggle microphone mute";
               command = "${wpctl} set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
             }
             {
-              pattern = "\\b(volume\\s*up|turn\\s*up|louder)\\b";
+              # "louder", or a volume verb followed (within a few words) by
+              # "up": catches "turn it up", "crank up", "bump the volume up".
+              # The verb whitelist keeps unrelated "...up" phrases ("close it
+              # up") from firing.
+              pattern = "\\blouder\\b|\\b(?:volume|turn|crank|bump)\\b[\\w\\s]{0,6}\\bup\\b";
               description = "Volume up";
               command = "${lib.getExe pkgs.pamixer} -i 10";
             }
             {
-              pattern = "\\b(volume\\s*down|turn\\s*down|quieter)\\b";
+              pattern = "\\b(?:quiet(?:er)?|lower|shush|hush)\\b|\\b(?:volume|turn|crank|bump)\\b[\\w\\s]{0,6}\\bdown\\b";
               description = "Volume down";
               command = "${lib.getExe pkgs.pamixer} -d 10";
             }
