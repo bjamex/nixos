@@ -35,12 +35,7 @@
         self.nixosModules.budslink
         self.nixosModules.shell
         self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
-        self.nixosModules.matcha # matcha.email — TUI email client
-        self.nixosModules.zed # Zed editor + Claude Code via ACP
         # self.nixosModules.davinciResolve  # blackmagic source download broken after nixpkgs bump 2026-06-30
-
-        self.nixosModules.focus # Pomodoro focus timer TUI
-        self.nixosModules.focusWidget # Pomodoro focus timer — Noctalia bar widget
 
         self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
         self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
