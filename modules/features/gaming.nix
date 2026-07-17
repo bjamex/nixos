@@ -1,5 +1,25 @@
 { self, inputs, ... }: {
   flake.nixosModules.gaming = { pkgs, lib, ... }:
+  let
+    # shadps4-qtlauncher is the Qt GUI frontend (it pulls in the shadps4 core as
+    # its emulator backend); the plain shadps4 binary is CLI-only. Neither ships
+    # a .desktop entry or icon, so generate one — using the upstream icon — that
+    # launches the Qt GUI.
+    shadps4Icon = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/shadps4-emu/shadPS4/main/.github/shadps4.png";
+      sha256 = "15a79cphq8qca7ndvwmyzbzk1wvs01ghf766wc1jvkf576hv89mg";
+    };
+    shadps4Desktop = pkgs.makeDesktopItem {
+      name = "shadps4";
+      desktopName = "shadPS4";
+      genericName = "PlayStation 4 Emulator";
+      comment = "Emulate PlayStation 4 games";
+      exec = "shadPS4QtLauncher";
+      icon = "${shadps4Icon}";
+      categories = [ "Game" "Emulator" ];
+      terminal = false;
+    };
+  in
   {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
@@ -65,7 +85,9 @@
       lsfg-vk-ui
       faugus-launcher
       xivlauncher
-      shadps4
+      shadps4            # core emulator binary (also what BB_Launcher execs to run the game)
+      shadps4-qtlauncher # Qt GUI frontend
+      shadps4Desktop
       appimage-run
     ]);
 

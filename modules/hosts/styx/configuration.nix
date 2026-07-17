@@ -11,6 +11,7 @@
         self.nixosModules.hyprland
         self.nixosModules.noctalia
         self.nixosModules.gaming
+        self.nixosModules.bblauncher # Bloodborne launcher/mod manager for shadPS4
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
         self.nixosModules.beammp # BeamNG.drive multiplayer launcher
         self.nixosModules.virtualisation # libvirt/KVM + virt-manager

@@ -12,6 +12,7 @@
 
       environment.systemPackages = with pkgs; [
         eza
+        unar # archive extractor (rar/zip/7z/…): `unar file.rar`, `lsar` to list
       ];
 
       hjem.users.swin.files = {
