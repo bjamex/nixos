@@ -95,6 +95,11 @@
       # KDE Connect: installs kdeconnect-kde and opens TCP/UDP 1714-1764
       programs.kdeconnect.enable = true;
 
+      # Pin voice capture to the USB microphone rather than the system default
+      # source — otherwise a Bluetooth headset (e.g. the AKG N5) can hijack the
+      # default and, if muted, leave voice control reading silence.
+      voice.satellite.micDevice = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
+
       # --- Locale & Time ---
       time.timeZone = "Australia/Brisbane";
       i18n.defaultLocale = "en_AU.UTF-8";
