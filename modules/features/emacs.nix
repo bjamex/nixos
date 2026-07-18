@@ -10,8 +10,9 @@
     # of booting all of Doom each launch. `emacs`/`emacs -nw` still work as normal
     # standalone instances — this only adds the daemon, it doesn't replace them.
     #
-    # startWithGraphical = false (NOT true): our Hyprland session is launched
-    # directly via greetd and does no `systemctl --user import-environment`, so
+    # startWithGraphical = false (NOT true): our Hyprland session is the plain
+    # (non-uwsm) session launched from SDDM (see login.nix) and does no
+    # `systemctl --user import-environment`, so
     # graphical-session.target is never reached — binding the daemon there leaves
     # it dead forever. default.target IS reached at login, so the daemon starts
     # reliably from there. Trade-off: a default.target daemon has no WAYLAND_DISPLAY,

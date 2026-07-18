@@ -18,6 +18,7 @@
         self.nixosModules.swinHome
         self.nixosModules.smb
         self.nixosModules.shell
+        self.nixosModules.tailscale # tailscale + ts-toggle + NOPASSWD sudo rule
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
         self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR on styx -> local commands
       ];
@@ -53,14 +54,6 @@
       networking.networkmanager.enable = true;
       networking.firewall.enable = true;
       services.openssh.enable = false;
-      services.tailscale = {
-        enable = true;
-        permitCertUid = "swin";
-        extraUpFlags = [
-          "--accept-routes=false"
-          "--snat-subnet-routes=false"
-        ];
-      };
 
       # --- Locale & Time ---
       time.timeZone = "Australia/Brisbane";
@@ -105,12 +98,7 @@
       programs.appimage.binfmt = true;
 
       # --- Remote Access ---
-      services.sunshine = {
-        enable = true;
-        autoStart = true;
-        capSysAdmin = true;
-        openFirewall = true;
-      };
+      # (Sunshine comes from gaming.nix, which this host imports.)
 
       # --- Virtualisation ---
       virtualisation.docker.enable = true;
@@ -146,7 +134,6 @@
         # Development
         git
         gh
-        vscode-fhs
         claude-code
         nh
 
@@ -184,7 +171,7 @@
         libreoffice
         gnome-calculator
         pdfarranger
-        freecad
+        stable.freecad # unstable's freecad→vtk→pdal breaks on the 2026-07 GDAL bump
         obsidian
 
         # Networking & Monitoring

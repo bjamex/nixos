@@ -18,6 +18,14 @@
         "nix-command"
         "flakes"
       ];
+      nix.settings.auto-optimise-store = true;
+      # Headless box that's rarely looked at — without GC it accumulates
+      # generations indefinitely. Same policy as styx/void.
+      nix.gc = {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 14d";
+      };
       nixpkgs.config.allowUnfree = true;
 
       # --- Boot ---
@@ -27,7 +35,7 @@
       # --- Networking ---
       networking.hostName = "hades";
       networking.firewall.enable = true;
-      networking.firewall.allowedTCPPorts = [ 22 ];
+      # (port 22 is opened by services.openssh's openFirewall default)
 
       # Headless server — no local console once deployed, so SSH stays on
       # (styx/void disable it since they're reachable in person + Tailscale).
