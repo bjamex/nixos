@@ -19,7 +19,7 @@
     let
       pname = "exiled-exchange-2";
       version = "0.15.8";
-      electron = pkgs.electron_40;
+      electron = pkgs.electron_41; # was electron_40; 40.x went EOL/insecure 2026-07
 
       src = pkgs.fetchFromGitHub {
         owner = "Kvan7";
@@ -40,7 +40,7 @@
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-BwzebVf2yyXQ7NSyOACImetGfp5+hIMOL8wAjLRh/2Q=";
+        outputHash = "sha256-NWkyF64oJJ64MxmoQqE8U86vfC1pqBXAMiUg41zz/Dk="; # electron_41 bump changed the built output
 
         # Pure download content: don't let fixupPhase shrink RPATHs of the
         # prebuilt *.node binaries, which would bake /nix/store refs into the

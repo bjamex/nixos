@@ -55,17 +55,23 @@
           pkgs.libnotify
         ];
         text = ''
+          log="$HOME/.local/state/voice-satellite.log"
           mkdir -p "$HOME/.local/state"
           ${lib.optionalString (cfg.micDevice != null) ''
             # Pin capture to a specific PipeWire source (see voice.satellite.micDevice).
             export PIPEWIRE_NODE=${lib.escapeShellArg cfg.micDevice}
           ''}
           while true; do
+            # Append-only with no supervision means the log grows forever on an
+            # always-on host; keep only the most recent chunk each (re)start.
+            if [ -f "$log" ]; then
+              tail -n 2000 "$log" > "$log.tmp" && mv "$log.tmp" "$log"
+            fi
             python3 ${./voice-satellite.py} \
               --whisper-uri "${cfg.whisperUri}" \
               --wake-word "${cfg.wakeWord}" \
               --commands "${commandsFile}" \
-              >>"$HOME/.local/state/voice-satellite.log" 2>&1 || true
+              >>"$log" 2>&1 || true
             sleep 5
           done
         '';
@@ -154,6 +160,17 @@
               command = "${lib.getExe pkgs.pamixer} -d 10";
             }
             {
+              # "set volume to 30", "volume 30 percent", "set the volume at 30%".
+              # Captures the number (\D{0,10} skips filler like "to"/"at"/"the")
+              # and expands it into \1 — see dispatch() in voice-satellite.py.
+              # Digits only: Whisper renders spoken numbers as digits here.
+              # pamixer clamps out-of-range values to 0-100. Comes after up/down
+              # since neither of those matches a "volume <number>" phrase.
+              pattern = "\\bvolume\\b\\D{0,10}(\\d{1,3})";
+              description = "Set volume";
+              command = "${lib.getExe pkgs.pamixer} --set-volume \\1";
+            }
+            {
               pattern = "\\b(mute|unmute|silence)\\b";
               description = "Toggle speaker mute";
               command = "${wpctl} set-mute @DEFAULT_AUDIO_SINK@ toggle";
@@ -187,6 +204,45 @@
               pattern = "\\b(close|kill)\\b";
               description = "Close window";
               command = "${hyprctl} dispatch killactive";
+            }
+
+            # App launchers. These resolve via the graphical session's PATH (the
+            # satellite runs under Hyprland), same as the keybind exec_cmds in
+            # hyprland.nix — hence bare names rather than store paths. They sit
+            # after "close" so "close discord" closes the window instead of
+            # matching the app name and reopening it.
+            {
+              pattern = "\\b(browser|helium|firefox|chrome|internet)\\b";
+              description = "Open browser";
+              command = "helium";
+            }
+            {
+              pattern = "\\b(terminal|kitty|console)\\b";
+              description = "Open terminal";
+              command = "kitty";
+            }
+            {
+              pattern = "\\bdiscord\\b";
+              description = "Open Discord";
+              command = "flatpak run com.discordapp.Discord";
+            }
+            {
+              pattern = "\\bsteam\\b";
+              description = "Open Steam";
+              command = "steam";
+            }
+            {
+              # nemo is the desktop file manager (see fileManager.nix).
+              pattern = "\\b(files?|file\\s*manager|nemo|explorer)\\b";
+              description = "Open file manager";
+              command = "nemo";
+            }
+            {
+              # -c opens a graphical frame; -a "" self-starts the daemon if the
+              # emacs server isn't already running.
+              pattern = "\\b(emacs|editor)\\b";
+              description = "Open Emacs";
+              command = "emacsclient -c -a \"\"";
             }
           ];
           description = "Ordered list of transcript-matching commands; first match wins.";
