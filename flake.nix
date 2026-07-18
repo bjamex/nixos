@@ -6,7 +6,9 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     lix-module = {
-      url = "https://git.lix.systems/lix-project/nixos-module/archive/stable.tar.gz";
+      # main, not stable: stable sits at the 2.92-era module while lixFromNixpkgs
+      # ships Lix 2.95.x, which the older module warns about on every eval.
+      url = "https://git.lix.systems/lix-project/nixos-module/archive/main.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:vic/import-tree";
@@ -28,6 +30,7 @@
     nix-citizen = {
       url = "github:LovingMelody/nix-citizen";
       inputs.nix-gaming.follows = "nix-gaming";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     helium = {

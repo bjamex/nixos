@@ -84,8 +84,5 @@
           ReadWritePaths = [ "/var/lib/comfyui" ];
         };
       };
-
-      # No longer need Docker for ComfyUI
-      virtualisation.oci-containers.containers = { };
     };
 }

@@ -35,7 +35,7 @@
         self.nixosModules.budslink
         self.nixosModules.shell
         self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
-        # self.nixosModules.davinciResolve  # blackmagic source download broken after nixpkgs bump 2026-06-30
+        self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
 
         self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
         self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
@@ -178,7 +178,6 @@
         # Development
         git
         gh
-        vscode-fhs
         claude-code
         nh
 
@@ -204,7 +203,6 @@
         teams-for-linux
         localsend
         # Media & Creative
-        komikku
         rapidraw
         obs-studio
         darktable
@@ -222,12 +220,10 @@
         libreoffice
         gnome-calculator
         pdfarranger
-        freecad
+        stable.freecad # unstable's freecad→vtk→pdal breaks on the 2026-07 GDAL bump
         orca-slicer
         simple-scan
         typora
-        obsidian
-        affine
 
         # Networking & Monitoring
         nethogs
@@ -235,7 +231,6 @@
         moonlight-qt
         pamixer
         cifs-utils
-        baobab
 
         # Containers (uses the docker backend already enabled above)
         distrobox
