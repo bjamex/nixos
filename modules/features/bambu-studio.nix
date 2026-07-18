@@ -37,6 +37,14 @@
         # pages (it isn't bundled); without it the app runs but Bambu account
         # login and the device page render blank.
         extraPkgs = p: [ p.webkitgtk_4_1 ];
+        # The app probes Fedora's CA path (/etc/pki/tls/certs/ca-bundle.crt)
+        # and pops an SSL warning on every launch when it's absent; point it
+        # at NixOS's bundle instead, as the dialog itself suggests.
+        extraBwrapArgs = [
+          "--setenv"
+          "SSL_CERT_FILE"
+          "/etc/ssl/certs/ca-certificates.crt"
+        ];
         extraInstallCommands = ''
           install -Dm444 ${appimageContents}/BambuStudio.desktop \
             $out/share/applications/${pname}.desktop

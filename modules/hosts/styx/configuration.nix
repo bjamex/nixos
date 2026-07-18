@@ -99,6 +99,16 @@
       # --- Locale & Time ---
       time.timeZone = "Australia/Brisbane";
       i18n.defaultLocale = "en_AU.UTF-8";
+      # en_GB: Bambu Studio's "English" UI locale — with only en_AU in the
+      # locale archive it warns "Switching language en_GB failed" on launch.
+      # (Setting this option replaces the auto-derived default, so the host
+      # locale + C must be listed explicitly.)
+      i18n.supportedLocales = [
+        "C.UTF-8/UTF-8"
+        "en_AU.UTF-8/UTF-8"
+        "en_GB.UTF-8/UTF-8"
+        "en_US.UTF-8/UTF-8"
+      ];
 
       # --- Hardware ---
       hardware.amdgpu.initrd.enable = true;
