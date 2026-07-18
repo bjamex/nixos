@@ -7,6 +7,7 @@
       imports = [
         inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.styxHardware
+        self.nixosModules.common # shared styx/void desktop foundation
         self.nixosModules.login
         self.nixosModules.hyprland
         self.nixosModules.noctalia
@@ -34,7 +35,6 @@
         # self.nixosModules.website
         self.nixosModules.budslink
         self.nixosModules.shell
-        self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
 
@@ -42,33 +42,8 @@
         self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
       ];
 
-      # --- Nix ---
-      nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      nix.settings.auto-optimise-store = true;
-      nix.gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 14d";
-      };
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.overlays = [
-        (final: prev: {
-          # pkgs.stable pinned for lutris — unstable broke it around 2025-06
-          stable = import inputs.nixpkgs-pinned {
-            system = final.stdenv.hostPlatform.system;
-            config.allowUnfree = true;
-          };
-        })
-      ];
-
       # --- Boot ---
-      boot.loader.systemd-boot.enable = true;
-      boot.loader.efi.canTouchEfiVariables = true;
       boot.loader.timeout = 0;
-      boot.kernelPackages = pkgs.linuxPackages_latest;
       boot.kernelModules = [
         "igc"
         "snd_usb_audio"
@@ -84,9 +59,6 @@
 
       # --- Networking ---
       networking.hostName = "styx";
-      networking.networkmanager.enable = true;
-      networking.firewall.enable = true;
-      services.openssh.enable = false;
 
       # KDE Connect: installs kdeconnect-kde and opens TCP/UDP 1714-1764
       programs.kdeconnect.enable = true;
@@ -96,9 +68,7 @@
       # default and, if muted, leave voice control reading silence.
       voice.satellite.micDevice = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
 
-      # --- Locale & Time ---
-      time.timeZone = "Australia/Brisbane";
-      i18n.defaultLocale = "en_AU.UTF-8";
+      # --- Locale ---
       # en_GB: Bambu Studio's "English" UI locale — with only en_AU in the
       # locale archive it warns "Switching language en_GB failed" on launch.
       # (Setting this option replaces the auto-derived default, so the host
@@ -113,21 +83,7 @@
       # --- Hardware ---
       hardware.amdgpu.initrd.enable = true;
 
-      # --- Bluetooth ---
-      hardware.bluetooth.enable = true;
-      hardware.bluetooth.powerOnBoot = true;
-      services.blueman.enable = true;
-
-      # --- Scanning ---
-      hardware.sane.enable = true;
-
       # --- Printing ---
-      services.printing.enable = true;
-      services.avahi = {
-        enable = true;
-        nssmdns4 = true;
-        openFirewall = true;
-      };
       hardware.printers.ensureDefaultPrinter = "EPSON_SC_T3100_Series";
       hardware.printers.ensurePrinters = [
         {
@@ -139,123 +95,48 @@
         }
       ];
 
-      # --- Virtualisation ---
-      virtualisation.docker.enable = true;
-
-      # --- Shell ---
-      # `ec` = emacsclient terminal frame on the daemon (see emacs.nix), with a
-      # self-start fallback. Plain `emacs` is still the standalone instance.
-      programs.bash.shellAliases.n = "ec";
-
       # --- Programs ---
       programs.nix-ld.enable = true;
-      security.polkit.enable = true;
-      programs.appimage = {
-        enable = true;
-        binfmt = true;
-      };
 
       # --- Services ---
-      services.flatpak.enable = true;
       services.ratbagd.enable = true;
-      # --- Users ---
-      users.users.swin = {
-        isNormalUser = true;
-        description = "Brett James";
-        extraGroups = [
-          "networkmanager"
-          "wheel"
-          "render"
-          "video"
-          "docker"
-          "scanner"
-          "lp"
-          "disk"
-          "dialout"
-          "input"
-          "ratbagd"
-        ];
-      };
 
-      # --- Packages ---
+      # --- Users ---
+      # Base user + shared groups come from common.nix; these merge on top.
+      users.users.swin.extraGroups = [
+        "input"
+        "ratbagd"
+      ];
+
+      # --- Packages (styx-only; shared set lives in common.nix) ---
       environment.systemPackages = with pkgs; [
         # Shell utilities
-
         unzip
-        (writeShellScriptBin "nwhich" "readlink -f $(which $1)")
-        (writeShellScriptBin "cnwhich" "cat $(readlink -f $(which $1))")
-        (writeShellScriptBin "md" "mkdir -p \"$1\" && cd \"$1\"")
-
-        # Development
-        git
-        gh
-        claude-code
-        nh
 
         # Mouse
         piper
         solaar
 
         # Terminal & System
-        btop
-        ncdu
-        baobab
-        fzf
-        lazygit
         nvtopPackages.amd
-        weathr
         tickrs
 
         # Internet & Communication
-        inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
         mcp-nixos
-        qbittorrent
-        nordpass
         teams-for-linux
-        localsend
+
         # Media & Creative
-        rapidraw
-        obs-studio
-        darktable
-        jellyfin-tui
-        ani-cli
-        loupe
-        vlc
-        inkscape
-        pinta
-        xournalpp
         blender
+        ## bambu-studio  # from nixpkgs = local source build; see bambu-studio.nix
+
         # Productivity
-        impression
-        libreoffice
-        gnome-calculator
-        pdfarranger
-        stable.freecad # unstable's freecad→vtk→pdal breaks on the 2026-07 GDAL bump
         orca-slicer
         simple-scan
         typora
 
-        # Networking & Monitoring
-        nethogs
-        linssid
-        moonlight-qt
-        pamixer
-        cifs-utils
-
-        # Containers (uses the docker backend already enabled above)
+        # Containers (uses the docker backend enabled in common.nix)
         distrobox
       ];
-
-      # --- Browser ---
-      xdg.mime.defaultApplications = {
-        "text/html" = "helium.desktop";
-        "x-scheme-handler/http" = "helium.desktop";
-        "x-scheme-handler/https" = "helium.desktop";
-        "x-scheme-handler/about" = "helium.desktop";
-        "x-scheme-handler/unknown" = "helium.desktop";
-      };
-
-      environment.sessionVariables.BROWSER = "helium";
 
       # Single Gigabyte M27Q desktop monitor; Hyprland base auto-detects otherwise.
       myHyprland.monitorLua = ''hl.monitor({ output = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q", mode = "2560x1440@143.856", position = "0x0", scale = 1 })'';

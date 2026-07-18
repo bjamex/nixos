@@ -1,31 +1,47 @@
-# Built from source so uiohook-napi links against the SYSTEM X11 libs via LD_LIBRARY_PATH,
-# and force-pinned to uiohook-napi 1.5.5: upstream's main/package-lock.json pins 1.5.4,
-# whose XkbGetKeyboard call is rejected by current XWayland (breaks the price-check
-# hotkey). The nixpkgs package wraps the AppImage which has the same problem.
-# Mirrors exiled-exchange.nix.
+# Awakened PoE Trade (PoE 1) + Exiled Exchange 2 (PoE 2) — the same Electron
+# overlay codebase (EE2 is an APT fork), built from source via one shared
+# builder so the Electron version and the uiohook-napi pin live in ONE place.
 #
-# To update to a new version:
-# 1. nix run nixpkgs#nix-prefetch-github -- SnosMe awakened-poe-trade --rev <tag-commit>
-# 2. Update rev, hash, and version below
-# 3. Set outputHash to lib.fakeHash
-# 4. Run: nixos-rebuild build --flake .#styx
+# Why source-built at all: the upstream AppImages bundle their own X11 libs
+# that are incompatible with Hyprland's XWayland — uiohook then fails
+# ("XkbGetKeyboard failed to locate a valid keyboard") and the price-check
+# hotkeys barely register. Building from source lets uiohook-napi link against
+# the system X11 libs via the wrapper's LD_LIBRARY_PATH, and we force-pin
+# uiohook-napi 1.5.5: the upstream locks pin 1.5.4, whose XkbGetKeyboard call
+# is rejected by current XWayland; 1.5.5 drops that call.
+#
+# To update either app to a new version:
+# 1. nix run nixpkgs#nix-prefetch-github -- <owner> <repo> --rev <tag/commit>
+# 2. Update rev, hash, version in that app's block below
+# 3. Set its outputHash to lib.fakeHash
+# 4. nixos-rebuild build --flake .#styx
 # 5. Copy the "got: sha256-..." from the error into outputHash
 # 6. Build again
 
 { self, inputs, ... }:
-{
-  flake.nixosModules.awakenedPoeTrade =
+let
+  mkModule =
+    {
+      pname,
+      version,
+      owner,
+      repo,
+      rev,
+      srcHash,
+      outputHash,
+      desktopName,
+      comment,
+      wmClass,
+      homepage,
+      extraElectronFlags ? "",
+    }:
     { pkgs, lib, ... }:
     let
-      pname = "awakened-poe-trade";
-      version = "3.28.103";
-      electron = pkgs.electron_41;
+      electron = pkgs.electron_41; # was electron_40; 40.x went EOL/insecure 2026-07
 
       src = pkgs.fetchFromGitHub {
-        owner = "SnosMe";
-        repo = "awakened-poe-trade";
-        rev = "904b2f5e0395c773cd4196e01b0c7f7fcf53f45c";
-        hash = "sha256-lJqJNMwLBYO4CYQOGkflJqg0NhYOBHSZeqUYihIU2DU=";
+        inherit owner repo rev;
+        hash = srcHash;
       };
 
       builtApp = pkgs.stdenv.mkDerivation {
@@ -40,7 +56,7 @@
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-VkC2cLUw5oC4nWMtBwZDtMfFLxMnVU538t5b1k/ME30="; # uiohook-napi 1.5.5 pin changed the built output
+        inherit outputHash;
 
         # Pure download content: don't let fixupPhase shrink RPATHs of the
         # prebuilt *.node binaries, which would bake /nix/store refs into the
@@ -56,9 +72,7 @@
           npm run make-index-files
           npm run build
           cd ..
-          # Force uiohook-napi 1.5.5: the upstream lock pins 1.5.4, whose
-          # XkbGetKeyboard call is rejected by current XWayland (breaks the
-          # price-check hotkey). 1.5.5 drops that call. Drop main's lock so
+          # Force uiohook-napi 1.5.5 (see file header). Drop main's lock so
           # the new pin resolves on install.
           jq '.dependencies."uiohook-napi" = "1.5.5" | .overrides."uiohook-napi" = "1.5.5"' \
             main/package.json > main/package.json.tmp
@@ -86,7 +100,7 @@
         '';
       };
 
-      awakenedPoeTrade = pkgs.stdenv.mkDerivation {
+      app = pkgs.stdenv.mkDerivation {
         inherit pname version;
 
         dontUnpack = true;
@@ -105,18 +119,18 @@
           cp -r ${builtApp}/renderer/* $out/share/${pname}/
           cp -r ${builtApp}/node_modules $out/share/${pname}/
 
-          echo '{"name":"awakened-poe-trade","version":"${version}","main":"main.js"}' \
+          echo '{"name":"${pname}","version":"${version}","main":"main.js"}' \
             > $out/share/${pname}/package.json
 
-          cat > $out/share/applications/${pname}.desktop << 'EOF'
+          cat > $out/share/applications/${pname}.desktop << EOF
           [Desktop Entry]
-          Name=Awakened PoE Trade
-          Comment=Path of Exile trading macro
-          Exec=awakened-poe-trade
-          Icon=awakened-poe-trade
+          Name=${desktopName}
+          Comment=${comment}
+          Exec=${pname}
+          Icon=${pname}
           Type=Application
           Categories=Game;Utility;
-          StartupWMClass=awakened-poe-trade
+          StartupWMClass=${wmClass}
           EOF
 
           runHook postInstall
@@ -125,7 +139,7 @@
         postFixup = ''
           makeWrapper ${lib.getExe electron} $out/bin/${pname} \
             --add-flags $out/share/${pname} \
-            --add-flags "--ozone-platform=x11" \
+            --add-flags "--ozone-platform=x11${extraElectronFlags}" \
             --prefix LD_LIBRARY_PATH : "${
               lib.makeLibraryPath (
                 with pkgs;
@@ -142,8 +156,8 @@
         '';
 
         meta = {
-          description = "Source-built awakened-poe-trade with Hyprland/XWayland hotkey fix";
-          homepage = "https://github.com/SnosMe/awakened-poe-trade";
+          description = "Source-built ${desktopName} with Hyprland/XWayland hotkey fix";
+          inherit homepage;
           license = lib.licenses.mit;
           platforms = lib.platforms.linux;
           mainProgram = pname;
@@ -151,6 +165,36 @@
       };
     in
     {
-      environment.systemPackages = [ awakenedPoeTrade ];
+      environment.systemPackages = [ app ];
     };
+in
+{
+  flake.nixosModules.awakenedPoeTrade = mkModule {
+    pname = "awakened-poe-trade";
+    version = "3.28.103";
+    owner = "SnosMe";
+    repo = "awakened-poe-trade";
+    rev = "904b2f5e0395c773cd4196e01b0c7f7fcf53f45c";
+    srcHash = "sha256-lJqJNMwLBYO4CYQOGkflJqg0NhYOBHSZeqUYihIU2DU=";
+    outputHash = "sha256-VkC2cLUw5oC4nWMtBwZDtMfFLxMnVU538t5b1k/ME30="; # uiohook-napi 1.5.5 pin changed the built output
+    desktopName = "Awakened PoE Trade";
+    comment = "Path of Exile trading macro";
+    wmClass = "awakened-poe-trade";
+    homepage = "https://github.com/SnosMe/awakened-poe-trade";
+  };
+
+  flake.nixosModules.exiledExchange = mkModule {
+    pname = "exiled-exchange-2";
+    version = "0.15.8";
+    owner = "Kvan7";
+    repo = "Exiled-Exchange-2";
+    rev = "v0.15.8";
+    srcHash = "sha256-+ghWAH5fijwOJRC5GssHNnEfHe+RDNUOJmoJ2Ddgt7M=";
+    outputHash = "sha256-NWkyF64oJJ64MxmoQqE8U86vfC1pqBXAMiUg41zz/Dk="; # electron_41 bump changed the built output
+    desktopName = "Exiled Exchange 2";
+    comment = "Path of Exile 2 trading macro";
+    wmClass = "Exiled Exchange 2";
+    homepage = "https://github.com/Kvan7/Exiled-Exchange-2";
+    extraElectronFlags = " --enable-transparent-visuals";
+  };
 }
