@@ -1,5 +1,8 @@
-# Built from source so npm pulls uiohook-napi 1.5.5+ (fixes XkbGetKeyboard on Hyprland/XWayland).
-# The nixpkgs package wraps the AppImage which bundles uiohook-napi 1.5.4 (broken).
+# Built from source so uiohook-napi links against the SYSTEM X11 libs via LD_LIBRARY_PATH,
+# and force-pinned to uiohook-napi 1.5.5: upstream's main/package-lock.json pins 1.5.4,
+# whose XkbGetKeyboard call is rejected by current XWayland (breaks the price-check
+# hotkey). The nixpkgs package wraps the AppImage which has the same problem.
+# Mirrors exiled-exchange.nix.
 #
 # To update to a new version:
 # 1. nix run nixpkgs#nix-prefetch-github -- SnosMe awakened-poe-trade --rev <tag-commit>
@@ -32,11 +35,17 @@
         nativeBuildInputs = with pkgs; [
           nodejs
           cacert
+          jq
         ];
 
         outputHashAlgo = "sha256";
         outputHashMode = "recursive";
-        outputHash = "sha256-ioVz7fUF7MzhFLTnD9ik3PHlbHx/24o+TUp8sVMyAbQ=";
+        outputHash = "sha256-VkC2cLUw5oC4nWMtBwZDtMfFLxMnVU538t5b1k/ME30="; # uiohook-napi 1.5.5 pin changed the built output
+
+        # Pure download content: don't let fixupPhase shrink RPATHs of the
+        # prebuilt *.node binaries, which would bake /nix/store refs into the
+        # FOD (forbidden). Runtime libs come from the wrapper's LD_LIBRARY_PATH.
+        dontFixup = true;
 
         buildPhase = ''
           export HOME=$TMPDIR
@@ -47,6 +56,14 @@
           npm run make-index-files
           npm run build
           cd ..
+          # Force uiohook-napi 1.5.5: the upstream lock pins 1.5.4, whose
+          # XkbGetKeyboard call is rejected by current XWayland (breaks the
+          # price-check hotkey). 1.5.5 drops that call. Drop main's lock so
+          # the new pin resolves on install.
+          jq '.dependencies."uiohook-napi" = "1.5.5" | .overrides."uiohook-napi" = "1.5.5"' \
+            main/package.json > main/package.json.tmp
+          mv main/package.json.tmp main/package.json
+          rm -f main/package-lock.json
           cd main
           npm install --ignore-scripts
           patchShebangs node_modules

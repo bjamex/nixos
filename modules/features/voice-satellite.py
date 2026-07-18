@@ -78,10 +78,22 @@ def dispatch(text: str, commands: List[Command]) -> None:
         return
 
     for cmd in commands:
-        if cmd.pattern.search(stripped):
+        match = cmd.pattern.search(stripped)
+        if match:
+            # Substitute regex capture groups into the command so a spoken value
+            # can flow through, e.g. pattern "...(\d+)" + command
+            # "pamixer --set-volume \1". Patterns without groups (or commands
+            # with no \N refs) are unchanged. Fall back to the literal command
+            # if the template has a stray backslash / bad group ref.
+            command = cmd.command
+            if match.groups():
+                try:
+                    command = match.expand(cmd.command)
+                except (re.error, IndexError):
+                    command = cmd.command
             _LOGGER.info("matched %r -> %s", stripped, cmd.description)
             subprocess.run(["notify-send", "-t", "2000", "Voice", cmd.description], check=False)
-            subprocess.Popen(cmd.command, shell=True)
+            subprocess.Popen(command, shell=True)
             return
 
     _LOGGER.info("no command matched: %r", stripped)

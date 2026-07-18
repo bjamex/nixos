@@ -23,6 +23,24 @@
   {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
+    # patool 4.0.5's check phase fails under nixpkgs 2026-07-15 — its tests can't
+    # find the archiver helpers (list_xz/list_bzip2/...) on the build PATH and a
+    # libmagic mime assertion mismatches — which blocks bottles. patool resolves
+    # archivers at runtime via PATH, so these are test-env failures only; skip
+    # the checks. Drop this overlay once nixpkgs fixes patool upstream.
+    nixpkgs.overlays = [
+      (final: prev: {
+        pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+          (pyfinal: pyprev: {
+            patool = pyprev.patool.overridePythonAttrs (_: {
+              doCheck = false;
+              doInstallCheck = false;
+            });
+          })
+        ];
+      })
+    ];
+
     hardware.graphics.enable = lib.mkDefault true;
     hardware.graphics.enable32Bit = lib.mkDefault true;
     hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr ];
