@@ -35,6 +35,7 @@
         self.nixosModules.budslink
         self.nixosModules.shell
         self.nixosModules.rapidraw # AppImage overlay — stays current with upstream
+        self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
 
         self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
@@ -214,7 +215,6 @@
         pinta
         xournalpp
         blender
-        ## bambu-studio
         # Productivity
         impression
         libreoffice
