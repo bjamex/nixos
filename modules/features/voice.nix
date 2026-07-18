@@ -93,10 +93,14 @@
 
         whisperUri = lib.mkOption {
           type = lib.types.str;
-          default = "tcp://styx.pancake-ling.ts.net:10300";
+          # Bare hostname on purpose: Tailscale's MagicDNS search domain
+          # (<tailnet>.ts.net in resolv.conf) completes it on any tailnet
+          # member, and the repo is public — no need to expose the tailnet name.
+          default = "tcp://styx:10300";
           description = ''
-            Wyoming ASR server URI. Defaults to styx over Tailscale MagicDNS;
-            styx itself overrides this to loopback (see voiceServer).
+            Wyoming ASR server URI. Defaults to styx over Tailscale MagicDNS
+            (short name, resolved via the tailnet search domain); styx itself
+            overrides this to loopback (see voiceServer).
           '';
         };
 
