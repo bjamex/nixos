@@ -35,15 +35,25 @@
         inherit pname version src;
         # The AppImage expects webkit2gtk on the host for the login/network
         # pages (it isn't bundled); without it the app runs but Bambu account
-        # login and the device page render blank.
-        extraPkgs = p: [ p.webkitgtk_4_1 ];
-        # The app probes Fedora's CA path (/etc/pki/tls/certs/ca-bundle.crt)
-        # and pops an SSL warning on every launch when it's absent; point it
-        # at NixOS's bundle instead, as the dialog itself suggests.
+        # login and the device page render blank. glib-networking is webkit's
+        # TLS backend (a GIO module) — without it the webview shows
+        # "TLS support is not available" on every https page.
+        extraPkgs = p: [
+          p.webkitgtk_4_1
+          p.glib-networking
+        ];
         extraBwrapArgs = [
+          # The app probes Fedora's CA path (/etc/pki/tls/certs/ca-bundle.crt)
+          # and pops an SSL warning on every launch when it's absent; point it
+          # at NixOS's bundle instead, as the dialog itself suggests.
           "--setenv"
           "SSL_CERT_FILE"
           "/etc/ssl/certs/ca-certificates.crt"
+          # nixpkgs glib only searches its own store path for GIO modules, so
+          # glib-networking must be announced explicitly.
+          "--setenv"
+          "GIO_EXTRA_MODULES"
+          "${pkgs.glib-networking}/lib/gio/modules"
         ];
         extraInstallCommands = ''
           install -Dm444 ${appimageContents}/BambuStudio.desktop \
