@@ -11,6 +11,9 @@
         pkgs.bzip2
         pkgs.libGL
         pkgs.glib
+        # opencv-python (custom node dep) links libxcb/libX11 at import time
+        pkgs.xorg.libxcb
+        pkgs.xorg.libX11
       ];
       startScript = pkgs.writeShellScript "comfyui-start" ''
         set -e
@@ -33,14 +36,21 @@
         fi
 
         if [ ! -f "$VENV_DIR/.installed" ]; then
-          echo "Creating venv and installing PyTorch ROCm 6.5..."
+          echo "Creating venv and installing PyTorch ROCm 7.2..."
           ${pkgs.python312}/bin/python -m venv "$VENV_DIR"
           "$VENV_DIR/bin/pip" install --quiet torch torchvision torchaudio \
-            --index-url https://download.pytorch.org/whl/rocm6.5
+            --index-url https://download.pytorch.org/whl/rocm7.2
           echo "Installing ComfyUI requirements..."
           "$VENV_DIR/bin/pip" install --quiet -r "$COMFYUI_DIR/requirements.txt"
           echo "Installing ComfyUI Manager..."
           "$VENV_DIR/bin/pip" install --quiet -U --pre comfyui-manager
+          # Custom nodes carry their own requirements; without this a venv
+          # rebuild leaves them all in IMPORT FAILED state.
+          for req in "$COMFYUI_DIR"/custom_nodes/*/requirements.txt; do
+            [ -f "$req" ] || continue
+            echo "Installing custom node requirements: $req"
+            "$VENV_DIR/bin/pip" install --quiet -r "$req"
+          done
           touch "$VENV_DIR/.installed"
         fi
 
@@ -80,7 +90,11 @@
           ExecStart = startScript;
           WorkingDirectory = "/var/lib/comfyui";
           Restart = "on-failure";
+          # Back off exponentially: a dead pip index once looped this unit 199
+          # times in a session at a flat 10s cadence.
           RestartSec = 10;
+          RestartSteps = 8;
+          RestartMaxDelaySec = "30min";
           ReadWritePaths = [ "/var/lib/comfyui" ];
         };
       };
