@@ -9,22 +9,34 @@
       system = pkgs.stdenv.hostPlatform.system;
       config.allowUnfree = true;
     };
+    pkgs-openwebui = import inputs.nixpkgs-openwebui {
+      system = pkgs.stdenv.hostPlatform.system;
+      config.allowUnfree = true;
+    };
   in {
     services.ollama = {
       enable = true;
       package = pkgs-ollama.ollama-rocm;
-      rocmOverrideGfx = "11.0.0"; # gfx1201 has no Tensile library yet; RDNA3 kernels work on RDNA4
+      # No rocmOverrideGfx: the bundled ROCm 7.2 ships native gfx1201 kernels,
+      # and forcing gfx1100 ISA on RDNA4 hung the MES (GPU reset, 2026-07-19).
       host = "127.0.0.1";
+      environmentVariables = {
+        # The vram-based default is 4096, which Open WebUI's prompts overflow —
+        # ollama then truncates the input and thinking eats the rest, so chats
+        # "think" but never answer. gemma4:12b + 16k KV fits 16 GB comfortably.
+        OLLAMA_CONTEXT_LENGTH = "16384";
+      };
     };
 
     services.open-webui = {
       enable = true;
-      # main nixpkgs' open-webui 0.10.2 fails its Svelte build (invalid
-      # self-closing tags) on the 2026-07 bump; the nixos-26.05 pin has a
-      # working 0.9.6. Drop this once main ships a fixed 0.10.x.
-      package = pkgs-ollama.open-webui;
+      # 0.10.1 already migrated the DB in /var/lib/open-webui, so 26.05's 0.9.6
+      # crashes on it (no such column: config.id); main's 0.10.2 fails its
+      # Svelte build. Pin the 0.10.1 rev until main ships a fixed 0.10.x.
+      package = pkgs-openwebui.open-webui;
       host = "127.0.0.1";
-      port = 8080;
+      # 8080 is taken by the odysseus searxng container
+      port = 8081;
     };
   };
 }
