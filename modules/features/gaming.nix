@@ -19,6 +19,20 @@
       categories = [ "Game" "Emulator" ];
       terminal = false;
     };
+
+    # RetroArch wrapped with a curated core set covering the systems that run
+    # well as libretro cores; the heavier consoles (PS2/PS3/GC-Wii/PS4) get
+    # dedicated standalone emulators below instead.
+    retroarchWithCores = pkgs.retroarch.withCores (cores: with cores; [
+      nestopia         # NES / Famicom
+      snes9x           # SNES
+      genesis-plus-gx  # Genesis / Mega Drive / Master System / Game Gear
+      mgba             # GB / GBC / GBA
+      mupen64plus      # N64 (mupen64plus-next)
+      beetle-psx-hw    # PS1 (hardware-rendered)
+      melonds          # DS
+      flycast          # Dreamcast
+    ]);
   in
   {
     imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
@@ -107,6 +121,14 @@
       shadps4-qtlauncher # Qt GUI frontend
       shadps4Desktop
       appimage-run
+      # Emulation: RetroArch (curated cores) plus standalones for the heavy
+      # consoles. ROMs/BIOS/saves are mutable state — keep them in a data dir
+      # (e.g. ~/Games/emulation) and point each emulator at it, not in the flake.
+      retroarchWithCores
+      pcsx2              # PS2
+      dolphin-emu        # GameCube / Wii
+      rpcs3              # PS3
+      eden               # Switch (Yuzu/Sudachi-lineage fork)
     ]);
 
     # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
