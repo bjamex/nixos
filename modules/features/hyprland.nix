@@ -248,6 +248,7 @@
               fullscreen      = true,
               fullscreen_state = "0 2",
               idle_inhibit    = "always",
+              rounding        = 0, -- square corners: game fills to the edge, no bg peeking through
             })
 
             -- PoE overlay tools
