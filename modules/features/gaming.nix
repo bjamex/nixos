@@ -20,6 +20,11 @@
       terminal = false;
     };
 
+    # PoE Campaign Copilot — passive leveling overlay built from source (no
+    # upstream Linux release). Point its Settings at the Proton install's
+    # Client.txt, e.g. ~/.local/share/Steam/steamapps/common/Path of Exile/logs/Client.txt
+    poe-campaign-copilot = pkgs.callPackage ../../pkgs/poe-campaign-copilot { };
+
     # RetroArch wrapped with a curated core set covering the systems that run
     # well as libretro cores; the heavier consoles (PS2/PS3/GC-Wii/PS4) get
     # dedicated standalone emulators below instead.
@@ -117,6 +122,7 @@
       lsfg-vk-ui
       faugus-launcher
       xivlauncher
+      poe-campaign-copilot  # PoE leveling overlay (see let-binding above)
       shadps4            # core emulator binary (also what BB_Launcher execs to run the game)
       shadps4-qtlauncher # Qt GUI frontend
       shadps4Desktop
@@ -129,6 +135,11 @@
       dolphin-emu        # GameCube / Wii
       rpcs3              # PS3
       eden               # Switch (Yuzu/Sudachi-lineage fork)
+      # Frontend: imports ROMs + the emulators above as non-Steam shortcuts
+      # (with SteamGridDB artwork) so the library browses from the normal Steam
+      # client or Big Picture. Re-run it after adding ROMs; Steam must be running
+      # for the shortcuts to launch.
+      steam-rom-manager
     ]);
 
     # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
