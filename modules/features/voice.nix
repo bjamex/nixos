@@ -242,11 +242,9 @@
               command = "nemo";
             }
             {
-              # -c opens a graphical frame; -a "" self-starts the daemon if the
-              # emacs server isn't already running.
-              pattern = "\\b(emacs|editor)\\b";
-              description = "Open Emacs";
-              command = "emacsclient -c -a \"\"";
+              pattern = "\\b(neovim|nvim|editor|vim)\\b";
+              description = "Open Neovim";
+              command = "kitty nvim";
             }
           ];
           description = "Ordered list of transcript-matching commands; first match wins.";

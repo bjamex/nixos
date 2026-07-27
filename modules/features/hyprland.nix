@@ -121,7 +121,7 @@
           editing the Lua block directly so other feature modules (e.g. the voice
           satellite) can hook into session startup and inherit Hyprland's
           WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — a systemd user service
-          on default.target does not have these (see emacs.nix).
+          on default.target does not have these.
         '';
       };
 
@@ -149,7 +149,7 @@
           wf-recorder # simple Wayland screen recorder (see screenRecordToggle bind)
           gpu-screen-recorder # GPU-encoded capture + replay buffer (see gpuReplay* )
           slurp # region picker for wf-recorder / grimblast
-          wl-clipboard # grimblast copy* needs wl-copy (was provided by the removed neovim module)
+          wl-clipboard # grimblast copy* needs wl-copy
           inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
         ];
 
@@ -275,7 +275,7 @@
 
             -- Apps
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty"))
-            hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty ec"))
+            hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
             hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nautilus"))
@@ -290,7 +290,6 @@
             hl.bind("Print",                  hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
             hl.bind(mod .. " + SHIFT + R",    hl.dsp.exec_cmd("${screenRecordToggle}"))
             hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
-            hl.bind(mod .. " + SHIFT + N",    hl.dsp.exec_cmd("emacs"))
 
             -- Window management
             hl.bind(mod .. " + SHIFT + M", hl.dsp.window.fullscreen({ type = "fullscreen" }))

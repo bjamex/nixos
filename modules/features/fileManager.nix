@@ -53,13 +53,13 @@
         name = "gdoc-opener";
         desktopName = "Google Drive Opener";
         # Also handles application/json so yazi can route .gdsheet (detected as json) here.
-        # Falls back to kitty+emacs for regular JSON files.
+        # Falls back to kitty+nvim for regular JSON files.
         exec = "${pkgs.writeShellScript "gdoc-open" ''
           url=$(${lib.getExe pkgs.jq} -r '.url // empty' "$1" 2>/dev/null)
           if [ -n "$url" ]; then
             helium "$url"
           else
-            kitty ec "$1"
+            kitty nvim "$1"
           fi
         ''} %f";
         mimeTypes = [
@@ -136,9 +136,9 @@
           opener = {
             edit = [
               {
-                run = "ec %s";
+                run = "nvim %s";
                 block = true;
-                desc = "emacs";
+                desc = "nvim";
               }
             ];
             open = [
