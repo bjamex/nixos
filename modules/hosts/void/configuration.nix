@@ -14,7 +14,7 @@
         self.nixosModules.pipewire
         self.nixosModules.fileManager
         self.nixosModules.kitty
-        self.nixosModules.emacs
+        self.nixosModules.neovim
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb

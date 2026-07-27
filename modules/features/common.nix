@@ -60,9 +60,8 @@
       };
 
       # --- Shell ---
-      # `ec` = emacsclient terminal frame on the daemon (see emacs.nix), with a
-      # self-start fallback. Plain `emacs` is still the standalone instance.
-      programs.bash.shellAliases.n = "ec";
+      # `n` = quick nvim launch (Neovim/LazyVim, see neovim.nix).
+      programs.bash.shellAliases.n = "nvim";
 
       # --- Programs ---
       security.polkit.enable = true;
