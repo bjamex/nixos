@@ -56,12 +56,51 @@
       wl-clipboard # system clipboard integration under Wayland
       tree-sitter
 
-      # Language servers (replacing Mason) + formatters
-      lua-language-server
+      # Language servers / linters / formatters (replacing Mason). LazyVim's
+      # enabled lang extras (see ~/.config/nvim/lazyvim.json) auto-detect these
+      # on PATH, so mostly no lua config is needed — just the binary here.
+      # Two enabled extras have no clean nixpkgs binary and are left to the user
+      # to disable if unused: lang.typescript.tsgo (@typescript/native-preview)
+      # and lang.twig (no packaged twig LSP).
+      lua-language-server # :lang (lua config itself)
       stylua
-      nixd
+
+      nixd # :lang nix
+      statix
+      deadnix
       nixfmt
-      pyright
+
+      pyright # :lang python
+      ruff
+
+      astro-language-server # :lang astro — astro-ls
+
+      # :lang typescript (vtsls is LazyVim's default) + json/eslint/html/css
+      vtsls
+      typescript
+      typescript-language-server
+      vscode-langservers-extracted # json, eslint, html, css LSPs
+      biome # :lang typescript.biome
+      oxlint # :lang typescript.oxc
+      prettierd # web formatting (conform/none-ls)
+
+      yaml-language-server # :lang yaml
+
+      # :lang docker
+      dockerfile-language-server
+      docker-compose-language-service
+      hadolint
+
+      rust-analyzer # :lang rust
+
+      # :lang sql (nixpkgs ships sqls, not the node sql-language-server)
+      sqls
+      sqlfluff
+
+      # :lang typst
+      tinymist
+      typst
+      typstyle
     ];
   };
 }
