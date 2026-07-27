@@ -170,7 +170,9 @@
               -- desktop. See exiled-exchange.nix "synthetic copy" comment.
               hl.exec_cmd("hypridle")
               hl.exec_cmd("${gpuReplayDaemon}")
-              ${lib.concatMapStringsSep "\n              " (cmd: ''hl.exec_cmd("${cmd}")'') config.myHyprland.extraStartupExec}
+              ${lib.concatMapStringsSep "\n              " (
+                cmd: ''hl.exec_cmd("${cmd}")''
+              ) config.myHyprland.extraStartupExec}
             end)
 
             -- Animation curves
@@ -199,7 +201,7 @@
                 layout = "dwindle",
               },
               decoration = {
-                rounding         = 12,
+                rounding         = 0,
                 active_opacity   = 0.95,
                 inactive_opacity = 0.95,
                 fullscreen_opacity = 1.0,
@@ -208,6 +210,9 @@
                   passes   = 2,
                   noise    = 0.02,
                   vibrancy = 0.1696,
+                },
+                shadow = {
+                  enabled = false,
                 },
               },
               animations = {
