@@ -257,6 +257,24 @@
             -- Scalpel (verify class/title with `hyprctl clients`; adjust if it differs)
             hl.window_rule({ match = { class = "Scalpel" },             tag = "+overlay" })
             hl.window_rule({ match = { title = "Scalpel" },             tag = "+overlay" })
+            -- PoE Campaign Copilot (Tauri) — main window's title is always
+            -- exactly "PoE Campaign Copilot" (Settings/dialogs retitle, this
+            -- one doesn't), so this full-match won't catch a browser tab.
+            -- Park it on ws5 over the (fake-)fullscreen game, no focus steal.
+            hl.window_rule({ match = { title = "PoE Campaign Copilot" },  tag = "+overlay" })
+            hl.window_rule({ match = { title = "PoE Campaign Copilot" },
+              workspace = "5",
+              float     = true,
+              no_focus  = true,
+              -- Bottom-centred, just above PoE's skill/XP bar. This Hyprland's
+              -- move parser has no window-height token, so we can't bottom-
+              -- anchor; instead pin the top-left low (y = monitor_h - 200) and
+              -- let content grow downward. 200 clears the bottom UI for typical
+              -- area-info; raise it if a tall zone list overflows. x = (2560 -
+              -- ~1006 width)/2 centres on DP-3. Applied on window open — relaunch
+              -- the overlay after changing.
+              move      = "777 monitor_h-200",
+            })
             hl.window_rule({ match = { tag = "overlay" },
               float      = true,
               no_blur    = true,
