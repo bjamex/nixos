@@ -3,11 +3,25 @@
   flake.nixosModules.pipewire = { pkgs, ... }: {
     environment.systemPackages = [ pkgs.crosspipe pkgs.easyeffects ];
     security.rtkit.enable = true;
-    services.pipewire.wireplumber.extraConfig."99-defaults" = {
-      "wireplumber.settings" = {
-        "default.configured-audio-sink" = "alsa_output.usb-Generic_USB_Audio-00.HiFi__Speaker__sink";
-        "default.configured-audio-source" = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
-      };
+
+    # Pin the USB DAC (headphones/mic) as the preferred default over the GPU's
+    # HDMI audio. WirePlumber picks the highest priority.session node that is
+    # available; the USB device wins normally (828 > 616), but if it is briefly
+    # busy at boot HDMI can get cached as the default. Boosting the USB nodes
+    # and demoting HDMI makes the USB DAC the decisive default whenever present.
+    # (The old `default.configured-audio-sink` settings key does not exist in
+    # WirePlumber — `wpctl settings` reports "not found" — so it was a no-op.)
+    services.pipewire.wireplumber.extraConfig."90-usb-audio-default" = {
+      "monitor.alsa.rules" = [
+        {
+          matches = [ { "node.name" = "~alsa_(output|input)\\.usb-Generic_USB_Audio-00\\..*"; } ];
+          actions.update-props."priority.session" = 2000;
+        }
+        {
+          matches = [ { "node.name" = "~alsa_output\\.pci-.*\\.hdmi.*"; } ];
+          actions.update-props."priority.session" = 100;
+        }
+      ];
     };
 
     services.pipewire = {
