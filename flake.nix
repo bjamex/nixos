@@ -2,10 +2,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixpkgs-pinned.url = "github:nixos/nixpkgs/b12141ef619e0a9c1c84dc8c684040326f27cdcc";
-    # open-webui pin: last unstable rev whose 0.10.1 matches the DB schema in
-    # /var/lib/open-webui (0.10.x migrated it; 26.05's 0.9.6 can no longer read
-    # it, and 0.10.2 fails its Svelte build). Drop once main ships a fixed 0.10.x.
-    nixpkgs-openwebui.url = "github:nixos/nixpkgs/9e92285f211dad236540fd617d7e30e0b99bc0e1";
     nixpkgs-ollama.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     flake-parts.url = "github:hercules-ci/flake-parts";

@@ -326,22 +326,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-openwebui": {
-      "locked": {
-        "lastModified": 1782948114,
-        "narHash": "sha256-AXmz9ho4Lud5CsbrZsuSVwpQZ4o5FgZ1chxBn5cJ8+0=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "9e92285f211dad236540fd617d7e30e0b99bc0e1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "9e92285f211dad236540fd617d7e30e0b99bc0e1",
-        "type": "github"
-      }
-    },
     "nixpkgs-pinned": {
       "locked": {
         "lastModified": 1776548001,
@@ -390,7 +374,6 @@
         "nix-gaming": "nix-gaming",
         "nixpkgs": "nixpkgs",
         "nixpkgs-ollama": "nixpkgs-ollama",
-        "nixpkgs-openwebui": "nixpkgs-openwebui",
         "nixpkgs-pinned": "nixpkgs-pinned",
         "noctalia": "noctalia"
       }
