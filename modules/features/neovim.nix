@@ -39,6 +39,10 @@
         "${self}/modules/users/dotfiles/nvim/lua/plugins/theme.lua";
       ".config/nvim/lua/plugins/nixos.lua".source =
         "${self}/modules/users/dotfiles/nvim/lua/plugins/nixos.lua";
+      ".config/nvim/lua/plugins/layout.lua".source =
+        "${self}/modules/users/dotfiles/nvim/lua/plugins/layout.lua";
+      ".config/nvim/lua/plugins/herdr.lua".source =
+        "${self}/modules/users/dotfiles/nvim/lua/plugins/herdr.lua";
     };
 
     environment.systemPackages = with pkgs; [
