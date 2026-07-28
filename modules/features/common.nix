@@ -123,6 +123,7 @@
         localsend
 
         # Media & Creative
+        ffmpeg # audio/video transcode; also lets open-webui do voice/audio
         rapidraw
         obs-studio
         darktable
