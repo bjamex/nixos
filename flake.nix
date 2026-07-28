@@ -31,12 +31,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-citizen = {
-      url = "github:LovingMelody/nix-citizen";
-      inputs.nix-gaming.follows = "nix-gaming";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     helium = {
       url = "github:amaanq/helium-flake";
       inputs.nixpkgs.follows = "nixpkgs";
