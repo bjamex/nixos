@@ -6,3 +6,6 @@ result-*
 # Dont look at me
 __pycache__/
 *.pyc
+
+# Personal roadmap notes — kept local, not tracked
+docs/hades-roadmap.md
