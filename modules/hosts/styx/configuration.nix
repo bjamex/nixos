@@ -25,7 +25,6 @@
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb
-        # self.nixosModules.starCitizen  # broken: dxvk cross-compilation fails on nixpkgs f83fc3c
         self.nixosModules.awakenedPoeTrade
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
@@ -33,7 +32,6 @@
         self.nixosModules.comfyui
         self.nixosModules.airvpn
         self.nixosModules.tailscale
-        # self.nixosModules.website
         self.nixosModules.budslink
         self.nixosModules.shell
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
