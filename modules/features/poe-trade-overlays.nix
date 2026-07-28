@@ -190,7 +190,7 @@ in
     repo = "Exiled-Exchange-2";
     rev = "v0.15.8";
     srcHash = "sha256-+ghWAH5fijwOJRC5GssHNnEfHe+RDNUOJmoJ2Ddgt7M=";
-    outputHash = "sha256-NWkyF64oJJ64MxmoQqE8U86vfC1pqBXAMiUg41zz/Dk="; # electron_41 bump changed the built output
+    outputHash = "sha256-AU35hEP2Sch3PI00e9HwUJ5r/A/2kucr6pxWK0rX89U="; # rebuilt for the 2026-07-26 nixpkgs bump (toolchain change)
     desktopName = "Exiled Exchange 2";
     comment = "Path of Exile 2 trading macro";
     wmClass = "Exiled Exchange 2";

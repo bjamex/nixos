@@ -20,11 +20,11 @@
     { pkgs, lib, ... }:
     let
       pname = "bb-launcher";
-      version = "16.03";
+      version = "16.05";
 
       src = pkgs.fetchurl {
         url = "https://github.com/rainmakerv3/BB_Launcher/releases/download/Release${version}/BB_Launcher-qt.AppImage";
-        hash = "sha256-bVOBT+UbhVIjCv1NkNV6WVCLR0TaVS0TmksqcmkW+ns=";
+        hash = "sha256-RjGFwWIS29VjCAqsrnKdldV+37MAaED3EEF+7ujrxMM=";
       };
 
       # Pull the bundled .desktop entry and icon out of the AppImage so it shows
