@@ -36,5 +36,11 @@
       # 8080 is taken by the odysseus searxng container
       port = 8081;
     };
+
+    # The open-webui unit runs with a restricted PATH (it does not inherit
+    # environment.systemPackages / current-system sw/bin), so ffmpeg has to be
+    # added to the service PATH explicitly for its audio/voice transcription —
+    # the system-wide ffmpeg in common.nix is only visible to user shells.
+    systemd.services.open-webui.path = [ pkgs.ffmpeg ];
   };
 }
