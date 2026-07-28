@@ -297,7 +297,7 @@
             local mod = "SUPER"
 
             -- Apps
-            hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty"))
+            hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty herdr"))
             hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))

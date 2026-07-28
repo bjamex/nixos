@@ -47,6 +47,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Terminal multiplexer purpose-built for AI coding agents (Claude Code,
+    # Codex, …) — real PTY panes, persistent SSH-attachable sessions. Not in
+    # nixpkgs; source-built (Rust + zig), so the first build compiles it.
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake 
