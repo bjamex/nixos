@@ -16,5 +16,18 @@
     { pkgs, ... }:
     {
       environment.systemPackages = [ inputs.herdr.packages.${pkgs.system}.default ];
+
+      # herdr's config.toml is a read-only *input* (herdr never writes back to
+      # it — settings, plugins.json, sessions and sockets all live in separate
+      # writable files), so it's safe to deliver as a read-only hjem symlink.
+      # This carries the herdr-splits Ctrl/Alt+hjkl keybinds so a fresh machine
+      # gets pane<->nvim-split navigation without hand-editing. Edit the repo
+      # copy then rebuild; run `herdr server reload-config` to apply live.
+      #
+      # Still imperative (like lazy.nvim installing plugins at runtime): the
+      # herdr-splits plugin itself, installed once with
+      #   herdr plugin install lmilojevicc/herdr-splits.nvim
+      hjem.users.swin.files.".config/herdr/config.toml".source =
+        "${self}/modules/users/dotfiles/herdr/config.toml";
     };
 }
