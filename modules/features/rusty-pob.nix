@@ -1,18 +1,11 @@
 { self, inputs, ... }: {
-  flake.nixosModules.rustyPob = { pkgs, ... }:
-  let
-    rusty-path-of-building = pkgs.rusty-path-of-building.overrideAttrs (_: {
-      version = "0.2.18";
-      src = pkgs.fetchzip {
-        url = "https://github.com/meehl/rusty-path-of-building/archive/refs/tags/v0.2.18.tar.gz";
-        hash = "sha256-9YHXTUtTJO3GPf+NqASEkxf+a94doBGTjLyYruuxRg4=";
-      };
-      cargoDeps = pkgs.rustPlatform.importCargoLock {
-        lockFile = ./rusty-path-of-building-Cargo.lock;
-      };
-    });
-  in
-  {
-    environment.systemPackages = [ rusty-path-of-building ];
+  flake.nixosModules.rustyPob = { pkgs, ... }: {
+    # rusty-path-of-building (PoE build planner) straight from nixpkgs. We used
+    # to override src/version/cargoDeps to a newer tag while nixpkgs lagged, but
+    # nixpkgs now ships the same version with a cached binary — so the plain
+    # package builds faster and updates come free with `nix flake update`.
+    # If nixpkgs falls behind again, reintroduce an overrideAttrs with a fresh
+    # src hash + vendored Cargo.lock (see git history for the pattern).
+    environment.systemPackages = [ pkgs.rusty-path-of-building ];
   };
 }
