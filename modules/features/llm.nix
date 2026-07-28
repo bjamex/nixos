@@ -9,10 +9,6 @@
       system = pkgs.stdenv.hostPlatform.system;
       config.allowUnfree = true;
     };
-    pkgs-openwebui = import inputs.nixpkgs-openwebui {
-      system = pkgs.stdenv.hostPlatform.system;
-      config.allowUnfree = true;
-    };
   in {
     services.ollama = {
       enable = true;
@@ -30,10 +26,12 @@
 
     services.open-webui = {
       enable = true;
-      # 0.10.1 already migrated the DB in /var/lib/open-webui, so 26.05's 0.9.6
-      # crashes on it (no such column: config.id); main's 0.10.2 fails its
-      # Svelte build. Pin the 0.10.1 rev until main ships a fixed 0.10.x.
-      package = pkgs-openwebui.open-webui;
+      # Uses the system nixpkgs (unstable) open-webui. Was pinned to a 0.10.1
+      # rev while unstable's 0.10.2 failed its Svelte build; that's since fixed
+      # (0.10.2 builds clean, 2026-07-28) and 0.10.2 is DB-schema-compatible
+      # with the 0.10.1 data already migrated in /var/lib/open-webui, so the pin
+      # (and its nixpkgs-openwebui input) is gone.
+      package = pkgs.open-webui;
       host = "127.0.0.1";
       # 8080 is taken by the odysseus searxng container
       port = 8081;
