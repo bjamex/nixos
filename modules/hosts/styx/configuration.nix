@@ -20,6 +20,7 @@
         self.nixosModules.fileManager
         self.nixosModules.kitty
         self.nixosModules.neovim
+        self.nixosModules.herdr # agent multiplexer (tmux-for-AI-agents)
         self.nixosModules.llm
         self.nixosModules.insync
         self.nixosModules.swinHome
@@ -97,6 +98,7 @@
 
       # --- Programs ---
       programs.nix-ld.enable = true;
+      programs.firefox.enable = true;
 
       # --- Services ---
       services.ratbagd.enable = true;
@@ -127,7 +129,6 @@
 
         # Media & Creative
         blender
-        ## bambu-studio  # from nixpkgs = local source build; see bambu-studio.nix
 
         # Productivity
         orca-slicer
