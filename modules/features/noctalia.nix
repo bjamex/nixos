@@ -106,8 +106,10 @@
             position = "top";
             background_opacity = 0.93;
             radius = 12;
-            margin_h = 4;
-            margin_v = 4;
+            # v5.0 renamed the bar margins: margin_h -> margin_ends (gap at the
+            # two ends), margin_v -> margin_edge (gap from the screen edge).
+            margin_ends = 4;
+            margin_edge = 4;
             capsule = true;
 
             start = [
@@ -132,19 +134,22 @@
           # v5 custom_button is static (glyph + click commands, no live polling
           # text), so these lose the v4 MUTED/LIVE and VPN up/down status text —
           # they're now plain toggle buttons.
+          # v5.0 replaced the single `command` key with per-gesture `actions`
+          # (left/middle/right/back/forward/scroll-up/scroll-down/…); a shell
+          # command has to be prefixed with `exec `.
           widget.mic_button = {
             type = "custom_button";
             glyph = "microphone";
             tooltip = "Toggle microphone mute";
             # wpctl toggles only the mute flag; pamixer's PulseAudio-compat path
             # would clobber the volume (mute-zeroes, unmute restores to ~50%).
-            command = "${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+            actions.left = "exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
           };
           widget.vpn_button = {
             type = "custom_button";
             glyph = "shield-lock";
             tooltip = "Toggle AirVPN";
-            command = "vpn-toggle";
+            actions.left = "exec vpn-toggle";
           };
           # Plain toggle (no live status) — replaces the broken upstream
           # tailscale plugin whose bar widget ran `tailscale up/down` without
@@ -154,7 +159,7 @@
             type = "custom_button";
             glyph = "cloud-network";
             tooltip = "Toggle Tailscale";
-            command = "ts-toggle";
+            actions.left = "exec ts-toggle";
           };
 
           widget.clock = {
