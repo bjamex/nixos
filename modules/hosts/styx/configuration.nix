@@ -23,6 +23,7 @@
         self.nixosModules.herdr # agent multiplexer (tmux-for-AI-agents)
         self.nixosModules.llm
         self.nixosModules.insync
+        self.nixosModules.insyncNotify # Insync 3.9.10 lost its own notifications
         self.nixosModules.swinHome
         self.nixosModules.smb
         self.nixosModules.awakenedPoeTrade
@@ -157,6 +158,10 @@
         device = "/dev/disk/by-uuid/3a71adec-87f1-430e-a3e3-9f1dd30e9b50";
         fsType = "ext4";
       };
+
+      # Insync's sync root. drive/ and sharedwithme/ hold nothing, so watching
+      # share/ covers every folder that actually receives files.
+      insyncNotify.paths = [ "/mnt/nvme3/share" ];
 
       system.stateVersion = "25.11";
     };
