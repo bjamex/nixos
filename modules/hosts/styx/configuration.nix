@@ -38,8 +38,8 @@
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
 
-        self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
-        self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
+        # self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
+        # self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
       ];
 
       # --- Boot ---
@@ -66,7 +66,8 @@
       # Pin voice capture to the USB microphone rather than the system default
       # source — otherwise a Bluetooth headset (e.g. the AKG N5) can hijack the
       # default and, if muted, leave voice control reading silence.
-      voice.satellite.micDevice = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
+
+      # voice.satellite.micDevice = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
 
       # --- Locale ---
       # en_GB: Bambu Studio's "English" UI locale — with only en_AU in the
