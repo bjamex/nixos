@@ -149,6 +149,16 @@
         description = "Whether hypridle locks the screen after the idle timeout. Disable on trusted always-on desktops.";
       };
 
+      options.myHyprland.extraBindsLua = lib.mkOption {
+        type = lib.types.lines;
+        default = "";
+        description = ''
+          Extra `hl.bind(...)` Lua appended after the built-in binds, so a
+          feature module can own its own keybind instead of this file carrying a
+          bind for something it doesn't otherwise know about. `mod` is in scope.
+        '';
+      };
+
       options.myHyprland.extraStartupExec = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
@@ -343,7 +353,6 @@
             hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
             hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
             hl.bind(mod .. " + A",            hl.dsp.exec_cmd("helium --app=https://gemini.google.com"))
-            hl.bind(mod .. " + semicolon",    hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exec_cmd("${gracefulExit}"))
             hl.bind("Print",                  hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
@@ -405,6 +414,8 @@
             hl.bind(mod .. " + backslash",    hl.dsp.exec_cmd(play_pause))
             hl.bind(mod .. " + bracketright", hl.dsp.exec_cmd(next_song))
             hl.bind(mod .. " + bracketleft",  hl.dsp.exec_cmd(prev_song))
+
+            ${config.myHyprland.extraBindsLua}
           '';
 
           ".config/hypr/hypridle.conf".text = ''

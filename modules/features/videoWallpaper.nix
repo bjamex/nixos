@@ -31,6 +31,32 @@
 
       videoExtRe = ".*\\.(mp4|mkv|webm|mov|m4v|avi|gif)";
 
+      # Shell-expanded at runtime in both scripts, so they agree on one path.
+      ipcSock = ''"''${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/video-wallpaper.sock"'';
+
+      # Skip to the next video without waiting out `interval`. Bound to the key
+      # that used to open Noctalia's wallpaper panel, which does nothing now
+      # that Noctalia's wallpaper is off.
+      wallpaperNext = pkgs.writeShellApplication {
+        name = "video-wallpaper-next";
+        runtimeInputs = with pkgs; [
+          socat
+          libnotify
+          coreutils
+        ];
+        text = ''
+          ipc_sock=${ipcSock}
+          # No socket means the wallpaper is stopped — which is the normal state
+          # during a game, not an error worth a popup on every keypress.
+          if [ ! -S "$ipc_sock" ]; then
+            notify-send -a Wallpaper -u low "Wallpaper not running" \
+              "Nothing to skip — it stops while a game is up." || true
+            exit 0
+          fi
+          printf '{"command":["playlist-next"]}\n' | socat - "$ipc_sock" >/dev/null
+        '';
+      };
+
       # Runs from the graphical session rather than a systemd user service so it
       # inherits WAYLAND_DISPLAY and HYPRLAND_INSTANCE_SIGNATURE (same reasoning
       # as myHyprland.extraStartupExec's own documentation).
@@ -50,6 +76,7 @@
           dir=${lib.escapeShellArg cfg.directory}
           mkdir -p "$dir"
 
+          ipc_sock=${ipcSock}
           mpv_pid=""
 
           # mpvpaper is run *without* -f so this script owns the pid directly.
@@ -65,10 +92,14 @@
                         -iregex ${lib.escapeShellArg videoExtRe} -print -quit)" ]; then
               return 0
             fi
+            # The IPC socket is appended here rather than left to mpvOptions:
+            # video-wallpaper-next has to know the path, and a user override of
+            # mpvOptions would otherwise silently break that command.
+            rm -f "$ipc_sock"
             # mpv expands a directory into a playlist; -n makes mpvpaper advance
             # it and adds "loop loop-playlist" itself.
             mpvpaper -n ${toString cfg.interval} \
-              -o ${lib.escapeShellArg cfg.mpvOptions} \
+              -o "${cfg.mpvOptions} input-ipc-server=$ipc_sock" \
               ${lib.escapeShellArg cfg.output} "$dir" &
             mpv_pid=$!
           }
@@ -80,6 +111,7 @@
             kill "$mpv_pid" 2>/dev/null || true
             wait "$mpv_pid" 2>/dev/null || true
             mpv_pid=""
+            rm -f "$ipc_sock"
           }
 
           # Stop outright rather than pausing. mpvpaper's own -p/-s are
@@ -266,8 +298,13 @@
         environment.systemPackages = [
           pkgs.mpvpaper
           wallpaper
+          wallpaperNext
         ];
         myHyprland.extraStartupExec = [ (lib.getExe wallpaper) ];
+        myHyprland.extraBindsLua = ''
+          -- Wallpaper: skip to the next video (was Noctalia's wallpaper panel).
+          hl.bind(mod .. " + semicolon", hl.dsp.exec_cmd("${lib.getExe wallpaperNext}"))
+        '';
       };
     };
 }
