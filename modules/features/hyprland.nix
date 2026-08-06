@@ -181,7 +181,6 @@
         environment.systemPackages = with pkgs; [
           hyprlock
           hypridle
-          hyprpaper
           grimblast
           wf-recorder # simple Wayland screen recorder (see screenRecordToggle bind)
           gpu-screen-recorder # GPU-encoded capture + replay buffer (see gpuReplay* )
