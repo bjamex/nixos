@@ -67,8 +67,13 @@
             };
           };
 
+          # Disabled in favour of the mpvpaper video wallpaper (videoWallpaper.nix).
+          # Both draw layer-shell surfaces on layer 0 and the one that maps last
+          # ends up on top, so leaving this on makes the background a login race.
+          # Re-enable (and drop myVideoWallpaper.enable) to go back to stills;
+          # the SUPER+semicolon wallpaper panel bind is inert while it is off.
           wallpaper = {
-            enabled = true;
+            enabled = false;
             directory = "/home/swin/Pictures/Wallpapers";
             fill_mode = "crop";
           };
