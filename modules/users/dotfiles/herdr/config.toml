@@ -8,6 +8,14 @@ auto_switch = false
 [ui.toast]
 delivery = "system"
 
+# Ctrl+<n> jumps straight to the n-th tab of the active workspace. Indexed
+# keybinds only accept the full "1..9" range (herdr rejects a narrower one), so
+# this covers more tabs than the four that usually exist — harmless, since keys
+# past the last tab are no-ops. Unlike the prefix-first defaults this is a
+# direct binding, so Ctrl+1..9 no longer reaches programs running in a pane.
+[keys]
+switch_tab = "ctrl+1..9"
+
 # herdr-splits: seamless nav/resize across Herdr panes and Neovim splits.
 # These bind bare Ctrl/Alt + h,j,k,l (no prefix) to the plugin's actions; the
 # plugin checks each pane's foreground process, so inside nvim they move nvim
