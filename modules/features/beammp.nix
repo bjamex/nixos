@@ -35,6 +35,13 @@
         alsa-lib
         libgbm
 
+        # The launcher posix_spawn()s BeamNG itself, so the game runs inside
+        # this same FHS and its deps have to be here too: wayland for the
+        # native Linux build's window backend, expat for libcef.
+        wayland
+        expat
+        gtk3 # only for BinLinux/crashReporter
+
         libGL
         libGLU
         vulkan-loader
