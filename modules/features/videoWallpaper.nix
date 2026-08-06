@@ -78,6 +78,7 @@
 
           ipc_sock=${ipcSock}
           mpv_pid=""
+          playlist_pos=0
 
           # mpvpaper is run *without* -f so this script owns the pid directly.
           # With -f it double-forks and the pid you get back is not the process
@@ -97,9 +98,12 @@
             # mpvOptions would otherwise silently break that command.
             rm -f "$ipc_sock"
             # mpv expands a directory into a playlist; -n makes mpvpaper advance
-            # it and adds "loop loop-playlist" itself.
+            # it and adds "loop loop-playlist" itself. playlist-start resumes the
+            # rotation where stop() left it — a restart is a brand-new mpv, so
+            # without it every game would send the playlist back to the first
+            # video and later entries would go effectively unseen.
             mpvpaper -n ${toString cfg.interval} \
-              -o "${cfg.mpvOptions} input-ipc-server=$ipc_sock" \
+              -o "${cfg.mpvOptions} input-ipc-server=$ipc_sock playlist-start=$playlist_pos" \
               ${lib.escapeShellArg cfg.output} "$dir" &
             mpv_pid=$!
           }
@@ -107,6 +111,17 @@
           stop() {
             if [ -z "$mpv_pid" ]; then
               return 0
+            fi
+            # Capture the position before killing mpv; start() restores it.
+            # A null/absent reply (mpv already gone, socket torn down) leaves the
+            # previous value alone rather than silently resetting to the top.
+            if [ -S "$ipc_sock" ]; then
+              p=$(printf '{"command":["get_property","playlist-pos"]}\n' \
+                    | socat - "$ipc_sock" 2>/dev/null | jq -r '.data // empty')
+              case "$p" in
+                "" | *[!0-9]*) ;;
+                *) playlist_pos="$p" ;;
+              esac
             fi
             kill "$mpv_pid" 2>/dev/null || true
             wait "$mpv_pid" 2>/dev/null || true
@@ -138,6 +153,10 @@
 
           reload() {
             stop
+            # The directory changed, so a saved index no longer refers to the
+            # same video — adding one file shifts everything after it. Start
+            # from the top rather than resuming onto an arbitrary entry.
+            playlist_pos=0
             sync_state
           }
 
