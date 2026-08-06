@@ -11,6 +11,7 @@
         self.nixosModules.login
         self.nixosModules.hyprland
         self.nixosModules.noctalia
+        self.nixosModules.videoWallpaper # mpvpaper animated wallpaper (replaces Noctalia's)
         self.nixosModules.gaming
         self.nixosModules.bblauncher # Bloodborne launcher/mod manager for shadPS4
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
@@ -145,6 +146,13 @@
       # Always-on desktop: don't auto-suspend or auto-lock on idle.
       myHyprland.autoSuspend = false;
       myHyprland.idleLock = false;
+
+      # --- Wallpaper ---
+      myVideoWallpaper = {
+        enable = true;
+        directory = "/home/swin/Videos/Wallpapers";
+        output = "DP-3";
+      };
 
       # --- Storage ---
       fileSystems."/mnt/nvme0" = {
