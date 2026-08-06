@@ -70,6 +70,55 @@
         ];
         noDisplay = true;
       };
+
+      # Open text files from the file manager in kitty rather than xterm. The
+      # nvim.desktop nixpkgs ships is `Exec=nvim %F` + `Terminal=true`, which
+      # leaves the terminal choice to GLib — and with no gnome-terminal/kgx/foot
+      # installed its fallback list bottoms out at xterm. That gives a white
+      # background, the bitmap `fixed` font and TERM=xterm (no truecolor), so the
+      # colorscheme degrades into the washed-out mess you get on double-click.
+      nvimKitty = pkgs.makeDesktopItem {
+        name = "nvim-kitty";
+        desktopName = "Neovim";
+        icon = "nvim";
+        exec = "kitty nvim %F";
+        terminal = false;
+        categories = [
+          "Utility"
+          "TextEditor"
+          "Development"
+        ];
+        # Mirrors nvim.desktop's list (so it wins the same associations) plus the
+        # text/plain subtypes that actually turn up here — .log, .md, .toml, .nix.
+        mimeTypes = textMimeTypes;
+      };
+
+      # Every type nvimKitty claims; reused verbatim for xdg.mime.defaultApplications
+      # so a type can never be claimed but left pointing at nvim.desktop.
+      textMimeTypes = [
+        "text/plain"
+        "text/english"
+        "text/markdown"
+        "text/x-log"
+        "text/x-makefile"
+        "text/x-c"
+        "text/x-c++"
+        "text/x-chdr"
+        "text/x-csrc"
+        "text/x-c++hdr"
+        "text/x-c++src"
+        "text/x-java"
+        "text/x-moc"
+        "text/x-pascal"
+        "text/x-tcl"
+        "text/x-tex"
+        "text/x-lua"
+        "text/x-python"
+        "text/x-nix"
+        "application/toml"
+        "application/x-yaml"
+        "application/x-shellscript"
+      ];
     in
     {
       services.gvfs.enable = true;
@@ -79,7 +128,12 @@
         {
           settings = {
             "org/nemo/list-view" = {
-              default-visible-columns = [ "name" "size" "mime_type" "date_modified" ];
+              default-visible-columns = [
+                "name"
+                "size"
+                "mime_type"
+                "date_modified"
+              ];
               enable-folder-expansion = true;
             };
             "org/nemo/preferences" = {
@@ -125,12 +179,24 @@
           # Needs the `mediainfo` CLI on PATH (added to systemPackages below).
           plugin = {
             prepend_previewers = [
-              { mime = "{audio,video,image}/*"; run = "mediainfo"; }
-              { mime = "application/subrip"; run = "mediainfo"; }
+              {
+                mime = "{audio,video,image}/*";
+                run = "mediainfo";
+              }
+              {
+                mime = "application/subrip";
+                run = "mediainfo";
+              }
             ];
             prepend_preloaders = [
-              { mime = "{audio,video,image}/*"; run = "mediainfo"; }
-              { mime = "application/subrip"; run = "mediainfo"; }
+              {
+                mime = "{audio,video,image}/*";
+                run = "mediainfo";
+              }
+              {
+                mime = "application/subrip";
+                run = "mediainfo";
+              }
             ];
           };
           opener = {
@@ -237,23 +303,37 @@
         mediainfo
         googleDriveMimeTypes
         gdocOpener
+        nvimKitty
+        xdg-terminal-exec
         jq
         handlr-regex
       ];
 
+      # Make kitty the terminal for every `Terminal=true` desktop entry, not just
+      # nvim's. GLib's fallback list is compiled into libgio and kitty is not in
+      # it — the list runs xdg-terminal-exec, gnome-terminal, mate-terminal,
+      # xfce4-terminal, io.elementary.terminal, tilix, konsole, nxterm,
+      # color-xterm, rxvt, dtterm, then xterm. `xdg-terminal-exec` is tried
+      # first and is the spec's designated hook, so installing it (above) and
+      # naming kitty here redirects the whole list at its head.
+      environment.etc."xdg/xdg-terminals.list".text = ''
+        kitty.desktop
+      '';
+
       xdg.mime.defaultApplications = {
-        "inode/directory"                    = "org.gnome.Nautilus.desktop";
-        "application/zip"                    = "org.gnome.FileRoller.desktop";
-        "application/vnd.rar"                = "org.gnome.FileRoller.desktop";
-        "application/x-7z-compressed"        = "org.gnome.FileRoller.desktop";
+        "inode/directory" = "org.gnome.Nautilus.desktop";
+        "application/zip" = "org.gnome.FileRoller.desktop";
+        "application/vnd.rar" = "org.gnome.FileRoller.desktop";
+        "application/x-7z-compressed" = "org.gnome.FileRoller.desktop";
         "application/x-bzip2-compressed-tar" = "org.gnome.FileRoller.desktop";
-        "application/x-tar"                  = "org.gnome.FileRoller.desktop";
+        "application/x-tar" = "org.gnome.FileRoller.desktop";
         "application/pdf" = "com.github.xournalpp.xournalpp.desktop";
         "application/x-xopp" = "com.github.xournalpp.xournalpp.desktop";
         "application/x-google-sheets" = "gdoc-opener.desktop";
         "application/x-google-doc" = "gdoc-opener.desktop";
         "application/x-google-slides" = "gdoc-opener.desktop";
         "application/json" = "gdoc-opener.desktop";
-      };
+      }
+      // lib.genAttrs textMimeTypes (_: "nvim-kitty.desktop");
     };
 }
