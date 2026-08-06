@@ -81,6 +81,43 @@
           -o "$dir"
       '';
 
+      # Quit the session without shredding config files. Some apps only persist
+      # state on a clean quit: darktable rewrites ~/.config/darktable/darktablerc
+      # from memory in dt_conf_cleanup, and _conf_save() truncates the file
+      # (fopen "wb") *before* writing it — so a SIGKILL at session teardown
+      # leaves it 0 bytes and every preference is gone. Ask those windows to
+      # close (a Wayland close request is a normal quit), wait for them to
+      # actually exit, then tear down Hyprland.
+      gracefulExit = pkgs.writeShellScript "hypr-graceful-exit" ''
+        hyprctl=${config.programs.hyprland.package}/bin/hyprctl
+        jq=${lib.getExe pkgs.jq}
+
+        # Window classes to close politely first. Add classes here as needed.
+        want='["org.darktable.darktable"]'
+
+        clients=$("$hyprctl" -j clients)
+        sel='.[] | select(.class as $c | $want | index($c))'
+        addrs=$(printf '%s' "$clients" | "$jq" -r --argjson want "$want" "$sel | .address")
+        pids=$(printf '%s' "$clients" | "$jq" -r --argjson want "$want" "$sel | .pid")
+
+        for addr in $addrs; do
+          "$hyprctl" dispatch closewindow "address:$addr"
+        done
+
+        # Give them up to 15s to write their config, then exit regardless — a
+        # stuck app must never leave the session un-exitable.
+        for _ in $(seq 1 150); do
+          alive=""
+          for pid in $pids; do
+            kill -0 "$pid" 2>/dev/null && alive=1
+          done
+          [ -n "$alive" ] || break
+          sleep 0.1
+        done
+
+        "$hyprctl" dispatch exit
+      '';
+
       # Flush the current 5-min buffer to disk. gpu-screen-recorder saves the
       # replay on SIGUSR1. Match with -f: its /proc comm is truncated to 15
       # chars, so -x against the full name would never hit.
@@ -309,7 +346,7 @@
             hl.bind(mod .. " + A",            hl.dsp.exec_cmd("helium --app=https://gemini.google.com"))
             hl.bind(mod .. " + semicolon",    hl.dsp.exec_cmd("noctalia msg panel-toggle wallpaper"))
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
-            hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exit())
+            hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exec_cmd("${gracefulExit}"))
             hl.bind("Print",                  hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
             hl.bind(mod .. " + SHIFT + R",    hl.dsp.exec_cmd("${screenRecordToggle}"))
             hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
