@@ -158,14 +158,17 @@
       fileSystems."/mnt/nvme0" = {
         device = "/dev/disk/by-uuid/6ab3631f-5d79-466e-a9fe-10aaddf7ce6e";
         fsType = "ext4";
+        options = [ "nofail" ];
       };
       fileSystems."/mnt/nvme2" = {
         device = "/dev/disk/by-uuid/eba90478-2582-4260-b65d-70cb4ffa1352";
         fsType = "ext4";
+        options = [ "nofail" ];
       };
       fileSystems."/mnt/nvme3" = {
         device = "/dev/disk/by-uuid/3a71adec-87f1-430e-a3e3-9f1dd30e9b50";
         fsType = "ext4";
+        options = [ "nofail" ];
       };
 
       # Insync's sync root. drive/ and sharedwithme/ hold nothing, so watching
