@@ -11,7 +11,6 @@
         self.nixosModules.login
         self.nixosModules.hyprland
         self.nixosModules.noctalia
-        self.nixosModules.videoWallpaper # mpvpaper animated wallpaper (replaces Noctalia's)
         self.nixosModules.gaming
         self.nixosModules.bblauncher # Bloodborne launcher/mod manager for shadPS4
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
@@ -39,8 +38,6 @@
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
 
-        # self.nixosModules.voiceServer # Wyoming faster-whisper ASR, tailnet-wide
-        # self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR -> local commands
       ];
 
       # --- Boot ---
@@ -51,8 +48,6 @@
       ];
       boot.kernelParams = [ "split_lock_detect=off" ];
 
-      # dbus-broker uses Type=notify so systemd waits 90s for a READY signal
-      # that never arrives. Cap the timeout so rebuilds fail fast instead of hanging.
       systemd.user.services.dbus-broker.serviceConfig = {
         ExecReload = "${pkgs.coreutils}/bin/true";
         TimeoutReloadSec = "5";
@@ -64,17 +59,6 @@
       # KDE Connect: installs kdeconnect-kde and opens TCP/UDP 1714-1764
       programs.kdeconnect.enable = true;
 
-      # Pin voice capture to the USB microphone rather than the system default
-      # source — otherwise a Bluetooth headset (e.g. the AKG N5) can hijack the
-      # default and, if muted, leave voice control reading silence.
-
-      # voice.satellite.micDevice = "alsa_input.usb-Generic_USB_Audio-00.HiFi__Mic__source";
-
-      # --- Locale ---
-      # en_GB: Bambu Studio's "English" UI locale — with only en_AU in the
-      # locale archive it warns "Switching language en_GB failed" on launch.
-      # (Setting this option replaces the auto-derived default, so the host
-      # locale + C must be listed explicitly.)
       i18n.supportedLocales = [
         "C.UTF-8/UTF-8"
         "en_AU.UTF-8/UTF-8"
@@ -140,19 +124,10 @@
         distrobox
       ];
 
-      # Single Gigabyte M27Q desktop monitor; Hyprland base auto-detects otherwise.
       myHyprland.monitorLua = ''hl.monitor({ output = "desc:GIGA-BYTE TECHNOLOGY CO. LTD. M27Q", mode = "2560x1440@143.856", position = "0x0", scale = 1 })'';
 
-      # Always-on desktop: don't auto-suspend or auto-lock on idle.
       myHyprland.autoSuspend = false;
       myHyprland.idleLock = false;
-
-      # --- Wallpaper ---
-      myVideoWallpaper = {
-        enable = true;
-        directory = "/home/swin/Videos/Wallpapers";
-        output = "DP-3";
-      };
 
       # --- Storage ---
       fileSystems."/mnt/nvme0" = {
