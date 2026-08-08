@@ -21,7 +21,6 @@
         self.nixosModules.shell
         self.nixosModules.tailscale # tailscale + ts-toggle + NOPASSWD sudo rule
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
-        self.nixosModules.voiceSatellite # "Hey Jarvis" wake word -> ASR on styx -> local commands
       ];
 
       # --- Networking ---

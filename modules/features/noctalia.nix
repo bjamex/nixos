@@ -67,13 +67,14 @@
             };
           };
 
-          # Disabled in favour of the mpvpaper video wallpaper (videoWallpaper.nix).
-          # Both draw layer-shell surfaces on layer 0 and the one that maps last
-          # ends up on top, so leaving this on makes the background a login race.
-          # Re-enable (and drop myVideoWallpaper.enable) to go back to stills;
-          # the SUPER+semicolon wallpaper panel bind is inert while it is off.
+          # Stills, re-enabled 2026-08-07 after the mpvpaper video wallpaper
+          # (videoWallpaper.nix) hung — see the note in styx/configuration.nix.
+          # Only one of the two may be on: both draw layer-shell surfaces on
+          # layer 0 and the one that maps last ends up on top, so enabling both
+          # makes the background a login race. To go back to video, set this
+          # false and restore myVideoWallpaper.enable.
           wallpaper = {
-            enabled = false;
+            enabled = true;
             directory = "/home/swin/Pictures/Wallpapers";
             fill_mode = "crop";
           };
