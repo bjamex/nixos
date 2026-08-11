@@ -70,13 +70,29 @@
       hardware.amdgpu.initrd.enable = true;
 
       # --- Printing ---
+      # The T3100 cannot render PDF — its IPP document-format-supported is only
+      # {octet-stream, pwg-raster, urf, jpeg}. But `model = "everywhere"` makes
+      # cups-filters' `driverless` generate a PPD whose sole rule is
+      #   *cupsFilter2: "application/vnd.cups-pdf application/pdf 0 -"
+      # i.e. hand the printer raw PDF. It accepts that as octet-stream (its
+      # default format, which matches anything), fails to parse it, and reports
+      # completed-successfully with job-impressions-completed = 0 — a silent
+      # no-op with no error anywhere. Ship a corrected copy of that same PPD
+      # with a real raster chain (PDF -> pdftoraster -> rastertopwg -> URF).
+      services.printing.drivers = [
+        (pkgs.runCommand "epson-sc-t3100-urf-ppd" { } ''
+          mkdir -p $out/share/cups/model
+          cp ${./epson-sc-t3100-urf.ppd} $out/share/cups/model/epson-sc-t3100-urf.ppd
+        '')
+      ];
+
       hardware.printers.ensureDefaultPrinter = "EPSON_SC_T3100_Series";
       hardware.printers.ensurePrinters = [
         {
           name = "EPSON_SC_T3100_Series";
           location = "Local";
           deviceUri = "dnssd://EPSON%20SC-T3100%20Series._ipp._tcp.local/?uuid=cfe92100-67c4-11d4-a45f-9caed3d3a501";
-          model = "everywhere";
+          model = "epson-sc-t3100-urf.ppd";
           ppdOptions.InputSlot = "Rear";
         }
       ];
