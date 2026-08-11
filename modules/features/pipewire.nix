@@ -24,6 +24,20 @@
       ];
     };
 
+    # The WF-1000XM4 only sustains LDAC with both buds in; a single bud falls
+    # back to AAC/SBC. WirePlumber picks LDAC whenever it is advertised, so
+    # pulling one bud made the headset tear down the A2DP transport
+    # ("connection .../sep3/fd0 terminated unexpectedly"), WirePlumber
+    # re-negotiated LDAC, and the link flapped every ~60s with a ~10s gap.
+    # Dropping ldac from the candidate list pins AAC, so the codec never has
+    # to change mid-session.
+    services.pipewire.wireplumber.extraConfig."51-bluez-no-ldac" = {
+      "monitor.bluez.properties" = {
+        "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" ];
+        "bluez5.enable-sbc-xq" = true;
+      };
+    };
+
     services.pipewire = {
       enable = true;
       alsa.enable = true;
