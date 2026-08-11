@@ -1,0 +1,273 @@
+*PPD-Adobe: "4.3"
+*FormatVersion: "4.3"
+*FileVersion: "2.1.1"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PSVersion: "(3010.000) 0"
+*LanguageLevel: "3"
+*FileSystem: False
+*PCFileName: "drvless.ppd"
+*Manufacturer: "EPSON"
+*ModelName: "EPSON Printer"
+*Product: "(EPSON Printer)"
+*NickName: "EPSON Printer, driverless, 2.1.1"
+*ShortNickName: "EPSON Printer"
+*DefaultOutputOrder: Normal
+*ColorDevice: True
+*LandscapeOrientation: Minus90
+*cupsVersion: 2.4
+*cupsSNMPSupplies: False
+*cupsLanguages: "en fr de it es pt nl ru pl zh-tw zh-cn ko ja"
+*APSupplies: "http://EPSOND3A501.local.:80/PRESENTATION/BONJOUR"
+*cupsStringsURI: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=en"
+*cupsStringsURI en: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=en"
+*cupsStringsURI fr: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=fr"
+*cupsStringsURI de: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=de"
+*cupsStringsURI it: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=it"
+*cupsStringsURI es: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=es"
+*cupsStringsURI pt: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=pt"
+*cupsStringsURI nl: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=nl"
+*cupsStringsURI ru: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=ru"
+*cupsStringsURI pl: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=pl"
+*cupsStringsURI zh-tw: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=zh-tw"
+*cupsStringsURI zh-cn: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=zh-cn"
+*cupsStringsURI ko: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=ko"
+*cupsStringsURI ja: "http://EPSOND3A501.local.:80/LANGUAGES/IPP?LANG=ja"
+*cupsSingleFile: True
+*cupsFilter2: "image/urf image/urf 100 -"
+*cupsFilter2: "image/pwg-raster image/pwg-raster 100 -"
+*cupsFilter2: "application/vnd.cups-raster image/urf 100 rastertopwg"
+*cupsManualCopies: True
+*cupsUrfSupported: "CP1,PQ4-5,OB14-40,OFU0,RS300,SRGB24,W8,IS18-4-9,V1.4,FN3-11-60,MT1-10-11"
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: A4
+*PageSize 13x19: "<</PageSize[936 1368]>>setpagedevice"
+*PageSize 17x24: "<</PageSize[1224 1728]>>setpagedevice"
+*PageSize 24x30/24 x 30 in / 610 x 762 mm: "<</PageSize[1728 2160]>>setpagedevice"
+*PageSize 300x400mm/30 x 40 cm: "<</PageSize[850.393700787402 1133.858267716535]>>setpagedevice"
+*PageSize 400x600mm/40 x 60 cm: "<</PageSize[1133.858267716535 1700.787401574803]>>setpagedevice"
+*PageSize 432x610mm: "<</PageSize[1224.566929133858 1729.133858267717]>>setpagedevice"
+*PageSize 500x700mm/50 x 70 cm: "<</PageSize[1417.322834645669 1984.251968503937]>>setpagedevice"
+*PageSize 600x900mm/60 x 90 cm: "<</PageSize[1700.787401574803 2551.181102362205]>>setpagedevice"
+*PageSize 610x914mm: "<</PageSize[1729.133858267717 2590.866141732283]>>setpagedevice"
+*PageSize A1: "<</PageSize[1683.779527559055 2383.937007874016]>>setpagedevice"
+*PageSize A2: "<</PageSize[1190.551181102362 1683.779527559055]>>setpagedevice"
+*PageSize A3: "<</PageSize[841.889763779528 1190.551181102362]>>setpagedevice"
+*PageSize A4: "<</PageSize[595.275590551181 841.889763779528]>>setpagedevice"
+*PageSize ARCHA: "<</PageSize[648 864]>>setpagedevice"
+*PageSize ARCHB: "<</PageSize[864 1296]>>setpagedevice"
+*PageSize ARCHC: "<</PageSize[1296 1728]>>setpagedevice"
+*PageSize ARCHD: "<</PageSize[1728 2592]>>setpagedevice"
+*PageSize AnsiC: "<</PageSize[1224 1584]>>setpagedevice"
+*PageSize AnsiD: "<</PageSize[1584 2448]>>setpagedevice"
+*PageSize B2: "<</PageSize[1459.842519685039 2063.622047244095]>>setpagedevice"
+*PageSize B3: "<</PageSize[1031.811023622047 1459.842519685039]>>setpagedevice"
+*PageSize B4: "<</PageSize[728.503937007874 1031.811023622047]>>setpagedevice"
+*PageSize ISOB2: "<</PageSize[1417.322834645669 2004.094488188976]>>setpagedevice"
+*PageSize ISOB3: "<</PageSize[1000.629921259842 1417.322834645669]>>setpagedevice"
+*PageSize ISOB4: "<</PageSize[708.661417322835 1000.629921259842]>>setpagedevice"
+*PageSize Legal: "<</PageSize[612 1008]>>setpagedevice"
+*PageSize Letter: "<</PageSize[612 792]>>setpagedevice"
+*PageSize Tabloid: "<</PageSize[792 1224]>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: A4
+*PageRegion 13x19: "<</PageSize[936 1368]>>setpagedevice"
+*PageRegion 17x24: "<</PageSize[1224 1728]>>setpagedevice"
+*PageRegion 24x30/24 x 30 in / 610 x 762 mm: "<</PageSize[1728 2160]>>setpagedevice"
+*PageRegion 300x400mm/30 x 40 cm: "<</PageSize[850.393700787402 1133.858267716535]>>setpagedevice"
+*PageRegion 400x600mm/40 x 60 cm: "<</PageSize[1133.858267716535 1700.787401574803]>>setpagedevice"
+*PageRegion 432x610mm: "<</PageSize[1224.566929133858 1729.133858267717]>>setpagedevice"
+*PageRegion 500x700mm/50 x 70 cm: "<</PageSize[1417.322834645669 1984.251968503937]>>setpagedevice"
+*PageRegion 600x900mm/60 x 90 cm: "<</PageSize[1700.787401574803 2551.181102362205]>>setpagedevice"
+*PageRegion 610x914mm: "<</PageSize[1729.133858267717 2590.866141732283]>>setpagedevice"
+*PageRegion A1: "<</PageSize[1683.779527559055 2383.937007874016]>>setpagedevice"
+*PageRegion A2: "<</PageSize[1190.551181102362 1683.779527559055]>>setpagedevice"
+*PageRegion A3: "<</PageSize[841.889763779528 1190.551181102362]>>setpagedevice"
+*PageRegion A4: "<</PageSize[595.275590551181 841.889763779528]>>setpagedevice"
+*PageRegion ARCHA: "<</PageSize[648 864]>>setpagedevice"
+*PageRegion ARCHB: "<</PageSize[864 1296]>>setpagedevice"
+*PageRegion ARCHC: "<</PageSize[1296 1728]>>setpagedevice"
+*PageRegion ARCHD: "<</PageSize[1728 2592]>>setpagedevice"
+*PageRegion AnsiC: "<</PageSize[1224 1584]>>setpagedevice"
+*PageRegion AnsiD: "<</PageSize[1584 2448]>>setpagedevice"
+*PageRegion B2: "<</PageSize[1459.842519685039 2063.622047244095]>>setpagedevice"
+*PageRegion B3: "<</PageSize[1031.811023622047 1459.842519685039]>>setpagedevice"
+*PageRegion B4: "<</PageSize[728.503937007874 1031.811023622047]>>setpagedevice"
+*PageRegion ISOB2: "<</PageSize[1417.322834645669 2004.094488188976]>>setpagedevice"
+*PageRegion ISOB3: "<</PageSize[1000.629921259842 1417.322834645669]>>setpagedevice"
+*PageRegion ISOB4: "<</PageSize[708.661417322835 1000.629921259842]>>setpagedevice"
+*PageRegion Legal: "<</PageSize[612 1008]>>setpagedevice"
+*PageRegion Letter: "<</PageSize[612 792]>>setpagedevice"
+*PageRegion Tabloid: "<</PageSize[792 1224]>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: A4
+*DefaultPaperDimension: A4
+*ImageableArea 13x19: "10.204724409449 8.503937007874 925.795275590551 1359.496062992126"
+*PaperDimension 13x19: "936 1368"
+*ImageableArea 17x24: "8.503937007874 8.503937007874 1215.496062992126 1719.496062992126"
+*PaperDimension 17x24: "1224 1728"
+*ImageableArea 24x30: "8.503937007874 8.503937007874 1719.496062992126 2151.496062992126"
+*PaperDimension 24x30: "1728 2160"
+*ImageableArea 300x400mm: "8.503937007874 8.503937007874 841.889763779528 1125.354330708661"
+*PaperDimension 300x400mm: "850.393700787402 1133.858267716535"
+*ImageableArea 400x600mm: "8.503937007874 8.503937007874 1125.354330708661 1692.283464566929"
+*PaperDimension 400x600mm: "1133.858267716535 1700.787401574803"
+*ImageableArea 432x610mm: "8.503937007874 8.503937007874 1216.062992125984 1720.629921259843"
+*PaperDimension 432x610mm: "1224.566929133858 1729.133858267717"
+*ImageableArea 500x700mm: "8.503937007874 8.503937007874 1408.818897637795 1975.748031496063"
+*PaperDimension 500x700mm: "1417.322834645669 1984.251968503937"
+*ImageableArea 600x900mm: "8.503937007874 8.503937007874 1692.283464566929 2542.677165354331"
+*PaperDimension 600x900mm: "1700.787401574803 2551.181102362205"
+*ImageableArea 610x914mm: "8.503937007874 8.503937007874 1720.629921259843 2582.362204724409"
+*PaperDimension 610x914mm: "1729.133858267717 2590.866141732283"
+*ImageableArea A1: "8.503937007874 8.503937007874 1675.275590551181 2375.433070866142"
+*PaperDimension A1: "1683.779527559055 2383.937007874016"
+*ImageableArea A2: "8.503937007874 8.503937007874 1182.047244094488 1675.275590551181"
+*PaperDimension A2: "1190.551181102362 1683.779527559055"
+*ImageableArea A3: "8.503937007874 8.503937007874 833.385826771654 1182.047244094488"
+*PaperDimension A3: "841.889763779528 1190.551181102362"
+*ImageableArea A4: "8.503937007874 8.503937007874 586.771653543307 833.385826771654"
+*PaperDimension A4: "595.275590551181 841.889763779528"
+*ImageableArea ARCHA: "8.503937007874 8.503937007874 639.496062992126 855.496062992126"
+*PaperDimension ARCHA: "648 864"
+*ImageableArea ARCHB: "8.503937007874 8.503937007874 855.496062992126 1287.496062992126"
+*PaperDimension ARCHB: "864 1296"
+*ImageableArea ARCHC: "8.503937007874 8.503937007874 1287.496062992126 1719.496062992126"
+*PaperDimension ARCHC: "1296 1728"
+*ImageableArea ARCHD: "8.503937007874 8.503937007874 1719.496062992126 2583.496062992126"
+*PaperDimension ARCHD: "1728 2592"
+*ImageableArea AnsiC: "8.503937007874 8.503937007874 1215.496062992126 1575.496062992126"
+*PaperDimension AnsiC: "1224 1584"
+*ImageableArea AnsiD: "8.503937007874 8.503937007874 1575.496062992126 2439.496062992126"
+*PaperDimension AnsiD: "1584 2448"
+*ImageableArea B2: "8.503937007874 8.503937007874 1451.338582677165 2055.118110236221"
+*PaperDimension B2: "1459.842519685039 2063.622047244095"
+*ImageableArea B3: "8.503937007874 8.503937007874 1023.307086614173 1451.338582677165"
+*PaperDimension B3: "1031.811023622047 1459.842519685039"
+*ImageableArea B4: "8.503937007874 8.503937007874 720 1023.307086614173"
+*PaperDimension B4: "728.503937007874 1031.811023622047"
+*ImageableArea ISOB2: "8.503937007874 8.503937007874 1408.818897637795 1995.590551181102"
+*PaperDimension ISOB2: "1417.322834645669 2004.094488188976"
+*ImageableArea ISOB3: "8.503937007874 8.503937007874 992.125984251968 1408.818897637795"
+*PaperDimension ISOB3: "1000.629921259842 1417.322834645669"
+*ImageableArea ISOB4: "8.503937007874 8.503937007874 700.157480314961 992.125984251968"
+*PaperDimension ISOB4: "708.661417322835 1000.629921259842"
+*ImageableArea Legal: "8.503937007874 8.503937007874 603.496062992126 999.496062992126"
+*PaperDimension Legal: "612 1008"
+*ImageableArea Letter: "8.503937007874 8.503937007874 603.496062992126 783.496062992126"
+*PaperDimension Letter: "612 792"
+*ImageableArea Tabloid: "8.503937007874 8.503937007874 783.496062992126 1215.496062992126"
+*PaperDimension Tabloid: "792 1224"
+*HWMargins: "8.503937007874 8.503937007874 8.503937007874 8.503937007874"
+*ParamCustomPageSize Width: 1 points 595.275590551181 1728
+*ParamCustomPageSize Height: 2 points 792 51023.622047244091
+*ParamCustomPageSize WidthOffset: 3 points 0 0
+*ParamCustomPageSize HeightOffset: 4 points 0 0
+*ParamCustomPageSize Orientation: 5 int 0 3
+*CustomPageSize True: "pop pop pop <</PageSize[5 -2 roll]/ImagingBBox null>>setpagedevice"
+*OpenUI *InputSlot/Media Source: PickOne
+*OrderDependency: 10 AnySetup *InputSlot
+*DefaultInputSlot: Rear
+*InputSlot Auto: "<</MediaPosition 0>>setpagedevice"
+*InputSlot Rear: "<</MediaPosition 18>>setpagedevice"
+*InputSlot Manual: "<</MediaPosition 4>>setpagedevice"
+*InputSlot MainRoll: "<</MediaPosition 9>>setpagedevice"
+*CloseUI: *InputSlot
+*OpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 10 AnySetup *MediaType
+*DefaultMediaType: Stationery
+*MediaType Stationery: "<</MediaType(Stationery)>>setpagedevice"
+*MediaType Com.epsonPhotographicGlossy: "<</MediaType(Com.epsonPhotographicGlossy)>>setpagedevice"
+*en_AU.MediaType Com.epsonPhotographicGlossy/Premium Glossy Photo Paper: ""
+*MediaType PhotographicSemiGloss: "<</MediaType(PhotographicSemiGloss)>>setpagedevice"
+*MediaType Com.epsonLuster: "<</MediaType(Com.epsonLuster)>>setpagedevice"
+*en_AU.MediaType Com.epsonLuster/Premium Luster Photo Paper: ""
+*MediaType Com.epsonPhotographicGlossyThin: "<</MediaType(Com.epsonPhotographicGlossyThin)>>setpagedevice"
+*en_AU.MediaType Com.epsonPhotographicGlossyThin/Premium Glossy Photo Paper(170): ""
+*MediaType Com.epsonPhotographicSemiGlossyThin: "<</MediaType(Com.epsonPhotographicSemiGlossyThin)>>setpagedevice"
+*en_AU.MediaType Com.epsonPhotographicSemiGlossyThin/Premium Semigloss Photo Paper(170): ""
+*MediaType PhotographicGlossy: "<</MediaType(PhotographicGlossy)>>setpagedevice"
+*MediaType Photographic: "<</MediaType(Photographic)>>setpagedevice"
+*MediaType Com.epsonMatteThick: "<</MediaType(Com.epsonMatteThick)>>setpagedevice"
+*en_AU.MediaType Com.epsonMatteThick/Doubleweight Matte Paper: ""
+*MediaType Com.epsonMatteEnhanced: "<</MediaType(Com.epsonMatteEnhanced)>>setpagedevice"
+*en_AU.MediaType Com.epsonMatteEnhanced/Enhanced Matte Paper: ""
+*MediaType PhotographicMatte: "<</MediaType(PhotographicMatte)>>setpagedevice"
+*MediaType Com.epsonMatteThin: "<</MediaType(Com.epsonMatteThin)>>setpagedevice"
+*en_AU.MediaType Com.epsonMatteThin/Singleweight Matte Paper: ""
+*MediaType Com.epsonCoated: "<</MediaType(Com.epsonCoated)>>setpagedevice"
+*en_AU.MediaType Com.epsonCoated/Photo Quality Inkjet Paper: ""
+*MediaType StationeryCoated: "<</MediaType(StationeryCoated)>>setpagedevice"
+*MediaType Com.epsonPolyesterFireProofed: "<</MediaType(Com.epsonPolyesterFireProofed)>>setpagedevice"
+*en_AU.MediaType Com.epsonPolyesterFireProofed/Heavy Weight Polyester Banner: ""
+*MediaType Com.epsonSyntheticAdhesive: "<</MediaType(Com.epsonSyntheticAdhesive)>>setpagedevice"
+*en_AU.MediaType Com.epsonSyntheticAdhesive/Enhanced Adhesive Synthetic Paper: ""
+*MediaType Com.epsonSyntheticLowAdhesive: "<</MediaType(Com.epsonSyntheticLowAdhesive)>>setpagedevice"
+*en_AU.MediaType Com.epsonSyntheticLowAdhesive/Enhanced Low Adhesive Synthetic Paper: ""
+*MediaType Com.epsonTracingpaper: "<</MediaType(Com.epsonTracingpaper)>>setpagedevice"
+*en_AU.MediaType Com.epsonTracingpaper/Tracing Paper: ""
+*MediaType Com.epsonTracingpaperThin: "<</MediaType(Com.epsonTracingpaperThin)>>setpagedevice"
+*en_AU.MediaType Com.epsonTracingpaperThin/Tracing Paper<3C>Low Duty>: ""
+*MediaType Com.epsonFilmMatte: "<</MediaType(Com.epsonFilmMatte)>>setpagedevice"
+*en_AU.MediaType Com.epsonFilmMatte/Matte Film: ""
+*MediaType Com.epsonBluePrint: "<</MediaType(Com.epsonBluePrint)>>setpagedevice"
+*en_AU.MediaType Com.epsonBluePrint/Blueprint Paper: ""
+*MediaType Com.epsonUsersetting: "<</MediaType(Com.epsonUsersetting)>>setpagedevice"
+*en_AU.MediaType Com.epsonUsersetting/Custom Paper Setting: ""
+*CloseUI: *MediaType
+*% ColorModel from print-color-mode-supported
+*OpenUI *ColorModel/Color Mode: PickOne
+*OrderDependency: 10 AnySetup *ColorModel
+*ColorModel RGB/Color: ""
+*ColorModel Gray/Monochrome: ""
+*ColorModel AutoGray/Auto Monochrome: ""
+*ColorModel ProcessGray/Process Monochrome: ""
+*DefaultColorModel: RGB
+*CloseUI: *ColorModel
+*OpenUI *OutputBin/Output Bin: PickOne
+*OrderDependency: 10 AnySetup *OutputBin
+*DefaultOutputBin: FaceUp
+*OutputBin FaceUp: ""
+*PageStackOrder FaceUp: Normal
+*CloseUI: *OutputBin
+*OpenUI *CutMedia/Cut: PickOne
+*OrderDependency: 10 AnySetup *CutMedia
+*DefaultCutMedia: None
+*CutMedia None/None: ""
+*CutMedia Auto: ""
+*cupsIPPFinishings 11/trim: "*CutMedia Auto"
+*CutMedia EndOfPage: ""
+*cupsIPPFinishings 60/trim-after-pages: "*CutMedia EndOfPage"
+*CloseUI: *CutMedia
+*OpenUI *cupsFinishingTemplate/Finishing Template: PickOne
+*OrderDependency: 10 AnySetup *cupsFinishingTemplate
+*DefaultcupsFinishingTemplate: None
+*cupsFinishingTemplate None/None: ""
+*cupsFinishingTemplate Trim: "
+*en_AU.cupsFinishingTemplate Trim/trim: ""
+"
+*cupsFinishingTemplate TrimAfterPages: "
+*en_AU.cupsFinishingTemplate TrimAfterPages/trim-after-pages: ""
+"
+*CloseUI: *cupsFinishingTemplate
+*cupsUIConstraint finishing-template: "*cupsFinishingTemplate *CutMedia"
+*cupsUIResolver finishing-template: "*cupsFinishingTemplate None *CutMedia None"
+*DefaultResolution: 300dpi
+*OpenUI *cupsPrintQuality/Print Quality: PickOne
+*OrderDependency: 10 AnySetup *cupsPrintQuality
+*DefaultcupsPrintQuality: Normal
+*cupsPrintQuality Normal/Normal: "<</HWResolution[300 300]>>setpagedevice"
+*cupsPrintQuality High/High: "<</HWResolution[300 300]>>setpagedevice"
+*CloseUI: *cupsPrintQuality
+*OpenUI *print-scaling/Print Scaling: PickOne
+*OrderDependency: 10 AnySetup *print-scaling
+*Defaultprint-scaling: auto
+*print-scaling auto: ""
+*print-scaling auto-fit: ""
+*print-scaling fill: ""
+*print-scaling fit: ""
+*print-scaling none: ""
+*CloseUI: *print-scaling
