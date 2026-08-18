@@ -24,17 +24,30 @@
       ];
     };
 
-    # The WF-1000XM4 only sustains LDAC with both buds in; a single bud falls
-    # back to AAC/SBC. WirePlumber picks LDAC whenever it is advertised, so
-    # pulling one bud made the headset tear down the A2DP transport
-    # ("connection .../sep3/fd0 terminated unexpectedly"), WirePlumber
-    # re-negotiated LDAC, and the link flapped every ~60s with a ~10s gap.
-    # Dropping ldac from the candidate list pins AAC, so the codec never has
-    # to change mid-session.
+    # Pin the WF-1000XM4 to AAC. This was originally added believing LDAC
+    # caused the single-bud dropouts; that turned out to be wrong (the flapping
+    # continued on AAC — see the autoswitch block below for the actual cause).
+    # Kept anyway: AAC is a much lower bitrate than LDAC, so the link has more
+    # headroom. Drop this block if you want LDAC quality back.
     services.pipewire.wireplumber.extraConfig."51-bluez-no-ldac" = {
       "monitor.bluez.properties" = {
         "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" ];
         "bluez5.enable-sbc-xq" = true;
+      };
+    };
+
+    # The real cause of the XM4 dropouts. WirePlumber defaults
+    # bluetooth.autoswitch-to-headset-profile to true, so any app opening a
+    # recording stream flips the buds from A2DP to HFP, which tears down the
+    # A2DP transport. The logs show the two events landing in the same second:
+    #   bluetoothd: ext_io_disconnected() Unable to get io data for
+    #               Hands-Free Voice gateway: ... not connected (107)
+    #   wireplumber: connection (.../sep2/fd0) terminated unexpectedly
+    # styx has a dedicated USB mic as its default source, so the earbud mic is
+    # never wanted — keep the buds in A2DP unconditionally.
+    services.pipewire.wireplumber.extraConfig."52-bluez-no-headset-autoswitch" = {
+      "wireplumber.settings" = {
+        "bluetooth.autoswitch-to-headset-profile" = false;
       };
     };
 
