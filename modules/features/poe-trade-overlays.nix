@@ -176,7 +176,7 @@ in
     repo = "awakened-poe-trade";
     rev = "6ed02a3c9442e395cc1c93cfd298fd92cec8d3c0";
     srcHash = "sha256-Burc7b9qJDMQMzajoQkQI0KWH4f3J+fTs7BB77cJkZE=";
-    outputHash = "sha256-2+U3KM20CPLTiiDMVQF8KuISINkx8adFanzvSFuXHz8="; # rebuilt for 3.29.101
+    outputHash = "sha256-hfAyd95EEBu6RYLCRL9JuP6LsznkoPfEB4lojvnIARM="; # rebuilt for the 2026-08-16 nixpkgs bump (toolchain change)
     desktopName = "Awakened PoE Trade";
     comment = "Path of Exile trading macro";
     wmClass = "awakened-poe-trade";
@@ -190,7 +190,7 @@ in
     repo = "Exiled-Exchange-2";
     rev = "v0.15.8";
     srcHash = "sha256-+ghWAH5fijwOJRC5GssHNnEfHe+RDNUOJmoJ2Ddgt7M=";
-    outputHash = "sha256-AU35hEP2Sch3PI00e9HwUJ5r/A/2kucr6pxWK0rX89U="; # rebuilt for the 2026-07-26 nixpkgs bump (toolchain change)
+    outputHash = "sha256-zmnYEzyeQU1vU7iW6oEYzUCMjQedKHtL5sSLplcw7Z4="; # rebuilt for the 2026-08-16 nixpkgs bump (toolchain change)
     desktopName = "Exiled Exchange 2";
     comment = "Path of Exile 2 trading macro";
     wmClass = "Exiled Exchange 2";
