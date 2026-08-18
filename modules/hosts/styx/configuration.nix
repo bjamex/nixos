@@ -11,6 +11,7 @@
         self.nixosModules.login
         self.nixosModules.hyprland
         self.nixosModules.noctalia
+        self.nixosModules.webapps # URLs as frameless launcher entries (see myWebApps)
         self.nixosModules.gaming
         self.nixosModules.bblauncher # Bloodborne launcher/mod manager for shadPS4
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)

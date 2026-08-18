@@ -10,6 +10,7 @@
         self.nixosModules.common # shared styx/void desktop foundation
         self.nixosModules.login
         self.nixosModules.hyprland
+        self.nixosModules.webapps # URLs as frameless launcher entries (see myWebApps)
         self.nixosModules.gaming
         self.nixosModules.pipewire
         self.nixosModules.fileManager
