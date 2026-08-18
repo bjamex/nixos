@@ -65,6 +65,27 @@
         ${lib.getExe pkgs.wf-recorder} -g "$geom" -f "$file"
       '';
 
+      # Region OCR — pick a region, pipe the raw PNG straight into tesseract and
+      # put the recognised text on the clipboard. Nothing touches disk. Bound to
+      # SUPER+CTRL+Print, alongside the plain Print screenshot.
+      ocrRegion =
+        let
+          # eng only: the unqualified package pulls in every language pack.
+          tesseractEng = pkgs.tesseract.override { enableLanguages = [ "eng" ]; };
+        in
+        pkgs.writeShellScript "ocr-region" ''
+          notify=${lib.getExe' pkgs.libnotify "notify-send"}
+          geom=$(${lib.getExe pkgs.slurp}) || exit 0
+          # tesseract takes the PNG on stdin ("-") and writes plain text to stdout.
+          text=$(${lib.getExe pkgs.grim} -g "$geom" -t png - | ${tesseractEng}/bin/tesseract - - 2>/dev/null)
+          if [ -z "$(printf '%s' "$text" | tr -d '[:space:]')" ]; then
+            "$notify" "OCR" "No text found in that selection"
+            exit 1
+          fi
+          printf '%s' "$text" | ${pkgs.wl-clipboard}/bin/wl-copy
+          "$notify" "OCR" "Copied $(printf '%s' "$text" | wc -c) characters to the clipboard"
+        '';
+
       # Shadowplay-style rolling replay buffer via gpu-screen-recorder. Started
       # at login (see hyprland.start); it keeps the last 5 min encoded in RAM
       # (VAAPI on this AMD GPU, near-zero cost) and writes nothing until saved.
@@ -352,10 +373,10 @@
             hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
             hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
             hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
-            hl.bind(mod .. " + A",            hl.dsp.exec_cmd("helium --app=https://gemini.google.com"))
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exec_cmd("${gracefulExit}"))
             hl.bind("Print",                  hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
+            hl.bind(mod .. " + CTRL + Print", hl.dsp.exec_cmd("${ocrRegion}"))
             hl.bind(mod .. " + SHIFT + R",    hl.dsp.exec_cmd("${screenRecordToggle}"))
             hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
 
