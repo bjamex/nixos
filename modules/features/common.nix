@@ -112,6 +112,7 @@
         btop
         ncdu
         baobab
+        qdirstat
         fzf
         lazygit
         weathr
