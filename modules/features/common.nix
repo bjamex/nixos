@@ -128,6 +128,8 @@
         obs-studio
         darktable
         jellyfin-tui
+        cliamp
+        yt-dlp # cliamp shells out to this for YouTube Music playback
         ani-cli
         loupe
         vlc
