@@ -20,11 +20,15 @@
     { pkgs, lib, ... }:
     let
       pname = "bb-launcher";
-      version = "16.05";
+      version = "16.10";
 
+      # Upstream deletes old releases rather than leaving them up — Release16.05
+      # vanished and started 404ing on the next rebuild. The AppImage is only a
+      # build input (nothing at runtime keeps it alive), so the weekly GC drops
+      # it and any rebuild has to re-download. Expect this to break again.
       src = pkgs.fetchurl {
         url = "https://github.com/rainmakerv3/BB_Launcher/releases/download/Release${version}/BB_Launcher-qt.AppImage";
-        hash = "sha256-RjGFwWIS29VjCAqsrnKdldV+37MAaED3EEF+7ujrxMM=";
+        hash = "sha256-KD9wlP44NmbrfRJP7aZ9ZUNb706MoEpFf3xZdYUpIDs=";
       };
 
       # Pull the bundled .desktop entry and icon out of the AppImage so it shows
