@@ -148,6 +148,15 @@
     # Symlink it to the real tzdata so e.g. Path of Exile reads the right zone.
     systemd.tmpfiles.rules = [ "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo" ];
 
+    # Minecraft "Open to LAN" binds a fresh random ephemeral port every time a
+    # world is opened, so a fixed allowedTCPPorts entry goes stale after each
+    # session. Allow the kernel's ephemeral range (ip_local_port_range) instead,
+    # scoped to the local subnet — LAN worlds are unauthenticated, so this must
+    # not be reachable from Tailscale or anywhere else.
+    networking.firewall.extraCommands = ''
+      iptables -A nixos-fw -s 192.168.0.0/24 -p tcp --dport 32768:60999 -j nixos-fw-accept
+    '';
+
     services.sunshine = {
       openFirewall = true;
       enable = true;
