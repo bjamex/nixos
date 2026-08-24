@@ -112,6 +112,7 @@
         gh
         claude-code
         nh
+        bruno
 
         # Terminal & System
         btop
