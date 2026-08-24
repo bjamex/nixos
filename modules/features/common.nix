@@ -7,6 +7,11 @@
   flake.nixosModules.common =
     { pkgs, ... }:
     {
+      imports = [
+        # Cisco Packet Tracer 9 — needs the NetAcad .deb added by hand, see module
+        self.nixosModules.packetTracer
+      ];
+
       # --- Nix ---
       nix.settings.experimental-features = [
         "nix-command"
