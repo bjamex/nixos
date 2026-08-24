@@ -227,6 +227,16 @@
 
             -- Startup
             hl.on("hyprland.start", function()
+              -- xdg-desktop-portal 1.22 added Requisite=graphical-session.target
+              -- to its unit: the portal now refuses to start unless that target
+              -- is already active, where 1.20 D-Bus activated regardless. The
+              -- plain start-hyprland session (login.nix keeps it over the uwsm
+              -- one, whose bindpid handshake fails under SDDM) never activates
+              -- it, so after the 2026-08-16 bump nothing had a ScreenCast
+              -- backend — Discord streaming, OBS and screenshots all silently
+              -- lost their portal. This shipped-but-unwired NixOS target
+              -- BindsTo graphical-session.target, which pulls it up.
+              hl.exec_cmd("systemctl --user start nixos-fake-graphical-session.target")
               hl.exec_cmd("noctalia")
               hl.exec_cmd("${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1")
               hl.exec_cmd("insync start")
