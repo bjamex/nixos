@@ -68,5 +68,28 @@
     in
     {
       environment.systemPackages = [ bambuStudio ];
+
+      # No plugin neutering here — deliberately. History, so it doesn't get
+      # reintroduced:
+      #
+      # The Bambu network plugin is a closed-source .so the app downloads at
+      # runtime into its config dir, so Nix never rebuilds it when nixpkgs moves
+      # gcc. Against 16.1 -> 16.2 it destroyed a std::locale allocated by the
+      # newer libstdc++ ABI and both slicers aborted on launch with `free():
+      # invalid size`. The attempted fix was to own plugins/ read-only (0500 via
+      # tmpfiles) so the blob could never land.
+      #
+      # That cure was worse than the disease: with the directory unwritable the
+      # app throws in its plugin-install path and recurses on the error until the
+      # stack is gone — SIGSEGV/SI_KERNEL, the same frame repeated to the bottom
+      # of the trace, four crashes in three minutes on 2026-08-20. Renaming the
+      # directory aside didn't help either; the app still found and loaded the
+      # stale blob out of plugins.disabled-abi-mismatch/.
+      #
+      # As of the 02.07.01.62 AppImage the downloaded plugin is ABI-compatible
+      # again: it re-downloads on first launch and loads on the next with no
+      # abort, so cloud/LAN send, camera and AMS all work. Leave plugins/
+      # writable. If a future gcc bump revives the `free(): invalid size` abort,
+      # do NOT re-lock the directory — pin the slicer or the toolchain instead.
     };
 }
