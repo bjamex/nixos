@@ -22,6 +22,7 @@
         self.nixosModules.shell
         self.nixosModules.tailscale # tailscale + ts-toggle + NOPASSWD sudo rule
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
+        self.nixosModules.thunderbird # GTK_THEME-wrapped, same as styx
       ];
 
       # --- Networking ---
@@ -53,9 +54,6 @@
       environment.systemPackages = with pkgs; [
         # Media & Creative
         komikku
-
-        # Internet & Communication
-        thunderbird
 
         # Productivity
         obsidian
