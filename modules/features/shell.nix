@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+{ ... }: {
 
   flake.nixosModules.shell =
     { pkgs, ... }:
@@ -22,7 +22,7 @@
       ];
 
       hjem.users.swin.files = {
-        ".config/starship.toml".source = "${self}/modules/users/dotfiles/starship.toml";
+        ".config/starship.toml".source = ../users/dotfiles/starship.toml;
       };
     };
 

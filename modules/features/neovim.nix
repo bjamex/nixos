@@ -1,4 +1,4 @@
-{ self, inputs, ... }: {
+{ ... }: {
 
   flake.nixosModules.neovim = { pkgs, lib, ... }: {
     # Neovim set up the way Omarchy does it: the LazyVim distribution driven by
@@ -26,23 +26,23 @@
     # lazy-lock.json and LazyVim's lazyvim.json (:LazyExtras) are deliberately
     # NOT listed here, so they stay writable at ~/.config/nvim for runtime use.
     hjem.users.swin.files = {
-      ".config/nvim/init.lua".source = "${self}/modules/users/dotfiles/nvim/init.lua";
+      ".config/nvim/init.lua".source = ../users/dotfiles/nvim/init.lua;
       ".config/nvim/lua/config/lazy.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/config/lazy.lua";
+        ../users/dotfiles/nvim/lua/config/lazy.lua;
       ".config/nvim/lua/config/options.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/config/options.lua";
+        ../users/dotfiles/nvim/lua/config/options.lua;
       ".config/nvim/lua/config/keymaps.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/config/keymaps.lua";
+        ../users/dotfiles/nvim/lua/config/keymaps.lua;
       ".config/nvim/lua/config/autocmds.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/config/autocmds.lua";
+        ../users/dotfiles/nvim/lua/config/autocmds.lua;
       ".config/nvim/lua/plugins/theme.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/plugins/theme.lua";
+        ../users/dotfiles/nvim/lua/plugins/theme.lua;
       ".config/nvim/lua/plugins/nixos.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/plugins/nixos.lua";
+        ../users/dotfiles/nvim/lua/plugins/nixos.lua;
       ".config/nvim/lua/plugins/layout.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/plugins/layout.lua";
+        ../users/dotfiles/nvim/lua/plugins/layout.lua;
       ".config/nvim/lua/plugins/herdr.lua".source =
-        "${self}/modules/users/dotfiles/nvim/lua/plugins/herdr.lua";
+        ../users/dotfiles/nvim/lua/plugins/herdr.lua;
     };
 
     environment.systemPackages = with pkgs; [
