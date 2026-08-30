@@ -33,7 +33,7 @@
 
       # Pull the bundled .desktop entry and icon out of the AppImage so it shows
       # up in the launcher instead of being an anonymous binary.
-      appimageContents = pkgs.appimageTools.extractType2 { inherit pname version src; };
+      appimageContents = pkgs.appimageTools.extract { inherit pname version src; };
 
       bblauncher = pkgs.appimageTools.wrapType2 {
         inherit pname version src;
