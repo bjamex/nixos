@@ -1,7 +1,10 @@
 { self, inputs, ... }: {
 
   flake.nixosModules.pipewire = { pkgs, ... }: {
-    environment.systemPackages = [ pkgs.crosspipe pkgs.easyeffects ];
+    environment.systemPackages = [
+      pkgs.crosspipe
+      pkgs.easyeffects
+    ];
     security.rtkit.enable = true;
 
     # Pin the USB DAC (headphones/mic) as the preferred default over the GPU's
@@ -31,7 +34,11 @@
     # headroom. Drop this block if you want LDAC quality back.
     services.pipewire.wireplumber.extraConfig."51-bluez-no-ldac" = {
       "monitor.bluez.properties" = {
-        "bluez5.codecs" = [ "aac" "sbc_xq" "sbc" ];
+        "bluez5.codecs" = [
+          "aac"
+          "sbc_xq"
+          "sbc"
+        ];
         "bluez5.enable-sbc-xq" = true;
       };
     };

@@ -27,7 +27,6 @@
       # Still imperative (like lazy.nvim installing plugins at runtime): the
       # herdr-splits plugin itself, installed once with
       #   herdr plugin install lmilojevicc/herdr-splits.nvim
-      hjem.users.swin.files.".config/herdr/config.toml".source =
-        ../users/dotfiles/herdr/config.toml;
+      hjem.users.swin.files.".config/herdr/config.toml".source = ../users/dotfiles/herdr/config.toml;
     };
 }
