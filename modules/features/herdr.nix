@@ -1,4 +1,4 @@
-{ self, inputs, ... }:
+{ inputs, ... }:
 {
   # herdr — a terminal multiplexer built for AI coding agents: each agent
   # (Claude Code, Codex, OpenCode, …) runs in its own real PTY pane, sessions
@@ -15,7 +15,7 @@
   flake.nixosModules.herdr =
     { pkgs, ... }:
     {
-      environment.systemPackages = [ inputs.herdr.packages.${pkgs.system}.default ];
+      environment.systemPackages = [ inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
       # herdr's config.toml is a read-only *input* (herdr never writes back to
       # it — settings, plugins.json, sessions and sockets all live in separate
@@ -28,6 +28,6 @@
       # herdr-splits plugin itself, installed once with
       #   herdr plugin install lmilojevicc/herdr-splits.nvim
       hjem.users.swin.files.".config/herdr/config.toml".source =
-        "${self}/modules/users/dotfiles/herdr/config.toml";
+        ../users/dotfiles/herdr/config.toml;
     };
 }
