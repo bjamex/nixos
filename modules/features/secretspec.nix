@@ -18,7 +18,12 @@
   #
   # See docs/hades-roadmap.md (Phases 3-4) for the migration workflow.
   flake.nixosModules.secretspec =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       cfg = config.services.secretspec;
       # /etc copy so the headless box can run `secretspec set`/`check` and the

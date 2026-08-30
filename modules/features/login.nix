@@ -4,7 +4,12 @@
   # Wayland env. Previously these lived inside niri-base.nix; extracted so the
   # single remaining compositor (Hyprland) keeps a working login on both hosts.
   flake.nixosModules.login =
-    { config, pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     let
       # where-is-my-sddm-theme: ultra-minimal greeter, tinted to Oxocarbon.
       # qt6 variant is the default, matching SDDM's qt6 greeter.

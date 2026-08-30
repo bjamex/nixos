@@ -43,11 +43,12 @@
           prev.buildFHSEnv {
             pname = "insync";
             inherit version;
-            targetPkgs = pkgs: with pkgs; [
-              libudev0-shim
-              insync-pkg
-              hicolor-icon-theme
-            ];
+            targetPkgs =
+              pkgs: with pkgs; [
+                libudev0-shim
+                insync-pkg
+                hicolor-icon-theme
+              ];
             extraInstallCommands = ''
               cp -rsHf "${insync-pkg}"/share $out/
             '';
@@ -89,7 +90,12 @@
   # sub-second warm. Insync already holds watches on the same directories, so
   # the inodes are pinned regardless and our marks are the only new cost.
   flake.nixosModules.insyncNotify =
-    { pkgs, lib, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       cfg = config.insyncNotify;
 

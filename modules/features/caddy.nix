@@ -11,7 +11,12 @@
   # committed. No ACME email is set (Caddy uses an anonymous account) to keep
   # the address out of the repo.
   flake.nixosModules.caddy =
-    { config, lib, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       caddyWithCloudflare = pkgs.caddy.withPlugins {
         plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
