@@ -11,22 +11,8 @@
         self.nixosModules.secretspec # secrets wiring for migrated services
         self.nixosModules.caddy # reverse proxy for *.swinlab.net (tailnet-only)
         self.nixosModules.uptimeKuma # pilot service behind Caddy
+        self.nixosModules.nixCore # nix daemon policy shared with the desktops
       ];
-
-      # --- Nix ---
-      nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      nix.settings.auto-optimise-store = true;
-      # Headless box that's rarely looked at — without GC it accumulates
-      # generations indefinitely. Same policy as styx/void.
-      nix.gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 14d";
-      };
-      nixpkgs.config.allowUnfree = true;
 
       # --- Boot ---
       boot.loader.systemd-boot.enable = true;
