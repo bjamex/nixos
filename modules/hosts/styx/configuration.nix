@@ -57,9 +57,6 @@
       # --- Networking ---
       networking.hostName = "styx";
 
-      # KDE Connect: installs kdeconnect-kde and opens TCP/UDP 1714-1764
-      programs.kdeconnect.enable = true;
-
       i18n.supportedLocales = [
         "C.UTF-8/UTF-8"
         "en_AU.UTF-8/UTF-8"
