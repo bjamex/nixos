@@ -33,22 +33,6 @@
         '';
       };
 
-      oxocarbon-gtk-theme = pkgs.stdenv.mkDerivation {
-        pname = "oxocarbon-gtk-theme";
-        version = "unstable-2023";
-        src = pkgs.fetchzip {
-          url = "https://git.sr.ht/~ved/oxocarbon-gtk/archive/0cf0eb35a927bffcb797db8a074ce240823d92de.tar.gz";
-          hash = "sha256-URuoDJVRQ05S+u7mkz1EN5HWquhTC4OqY8MqAbl0crk=";
-        };
-        nativeBuildInputs = [ pkgs.dart-sass ];
-        buildPhase = "sass scss:.";
-        installPhase = ''
-          install -d $out/share/themes/oxocarbon
-          install -m 0644 index.theme $out/share/themes/oxocarbon/
-          cp -r assets gtk-3.0 $out/share/themes/oxocarbon/
-        '';
-      };
-
       gdocOpener = pkgs.makeDesktopItem {
         name = "gdoc-opener";
         desktopName = "Google Drive Opener";
@@ -155,7 +139,11 @@
             };
             "org/gnome/desktop/interface" = {
               icon-theme = "Papirus-Dark";
-              gtk-theme = "oxocarbon";
+              # adw-gtk3-dark is what Noctalia's gtk template also sets via
+              # gsettings; keeping them the same stops dconf and the template
+              # from fighting on every theme apply. Colours come from the
+              # generated gtk-3.0/noctalia.css, not from the theme package.
+              gtk-theme = "adw-gtk3-dark";
               color-scheme = "prefer-dark";
             };
           };
@@ -298,7 +286,6 @@
         xdg-utils
         papirus-icon-theme
         adw-gtk3
-        oxocarbon-gtk-theme
         ripdrag
         mediainfo
         googleDriveMimeTypes

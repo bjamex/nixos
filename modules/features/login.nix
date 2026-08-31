@@ -11,13 +11,15 @@
       ...
     }:
     let
-      # where-is-my-sddm-theme: ultra-minimal greeter, tinted to Oxocarbon.
+      # where-is-my-sddm-theme: ultra-minimal greeter, tinted to Doomed.
+      # SDDM has no Noctalia template, so these are hand-copied from the
+      # customPalettes.doomed block in noctalia.nix — update both together.
       # qt6 variant is the default, matching SDDM's qt6 greeter.
       sddmTheme = pkgs.where-is-my-sddm-theme.override {
         themeConfig.General = {
-          backgroundFill = "#161616"; # Oxocarbon base00
-          basicTextColor = "#f2f4f8"; # near-white (base05)
-          passwordCursorColor = "#3ddbd9"; # Oxocarbon teal accent
+          backgroundFill = "#1c1e1e"; # Doomed mSurface
+          basicTextColor = "#fffcf8"; # Doomed mOnSurface
+          passwordCursorColor = "#51afef"; # Doomed mPrimary (doom blue)
         };
       };
     in

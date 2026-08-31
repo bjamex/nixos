@@ -5,13 +5,13 @@ format = "$username$hostname$directory$git_branch$git_status$nix_shell$cmd_durat
 [username]
 show_always = true
 format = "[$user]($style)@"
-style_user = "bold #be95ff"
+style_user = "bold mauve"
 
 [hostname]
 ssh_symbol = " "
 ssh_only = false
 format = "[$ssh_symbol$hostname]($style) "
-style = "bold #be95ff"
+style = "bold mauve"
 
 [character]
 success_symbol = " [❯](bold green)"

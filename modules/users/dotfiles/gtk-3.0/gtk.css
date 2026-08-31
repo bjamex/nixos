@@ -1,0 +1,10 @@
+/* Colours come from Noctalia's gtk3 template, which regenerates
+ * ~/.config/gtk-3.0/noctalia.css from the palette in modules/features/noctalia.nix.
+ * This file only imports it — do not put @define-color rules here, they would
+ * be a second source of truth and drift from the rest of the desktop.
+ *
+ * Delivered with hjem `type = "copy"` so Noctalia's gtk apply.sh can append the
+ * import itself if it is ever missing; as shipped it is already correct, so the
+ * hook is a no-op.
+ */
+@import url("noctalia.css");

@@ -19,27 +19,64 @@
         enable = true;
         package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
-        # Oxocarbon, ported verbatim from the v4 colors.json so the whole desktop
-        # (gtk, btop, kitty) stays on the same palette. Selected below via
-        # theme.source = "custom" + theme.custom_palette = "oxocarbon".
-        customPalettes.oxocarbon = {
+        # Doomed (doom-one lineage), ported verbatim from the upstream scheme
+        # file so the palette lives in this repo. It deliberately is NOT selected
+        # via `builtin_palette`: the scheme set lives in the imperative,
+        # untracked ~/.config/noctalia/colorschemes/ dir, which does not exist on
+        # a fresh install (or on void), so a builtin reference would silently
+        # break there. Selected below via source = "custom" + custom_palette.
+        #
+        # This is the single source of truth for the desktop's colours — the
+        # templates block below regenerates kitty/btop/GTK/starship/Qt from it.
+        # The places that CANNOT be templated (SDDM in login.nix, Hyprland
+        # borders + hyprlock in hyprland.nix, Neovim in nvim/plugins/theme.lua)
+        # carry hand-copied values from this palette; grep 51afef to find them.
+        customPalettes.doomed = {
           dark = {
-            mPrimary = "#33b1ff";
-            mOnPrimary = "#161616";
-            mSecondary = "#42be65";
-            mOnSecondary = "#161616";
-            mTertiary = "#be95ff";
-            mOnTertiary = "#161616";
-            mError = "#ee5396";
-            mOnError = "#161616";
-            mSurface = "#161616";
-            mOnSurface = "#f2f4f8";
-            mSurfaceVariant = "#262626";
-            mOnSurfaceVariant = "#dde1e6";
-            mOutline = "#525252";
-            mShadow = "#000000";
-            mHover = "#78a9ff";
-            mOnHover = "#161616";
+            mPrimary = "#51afef";
+            mOnPrimary = "#1c1e1e";
+            mSecondary = "#f2c481";
+            mOnSecondary = "#1c1e1e";
+            mTertiary = "#98be65";
+            mOnTertiary = "#1c1e1e";
+            mError = "#ff6b5a";
+            mOnError = "#1c1e1e";
+            mSurface = "#1c1e1e";
+            mOnSurface = "#fffcf8";
+            mSurfaceVariant = "#282c34";
+            mOnSurfaceVariant = "#bbc2cf";
+            mOutline = "#3f444a";
+            mShadow = "#111212";
+            mHover = "#2d3139";
+            mOnHover = "#fffcf8";
+            terminal = {
+              background = "#1c1e1e";
+              foreground = "#fffcf8";
+              cursor = "#bbc2cf";
+              cursorText = "#1c1e1e";
+              selectionBg = "#fffcf8";
+              selectionFg = "#2d3138";
+              normal = {
+                black = "#1c1e1e";
+                red = "#ff6b5a";
+                green = "#98be65";
+                yellow = "#f2c481";
+                blue = "#51afef";
+                magenta = "#dc8ef3";
+                cyan = "#46d9ff";
+                white = "#bbc2cf";
+              };
+              bright = {
+                black = "#2e323a";
+                red = "#ff7665";
+                green = "#a9cf76";
+                yellow = "#f2c481";
+                blue = "#47a5e5";
+                magenta = "#c678dd";
+                cyan = "#4db5bd";
+                white = "#f0f6fc";
+              };
+            };
           };
         };
 
@@ -53,16 +90,23 @@
           theme = {
             mode = "dark";
             source = "custom";
-            custom_palette = "oxocarbon";
+            custom_palette = "doomed";
             templates = {
               enable_builtin_templates = true;
-              # kitty + btop ship as builtin templates (each with its own
-              # post-hook that reloads the app) — this replaces the v4 template
-              # setup AND the systemd kitty-reload watcher. NOTE: yazi has no
-              # builtin v5 template; it needs a user template (follow-up).
+              # Every app whose theme Noctalia can generate. Each template writes
+              # a themes/noctalia.* file AND runs a post-hook that rewrites the
+              # app's own config to point at it — which is why those configs are
+              # delivered with hjem `type = "copy"` (writable) instead of
+              # read-only store symlinks. A read-only symlink is exactly what
+              # silently stranded btop on the old palette.
+              # NOTE: yazi still has no builtin v5 template (follow-up).
               builtin_ids = [
                 "kitty"
                 "btop"
+                "gtk3"
+                "gtk4"
+                "starship"
+                "qt"
               ];
             };
           };

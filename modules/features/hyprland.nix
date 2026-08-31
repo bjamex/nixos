@@ -271,9 +271,13 @@
                 gaps_in     = 3,
                 gaps_out    = 7,
                 border_size = 2,
+                -- Hand-copied from customPalettes.doomed in noctalia.nix (mPrimary /
+                -- mOutline): Hyprland has a Noctalia template, but this config is
+                -- a Nix-generated read-only hyprland.lua, so the template's hook
+                -- could not write to it. Update both together.
                 col = {
-                  active_border   = "rgba(7fc8ffff)",
-                  inactive_border = "rgba(45475Aff)",
+                  active_border   = "rgba(51afefff)",
+                  inactive_border = "rgba(3f444aff)",
                 },
                 layout = "dwindle",
               },
@@ -472,7 +476,7 @@
           ".config/hypr/hyprlock.conf".text = ''
             background {
               monitor =
-              color   = rgba(16, 16, 16, 1.0)
+              color   = rgba(28, 30, 30, 1.0)
               blur_passes = 2
               blur_size   = 7
             }
@@ -481,9 +485,9 @@
               monitor          =
               size             = 300, 50
               outline_thickness = 2
-              outer_color      = rgb(7fc8ff)
-              inner_color      = rgb(262626)
-              font_color       = rgb(f2f4f8)
+              outer_color      = rgb(51afef)
+              inner_color      = rgb(282c34)
+              font_color       = rgb(fffcf8)
               fade_on_empty    = true
               placeholder_text =
               hide_input       = false
@@ -495,7 +499,7 @@
             label {
               monitor     =
               text        = cmd[update:1000] echo "$(date +"%H:%M")"
-              color       = rgba(242, 244, 248, 1.0)
+              color       = rgba(255, 252, 248, 1.0)
               font_size   = 72
               font_family = JetBrains Mono
               position    = 0, 100

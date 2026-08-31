@@ -21,8 +21,14 @@
         nix-output-monitor # `nom` — live build/dependency progress for nix builds
       ];
 
-      hjem.users.swin.files = {
-        ".config/starship.toml".source = ../users/dotfiles/starship.toml;
+      # Noctalia's starship template injects `palette = "noctalia"` plus the
+      # generated [palettes.noctalia] block into this file, so it has to be
+      # writable — hence `type = "copy"` (same reasoning as modules/users/swin.nix).
+      # The colours here are palette *names* (mauve, etc), never hex, so they
+      # follow whatever palette noctalia.nix selects.
+      hjem.users.swin.files.".config/starship.toml" = {
+        source = ../users/dotfiles/starship.toml;
+        type = "copy";
       };
     };
 
