@@ -31,6 +31,7 @@
         self.nixosModules.thunderbird
         self.nixosModules.exiledExchange
         self.nixosModules.scalpel # alternative PoE2 overlay/price checker
+        self.nixosModules.stashsage # PoE2 ML price prediction overlay (~2.8GB store path)
         self.nixosModules.airvpn
         self.nixosModules.tailscale
         self.nixosModules.budslink
