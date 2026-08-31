@@ -171,12 +171,12 @@ in
 {
   flake.nixosModules.awakenedPoeTrade = mkModule {
     pname = "awakened-poe-trade";
-    version = "3.29.101";
+    version = "3.29.107";
     owner = "SnosMe";
     repo = "awakened-poe-trade";
-    rev = "6ed02a3c9442e395cc1c93cfd298fd92cec8d3c0";
-    srcHash = "sha256-Burc7b9qJDMQMzajoQkQI0KWH4f3J+fTs7BB77cJkZE=";
-    outputHash = "sha256-hfAyd95EEBu6RYLCRL9JuP6LsznkoPfEB4lojvnIARM="; # rebuilt for the 2026-08-16 nixpkgs bump (toolchain change)
+    rev = "f9c7ffc247e82db6cd6c7203d5be74be01f43dcd";
+    srcHash = inputs.nixpkgs.lib.fakeHash;
+    outputHash = inputs.nixpkgs.lib.fakeHash;
     desktopName = "Awakened PoE Trade";
     comment = "Path of Exile trading macro";
     wmClass = "awakened-poe-trade";
