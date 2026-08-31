@@ -10,6 +10,7 @@
       imports = [
         # Cisco Packet Tracer 9 — needs the NetAcad .deb added by hand, see module
         self.nixosModules.packetTracer
+        self.nixosModules.wayscriber # screen annotation overlay (SUPER+ALT binds)
       ];
 
       # --- Nix ---
