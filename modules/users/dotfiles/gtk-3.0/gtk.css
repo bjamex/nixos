@@ -1,5 +1,5 @@
-/* Colours come from Noctalia's gtk4 template, which regenerates
- * ~/.config/gtk-4.0/noctalia.css from the palette in modules/features/noctalia.nix.
+/* Colours come from Noctalia's gtk3 template, which regenerates
+ * ~/.config/gtk-3.0/noctalia.css from the palette in modules/features/noctalia.nix.
  * This file only imports it — do not put @define-color rules here, they would
  * be a second source of truth and drift from the rest of the desktop.
  *

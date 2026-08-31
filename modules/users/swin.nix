@@ -11,12 +11,32 @@
     hjem.users.swin = {
       directory = "/home/swin";
       files = {
-        ".config/kitty/kitty.conf".source = ./dotfiles/kitty.conf;
-        ".config/btop/btop.conf".source = ./dotfiles/btop/btop.conf;
-        ".config/btop/themes/oxocarbon.theme".source = ./dotfiles/btop/themes/oxocarbon.theme;
+        # `type = "copy"` on every config a Noctalia template post-hook rewrites
+        # (see the templates block in modules/features/noctalia.nix). Those hooks
+        # edit the app's own config to point at the generated theme, and a
+        # read-only /nix/store symlink makes them fail — which is exactly what
+        # silently stranded btop on the old palette. The repo copies already
+        # carry the final state, so on a fresh activation the hooks are no-ops.
+        ".config/kitty/kitty.conf" = {
+          source = ./dotfiles/kitty.conf;
+          type = "copy";
+        };
+        ".config/btop/btop.conf" = {
+          source = ./dotfiles/btop/btop.conf;
+          type = "copy";
+        };
+        ".config/gtk-3.0/gtk.css" = {
+          source = ./dotfiles/gtk-3.0/gtk.css;
+          type = "copy";
+        };
+        ".config/gtk-4.0/gtk.css" = {
+          source = ./dotfiles/gtk-4.0/gtk.css;
+          type = "copy";
+        };
+
+        # Not touched by any template — plain symlinks are fine.
         ".config/gtk-3.0/settings.ini".source = ./dotfiles/gtk-3.0/settings.ini;
         ".config/gtk-4.0/settings.ini".source = ./dotfiles/gtk-4.0/settings.ini;
-        ".config/gtk-4.0/gtk.css".source = ./dotfiles/gtk-4.0/gtk.css;
       };
     };
   };
