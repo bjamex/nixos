@@ -175,8 +175,8 @@ in
     owner = "SnosMe";
     repo = "awakened-poe-trade";
     rev = "f9c7ffc247e82db6cd6c7203d5be74be01f43dcd";
-    srcHash = inputs.nixpkgs.lib.fakeHash;
-    outputHash = inputs.nixpkgs.lib.fakeHash;
+    srcHash = "sha256-VEv07fuyRxTGXRI1QK8t89ugXMdlTcTdMp1tpc6Mavw=";
+    outputHash = "sha256-0WxT62HVHE4FoyMfh3jI4GMgD8UBJsTFWDoBF3+ER9I="; # rebuilt for 3.29.107
     desktopName = "Awakened PoE Trade";
     comment = "Path of Exile trading macro";
     wmClass = "awakened-poe-trade";
