@@ -11,20 +11,10 @@
         # Cisco Packet Tracer 9 — needs the NetAcad .deb added by hand, see module
         self.nixosModules.packetTracer
         self.nixosModules.wayscriber # screen annotation overlay (SUPER+ALT binds)
+        self.nixosModules.nixCore # nix daemon policy shared with hades
       ];
 
       # --- Nix ---
-      nix.settings.experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      nix.settings.auto-optimise-store = true;
-      nix.gc = {
-        automatic = true;
-        dates = "weekly";
-        options = "--delete-older-than 14d";
-      };
-      nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
         (final: prev: {
           # pkgs.stable pinned escape hatch for packages unstable breaks
@@ -96,7 +86,6 @@
           "docker"
           "scanner"
           "lp"
-          "disk"
           "dialout"
         ];
       };
