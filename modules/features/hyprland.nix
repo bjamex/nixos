@@ -268,8 +268,10 @@
             -- Configuration
             hl.config({
               general = {
-                gaps_in     = 3,
-                gaps_out    = 7,
+                -- Gapless: windows sit flush to each other and the screen edge.
+                -- Previous values were gaps_in = 3, gaps_out = 7.
+                gaps_in     = 0,
+                gaps_out    = 0,
                 border_size = 2,
                 -- Hand-copied from customPalettes.doomed in noctalia.nix (mPrimary /
                 -- mOutline): Hyprland has a Noctalia template, but this config is
