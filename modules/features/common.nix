@@ -33,7 +33,9 @@
 
       # --- Networking ---
       networking.networkmanager.enable = true;
+      networking.networkmanager.dns = "systemd-resolved";
       networking.firewall.enable = true;
+      services.resolved.enable = true;
       # Desktops are reachable in person + over Tailscale; no SSH daemon.
       services.openssh.enable = false;
 
