@@ -39,6 +39,7 @@
         self.nixosModules.nixLd # unpatched binaries (Playwright's Chromium et al)
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
+        self.nixosModules.packetTracer # needs the NetAcad .deb added by hand, see module
 
       ];
 
