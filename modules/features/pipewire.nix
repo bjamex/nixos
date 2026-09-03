@@ -58,6 +58,27 @@
       };
     };
 
+    # The onboard Realtek codec never enumerates. The PCH HDA controller itself
+    # binds fine (00:1f.3, snd_hda_intel, "Onboard - Sound"), but the boot log
+    # ends at "no codecs found!" and /sys/bus/hdaudio/devices/ holds only the
+    # GPU's HDMI codec — so the board's analog jacks do not exist as far as ALSA
+    # is concerned. That leaves the Generic USB Audio device as the only analog
+    # input, and its mic stage tops out at +12 dB, which is not enough for the
+    # NTH-Mic: capture sits pinned at ALSA 39/39 *and* 150% in PipeWire and is
+    # still quiet. A Realtek codec would offer +20-30 dB of Mic Boost instead.
+    # probe_mask=1 forces a probe of codec slot 0 rather than trusting the
+    # controller's (empty) codec bitmap. A no-op if the codec is truly absent.
+    #
+    # Tested 2026-09-03 on kernel 7.2.2 (up from 7.1.8): no change. The option
+    # reaches /etc/modprobe.d/ but the boot log still ends at "no codecs
+    # found!" for 00:1f.3, card 1 exposes no codec, and /sys/bus/hdaudio/
+    # still holds only hdaudioC2D0 (the ATI HDMI codec). So the Realtek is
+    # genuinely absent rather than mis-enumerated — firmware/BIOS territory,
+    # not the driver. Kept as a record of what has already been ruled out.
+    boot.extraModprobeConfig = ''
+      options snd-hda-intel probe_mask=1
+    '';
+
     services.pipewire = {
       enable = true;
       alsa.enable = true;
