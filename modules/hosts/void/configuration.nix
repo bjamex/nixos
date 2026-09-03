@@ -16,6 +16,7 @@
         self.nixosModules.fileManager
         self.nixosModules.kitty
         self.nixosModules.neovim
+        self.nixosModules.herdr # agent multiplexer (tmux-for-AI-agents)
         self.nixosModules.insync
         self.nixosModules.swinHome
         self.nixosModules.smb
@@ -23,6 +24,7 @@
         self.nixosModules.tailscale # tailscale + ts-toggle + NOPASSWD sudo rule
         self.nixosModules.davinciResolve # DaVinci Resolve 21 (free) + Blackmagic udev rules
         self.nixosModules.thunderbird # GTK_THEME-wrapped, same as styx
+        self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
       ];
 
       # --- Networking ---
@@ -49,6 +51,16 @@
 
       # --- Services ---
       services.upower.enable = true;
+
+      # --- Hyprland ---
+      myHyprland.idleLock = false; # disable auto-lock on idle
+      myHyprland.autoSuspend = false; # suspend/resume doesn't survive cleanly on this hardware, forces relogin
+      # SUPER + CTRL, not SUPER + ALT: wayscriber (common.nix) binds its own
+      # toggles on mod + ALT + {D,S,L,F}, so an ALT-based mod here would double
+      # up ALT in the chord and collide with those (and with the plain mod + D
+      # Discord bind). CTRL only ever appears once elsewhere (mod + CTRL +
+      # Print for OCR), which just collapses to itself, not a real collision.
+      myHyprland.mod = "SUPER + CTRL"; # styx keeps plain SUPER; avoids collision when moonlighting into styx
 
       # --- Packages (void-only; shared set lives in common.nix) ---
       environment.systemPackages = with pkgs; [
