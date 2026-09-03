@@ -158,6 +158,17 @@
         description = "Per-host hl.monitor(...) Lua calls. Default auto-detects all outputs.";
       };
 
+      options.myHyprland.mod = lib.mkOption {
+        type = lib.types.str;
+        default = "SUPER";
+        description = ''
+          Modifier chord for the built-in binds below (hyprlua `+`-joined
+          string, e.g. "SUPER + ALT"). Give a host its own combo when Moonlight
+          in from another Hyprland box, so the mod key doesn't collide with the
+          local compositor's binds and get eaten before it reaches the stream.
+        '';
+      };
+
       options.myHyprland.autoSuspend = lib.mkOption {
         type = lib.types.bool;
         default = true;
@@ -377,7 +388,7 @@
             hl.window_rule({ match = { title = "notificationtoasts_.*_desktop" }, float = true, no_focus = true })
 
             -- Keybinds
-            local mod = "SUPER"
+            local mod = "${config.myHyprland.mod}"
 
             -- Apps
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty herdr"))
