@@ -189,12 +189,12 @@ in
 
   flake.nixosModules.exiledExchange = mkModule {
     pname = "exiled-exchange-2";
-    version = "0.15.8";
+    version = "0.16.1";
     owner = "Kvan7";
     repo = "Exiled-Exchange-2";
-    rev = "v0.15.8";
-    srcHash = "sha256-+ghWAH5fijwOJRC5GssHNnEfHe+RDNUOJmoJ2Ddgt7M=";
-    outputHash = "sha256-dMCMPWKws6yYa07C585sVlExP1fkfe/bJyMGO8lGbhc="; # rebuilt for the 2026-08-31 nixpkgs bump (toolchain change)
+    rev = "v0.16.1";
+    srcHash = inputs.nixpkgs.lib.fakeHash;
+    outputHash = inputs.nixpkgs.lib.fakeHash;
     desktopName = "Exiled Exchange 2";
     comment = "Path of Exile 2 trading macro";
     wmClass = "Exiled Exchange 2";
