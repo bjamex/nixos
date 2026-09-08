@@ -299,6 +299,10 @@
                 active_opacity   = 0.95,
                 inactive_opacity = 0.95,
                 fullscreen_opacity = 1.0,
+                -- Dims the workspace under the scratchpad console so it reads
+                -- as an overlay, not a replacement. Only applies while a
+                -- special workspace is open, so it costs nothing otherwise.
+                dim_special      = 0.6,
                 blur = {
                   enabled  = true,
                   passes   = 2,
@@ -337,15 +341,102 @@
               },
             })
 
-            -- Scratchpad
+            -- Scratchpad — a Quake-style herdr console, ported from Omarchy's
+            -- default/hypr/qconsole.lua. mod+S (or mod+grave) drops it down over
+            -- whatever workspace you're on; the workspace underneath dims rather
+            -- than being replaced. The first toggle spawns herdr via
+            -- on_created_empty; after that the same session is only shown and
+            -- hidden, so agents keep running while it's away. Its --class is
+            -- distinct from the mod+Return instance so the two are tellable
+            -- apart in `hyprctl clients`.
+            --
+            -- Omarchy pins the workspace in the seed command itself
+            -- (`[workspace special:herdr silent] ...`) because their looknfeel
+            -- turns misc.initial_workspace_tracking off; ours is left at the
+            -- default (on), so the spawn is tagged with the workspace it came
+            -- from and the bare command is enough.
 
-            -- herdr scratchpad — a special workspace that toggles in and out over
-            -- whatever's on screen (mod+S). The first toggle spawns herdr via
-            -- on_created_empty; after that the same session is only shown/hidden,
-            -- so agents keep running in the background while it's away. Distinct
-            -- --class from the mod+Return instance so the two are tellable apart
-            -- in `hyprctl clients`.
-            hl.workspace_rule({ workspace = "special:herdr", on_created_empty = "kitty --class herdr-scratch herdr" })
+            -- How much of the usable screen the console covers, from the top.
+            local scratchpadShare = 0.5
+
+            -- Sizing the console with a window rule would freeze it at whatever
+            -- the screen measured when the window first mapped — Hyprland
+            -- resolves those expressions once. Rescaling or switching monitors
+            -- afterwards would leave a console that's no longer half of
+            -- anything. Gaps are re-applied by the layout instead, so the
+            -- console is sized by the gap left underneath it, recomputed on
+            -- every layout change. This is what makes it work on both styx's
+            -- 1440p panel and void's laptop screen without hardcoded pixels.
+            local scratchpadCovering = nil
+
+            local function scratchpadCover(bottom)
+              -- Refitting replaces the rule in place rather than stacking a new
+              -- one, but it still schedules a monitor/window state refresh, and
+              -- monitor.focused fires on every hop between screens. Most hops
+              -- don't change the number, so only write when it actually moves.
+              if scratchpadCovering == bottom then
+                return
+              end
+              scratchpadCovering = bottom
+
+              hl.workspace_rule({
+                workspace = "special:herdr",
+                gaps_in   = 0,
+                gaps_out  = { top = 0, right = 0, bottom = bottom, left = 0 },
+
+                -- Nothing to highlight in a console that's only ever focused
+                -- while open, and an active border reads as a stray frame
+                -- around a panel the dimming already sets apart.
+                no_border = true,
+
+                on_created_empty = "kitty --class herdr-scratch herdr",
+              })
+            end
+
+            local function scratchpadFit()
+              local monitor = hl.get_active_monitor()
+
+              -- A monitor handle whose output has gone away answers nil to every
+              -- field, and layout changes are exactly when that happens, so this
+              -- also covers reading height and reserved below.
+              if not monitor or not monitor.scale or monitor.scale <= 0 then
+                return
+              end
+
+              -- This Hyprland's stubs type monitor.reserved as number|table, so
+              -- don't assume the struct: a bare number means nothing reserved
+              -- per-edge, and a missing field means that edge is clear.
+              local reserved = monitor.reserved
+              local reservedTop, reservedBottom = 0, 0
+              if type(reserved) == "table" then
+                reservedTop    = reserved.top or 0
+                reservedBottom = reserved.bottom or 0
+              end
+
+              -- Monitor dimensions are physical pixels; gaps are logical, so the
+              -- scale has to come out before the reserved area (already logical)
+              -- comes off.
+              local usable = monitor.height / monitor.scale - reservedTop - reservedBottom
+
+              scratchpadCover(math.max(0, math.floor(usable * (1 - scratchpadShare))))
+            end
+
+            -- Until a monitor can be read, cover the whole work area rather than
+            -- leaving the console unruled, so it's never seeded without its
+            -- placement.
+            scratchpadCover(0)
+            scratchpadFit()
+
+            hl.on("monitor.layout_changed", scratchpadFit)
+            hl.on("monitor.focused", scratchpadFit)
+
+            -- The direction names the edge the offset is measured from, not where
+            -- the workspace goes: "slide top" drops it down into view, and
+            -- "slide bottom" retracts it back up, the way a Quake console does.
+            hl.curve("easeOutQuint",   { type = "bezier", points = {{0.23, 1.0}, {0.32, 1.0}} })
+            hl.curve("easeInOutCubic", { type = "bezier", points = {{0.65, 0.0}, {0.35, 1.0}} })
+            hl.animation({ leaf = "specialWorkspaceIn",  enabled = true, speed = 3, bezier = "easeOutQuint",   style = "slide top" })
+            hl.animation({ leaf = "specialWorkspaceOut", enabled = true, speed = 2, bezier = "easeInOutCubic", style = "slide bottom" })
 
             -- Window rules
 
