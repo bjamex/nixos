@@ -337,6 +337,16 @@
               },
             })
 
+            -- Scratchpad
+
+            -- herdr scratchpad — a special workspace that toggles in and out over
+            -- whatever's on screen (mod+S). The first toggle spawns herdr via
+            -- on_created_empty; after that the same session is only shown/hidden,
+            -- so agents keep running in the background while it's away. Distinct
+            -- --class from the mod+Return instance so the two are tellable apart
+            -- in `hyprctl clients`.
+            hl.workspace_rule({ workspace = "special:herdr", on_created_empty = "kitty --class herdr-scratch herdr" })
+
             -- Window rules
 
             -- Path of Exile
@@ -392,6 +402,7 @@
 
             -- Apps
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty herdr"))
+            hl.bind(mod .. " + S",            hl.dsp.workspace.toggle_special("herdr"))
             hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))

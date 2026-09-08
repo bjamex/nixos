@@ -118,13 +118,6 @@
             url = "https://claude.ai";
             hotkey = "A"; # SUPER+A, the slot Gemini used to hold
           };
-
-          # Self-hosted on the Dockhand box; see project notes in sparkyfitness.
-          sparkyfitness = {
-            name = "SparkyFitness";
-            url = "http://192.168.0.101:3004";
-            hotkey = "S"; # SUPER+S (SUPER+SHIFT+S is the replay save, unaffected)
-          };
         };
       };
     };
