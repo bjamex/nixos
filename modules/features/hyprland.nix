@@ -403,6 +403,11 @@
             -- Apps
             hl.bind(mod .. " + Return",       hl.dsp.exec_cmd("kitty herdr"))
             hl.bind(mod .. " + S",            hl.dsp.workspace.toggle_special("herdr"))
+            -- grave mirrors mod+S, the way Omarchy binds its scratchpad both
+            -- ways. SHIFT throws the focused window in without following it;
+            -- Omarchy's other move bind (mod+ALT+S) is wayscriber's here.
+            hl.bind(mod .. " + grave",         hl.dsp.workspace.toggle_special("herdr"))
+            hl.bind(mod .. " + SHIFT + grave", hl.dsp.window.move({ workspace = "special:herdr", follow = false }))
             hl.bind(mod .. " + N",            hl.dsp.exec_cmd("kitty nvim"))
             hl.bind(mod .. " + W",            hl.dsp.window.close())
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
