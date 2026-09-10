@@ -121,6 +121,13 @@
       # --- Services ---
       services.ratbagd.enable = true;
 
+      # Enrolling custom Secure Boot keys meant clearing the factory variables,
+      # which took dbx (431 revoked signatures) with it — sbctl enrolls PK, KEK
+      # and db but not dbx. fwupd ships the UEFI revocation list as an ordinary
+      # device update, so `fwupdmgr get-updates` can put it back. Enabling the
+      # service applies nothing on its own; updates are still opt-in per run.
+      services.fwupd.enable = true;
+
       # --- Users ---
       # Base user + shared groups come from common.nix; these merge on top.
       users.users.swin.extraGroups = [
