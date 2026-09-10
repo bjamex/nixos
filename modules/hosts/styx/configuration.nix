@@ -45,10 +45,18 @@
       ];
 
       # --- Boot ---
-      # 0 hides the boot menu entirely, which is fine with one OS installed. Once
-      # Windows is on sda there is something to choose between, so raise this
-      # (5 is plenty) or the machine will always boot straight into the default.
-      boot.loader.timeout = 0;
+      # 5s so the menu is actually reachable now that Windows is installed on
+      # the 850 EVO (S2R4NX0H809823P). Note systemd-boot will NOT list Windows:
+      # it only shows entries from its own ESP, and Windows made its own on
+      # sda1 rather than borrowing this one. Switch OS from the firmware boot
+      # menu (F11); this timeout just stops NixOS booting before you can.
+      boot.loader.timeout = 5;
+
+      # Windows writes local time to the RTC; NixOS assumes UTC. Without this
+      # each OS drags the clock 10 hours (Australia/Brisbane) whenever you
+      # switch, and NixOS then re-fights it via NTP. Host-only, not in
+      # common.nix, because void has no Windows install to appease.
+      time.hardwareClockInLocalTime = true;
       boot.kernelModules = [
         "igc"
         "snd_usb_audio"
