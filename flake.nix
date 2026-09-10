@@ -32,6 +32,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Secure Boot: signed unified kernel images so NixOS still boots once the
+    # firmware enforces Secure Boot for Windows. See features/secureboot.nix.
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v1.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";

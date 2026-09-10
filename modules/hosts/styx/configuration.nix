@@ -40,10 +40,14 @@
         self.nixosModules.bambuStudio # upstream AppImage; nixpkgs' is unfree/uncached (local source build)
         self.nixosModules.davinciResolve # from nixpkgs (21.x) since the version-bump overlay was dropped 2026-07-18
         self.nixosModules.packetTracer # needs the NetAcad .deb added by hand, see module
+        self.nixosModules.secureboot # inert until mySecureBoot.enable; see the module header
 
       ];
 
       # --- Boot ---
+      # 0 hides the boot menu entirely, which is fine with one OS installed. Once
+      # Windows is on sda there is something to choose between, so raise this
+      # (5 is plenty) or the machine will always boot straight into the default.
       boot.loader.timeout = 0;
       boot.kernelModules = [
         "igc"
