@@ -52,6 +52,12 @@
       # menu (F11); this timeout just stops NixOS booting before you can.
       boot.loader.timeout = 5;
 
+      # Secure Boot, so Ricochet is satisfied while NixOS still boots. First
+      # switch installs lanzaboote unsigned (autoGenerateKeys sets
+      # allowUnsigned); the keys appear on the next boot and a second rebuild
+      # signs. Full ceremony in features/secureboot.nix.
+      mySecureBoot.enable = true;
+
       # Windows writes local time to the RTC; NixOS assumes UTC. Without this
       # each OS drags the clock 10 hours (Australia/Brisbane) whenever you
       # switch, and NixOS then re-fights it via NTP. Host-only, not in
