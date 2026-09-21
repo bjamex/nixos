@@ -151,6 +151,7 @@
         # Internet & Communication
         mcp-nixos
         teams-for-linux
+        webex # unfree, so uncached — builds locally (a .deb unpack + autoPatchelf)
 
         # Media & Creative
         blender
