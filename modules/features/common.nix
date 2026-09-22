@@ -5,7 +5,7 @@
 { self, inputs, ... }:
 {
   flake.nixosModules.common =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     {
       imports = [
         self.nixosModules.wayscriber # screen annotation overlay (SUPER+ALT binds)
@@ -157,7 +157,47 @@
         "x-scheme-handler/https" = "helium.desktop";
         "x-scheme-handler/about" = "helium.desktop";
         "x-scheme-handler/unknown" = "helium.desktop";
-      };
+      }
+      # --- Media ---
+      # With no default set, whichever installed app claims a type wins — so
+      # adding kdenlive silently made it the opener for mp4/mkv/webm/mp3. Pin
+      # VLC for every video/audio type kdenlive claims, plus the other common
+      # ones (all checked against vlc.desktop's MimeType list).
+      // lib.genAttrs [
+        # the 14 kdenlive claims
+        "video/mp4"
+        "video/x-matroska"
+        "video/webm"
+        "video/quicktime"
+        "video/x-msvideo"
+        "video/mpeg"
+        "video/3gpp"
+        "video/3gpp2"
+        "audio/mpeg"
+        "audio/mp4"
+        "audio/flac"
+        "audio/ogg"
+        "audio/wav"
+        "audio/x-matroska"
+        # other common formats
+        "video/x-m4v"
+        "video/x-flv"
+        "video/x-ms-wmv"
+        "video/ogg"
+        "video/mp2t"
+        "video/x-ogm+ogg"
+        "video/avi"
+        "audio/aac"
+        "audio/x-aac"
+        "audio/opus"
+        "audio/x-flac"
+        "audio/x-vorbis+ogg"
+        "audio/x-wav"
+        "audio/x-ms-wma"
+        "audio/x-m4a"
+        "audio/mp3"
+        "audio/x-mp3"
+      ] (_: "vlc.desktop");
       environment.sessionVariables.BROWSER = "helium";
     };
 }
