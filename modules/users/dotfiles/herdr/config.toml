@@ -1,3 +1,8 @@
+# herdr 0.9+ runs an onboarding flow until this is false, then tries to write
+# `onboarding = false` back here itself — which fails, since hjem delivers this
+# file as a read-only store symlink ("Read-only file system (os error 30)").
+onboarding = false
+
 [ui]
 agent_panel_sort = "priority"
 
