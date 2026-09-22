@@ -10,6 +10,7 @@
       imports = [
         self.nixosModules.wayscriber # screen annotation overlay (SUPER+ALT binds)
         self.nixosModules.nixCore # nix daemon policy shared with hades
+        self.nixosModules.fonts # fonts.packages + fontconfig defaults (incl. Calibri)
       ];
 
       # --- Nix ---
