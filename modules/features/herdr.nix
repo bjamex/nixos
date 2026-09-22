@@ -17,9 +17,11 @@
     {
       environment.systemPackages = [ inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default ];
 
-      # herdr's config.toml is a read-only *input* (herdr never writes back to
-      # it — settings, plugins.json, sessions and sockets all live in separate
-      # writable files), so it's safe to deliver as a read-only hjem symlink.
+      # herdr's config.toml is mostly a read-only *input* (plugins.json, sessions
+      # and sockets all live in separate writable files), so it's delivered as a
+      # read-only hjem symlink. The one exception since 0.9: after onboarding,
+      # herdr writes `onboarding = false` back here — so that's pre-set in the
+      # repo copy, or it errors with "Read-only file system" on every launch.
       # This carries the herdr-splits Ctrl/Alt+hjkl keybinds so a fresh machine
       # gets pane<->nvim-split navigation without hand-editing. Edit the repo
       # copy then rebuild; run `herdr server reload-config` to apply live.
