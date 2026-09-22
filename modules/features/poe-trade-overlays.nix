@@ -41,7 +41,7 @@ let
     }:
     { pkgs, lib, ... }:
     let
-      electron = pkgs.electron_41; # was electron_40; 40.x went EOL/insecure 2026-07
+      electron = pkgs.electron_42; # was electron_41; 41.x went EOL/insecure 2026-09
 
       src = pkgs.fetchFromGitHub {
         inherit owner repo rev;
@@ -180,7 +180,7 @@ in
     repo = "awakened-poe-trade";
     rev = "f9c7ffc247e82db6cd6c7203d5be74be01f43dcd";
     srcHash = "sha256-VEv07fuyRxTGXRI1QK8t89ugXMdlTcTdMp1tpc6Mavw=";
-    outputHash = "sha256-SUa3pKgyVk0IYqv1FjUcVckp7ATjAEOpNEzuUHqWdMU="; # rebuilt for 3.29.107 on the 2026-08-31 nixpkgs
+    outputHash = "sha256-PAw6I6Tm/5rf7TUFsIl+j8FnX2wycZt7IPP5cszMXzY="; # rebuilt for 3.29.107 on the 2026-09-19 nixpkgs + electron_42
     desktopName = "Awakened PoE Trade";
     comment = "Path of Exile trading macro";
     wmClass = "awakened-poe-trade";
@@ -194,7 +194,7 @@ in
     repo = "Exiled-Exchange-2";
     rev = "v0.16.3";
     srcHash = "sha256-yGP9u4lidmzKJgryW1oS5ooZ2OUdtZ5afy9RtAEUQZI=";
-    outputHash = "sha256-v4PnwU6+9GRy5hduAIHlXeYYv+cvMC7u6ayEsKqakGk=";
+    outputHash = "sha256-M8lMqhS5RGYy9qlLkO88oEsYtoATcg6uwTD6p65JHWg="; # rebuilt for 0.16.3 on the 2026-09-19 nixpkgs + electron_42
     desktopName = "Exiled Exchange 2";
     comment = "Path of Exile 2 trading macro";
     wmClass = "Exiled Exchange 2";
