@@ -155,6 +155,7 @@
 
         # Media & Creative
         blender
+        kdePackages.kdenlive
 
         # Productivity
         orca-slicer
