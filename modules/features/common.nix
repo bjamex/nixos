@@ -37,7 +37,6 @@
         self.nixosModules.thunderbird
         self.nixosModules.davinciResolve
         self.nixosModules.bambuStudio
-        self.nixosModules.omaphoto
         self.nixosModules.lightcraft
         self.nixosModules.craftApps # the rest of the ArtCraft suite
       ];

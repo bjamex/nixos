@@ -478,27 +478,6 @@
         "type": "github"
       }
     },
-    "omaphoto": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1791090103,
-        "narHash": "sha256-UQDH7Xylp4t0/LE3+roFOGRt9Kt6Nyp5XpAlzf+xtgs=",
-        "owner": "ZacharyZhang-NY",
-        "repo": "OmaPhoto",
-        "rev": "4c7d98b17f80c3cbaecc17ac75c27af74f2f703b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ZacharyZhang-NY",
-        "ref": "v1.4.5",
-        "repo": "OmaPhoto",
-        "type": "github"
-      }
-    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -537,8 +516,7 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-ollama": "nixpkgs-ollama",
         "nixpkgs-pinned": "nixpkgs-pinned",
-        "noctalia": "noctalia",
-        "omaphoto": "omaphoto"
+        "noctalia": "noctalia"
       }
     },
     "rust-overlay": {
