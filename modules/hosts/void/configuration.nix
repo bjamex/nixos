@@ -36,13 +36,6 @@
       myHyprland = {
         idleLock = false;
         autoSuspend = false; # suspend/resume doesn't survive cleanly on this hardware, forces relogin
-        # styx keeps plain SUPER; this avoids collisions when moonlighting into
-        # styx. SUPER + CTRL, not SUPER + ALT: wayscriber binds its own toggles
-        # on mod + ALT + {D,S,L,F}, so an ALT-based mod here would double up ALT
-        # in the chord and collide with those (and with the plain mod + D
-        # Discord bind). CTRL only ever appears once elsewhere (mod + CTRL +
-        # Print for OCR), which just collapses to itself, not a real collision.
-        mod = "SUPER + CTRL";
       };
 
       # --- Packages (void-only; shared set lives in common.nix) ---
