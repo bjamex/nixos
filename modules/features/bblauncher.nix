@@ -5,7 +5,7 @@
 # install from its settings screen.
 #
 # Packaged from the upstream Linux AppImage (same pattern as scalpel.nix /
-# rapidraw.nix). The AppImage bundles its own Qt, so we don't touch Qt here.
+# bambu-studio.nix). The AppImage bundles its own Qt, so we don't touch Qt here.
 #
 # To update to a new release:
 # 1. Bump `version` below (matches the `ReleaseNN.NN` git tag)
@@ -13,11 +13,10 @@
 # 3. nixos-rebuild build --flake .#styx
 # 4. Copy the "got: sha256-..." from the error into `hash`
 # 5. Build again
-
-{ self, ... }:
+{ ... }:
 {
   flake.nixosModules.bblauncher =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     let
       pname = "bb-launcher";
       version = "16.10";

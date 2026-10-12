@@ -1,22 +1,22 @@
-{ self, inputs, ... }:
+# Reusable SecretSpec wiring for services (oci-containers and native).
+#
+# SecretSpec (https://secretspec.dev) keeps the *declaration* of required
+# secrets in the repo (`secretspec.toml`, non-secret: names + descriptions)
+# while the *values* live in a provider backend, never committed. This module
+# turns that into per-service systemd glue: for each consuming unit it creates
+# a `secretspec-<unit>` oneshot, ordered *before* that unit, which resolves the
+# secrets the unit needs into a root-only env file. The consuming unit then
+# loads that file via `environmentFiles` (oci-containers, podman `--env-file`)
+# or `environmentFile`/`EnvironmentFile` (native services).
+#
+# A separate oneshot (rather than an ExecStartPre on the unit itself) is used
+# so the env file exists *before* the consumer starts — native services read
+# `EnvironmentFile=` for every Exec* line, so an in-unit ExecStartPre would run
+# before its own file existed.
+#
+# See docs/hades-roadmap.md (Phases 3-4) for the migration workflow.
+{ ... }:
 {
-  # Reusable SecretSpec wiring for services (oci-containers and native).
-  #
-  # SecretSpec (https://secretspec.dev) keeps the *declaration* of required
-  # secrets in the repo (`secretspec.toml`, non-secret: names + descriptions)
-  # while the *values* live in a provider backend, never committed. This module
-  # turns that into per-service systemd glue: for each consuming unit it creates
-  # a `secretspec-<unit>` oneshot, ordered *before* that unit, which resolves the
-  # secrets the unit needs into a root-only env file. The consuming unit then
-  # loads that file via `environmentFiles` (oci-containers, podman `--env-file`)
-  # or `environmentFile`/`EnvironmentFile` (native services).
-  #
-  # A separate oneshot (rather than an ExecStartPre on the unit itself) is used
-  # so the env file exists *before* the consumer starts — native services read
-  # `EnvironmentFile=` for every Exec* line, so an in-unit ExecStartPre would run
-  # before its own file existed.
-  #
-  # See docs/hades-roadmap.md (Phases 3-4) for the migration workflow.
   flake.nixosModules.secretspec =
     {
       config,

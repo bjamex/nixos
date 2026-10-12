@@ -1,5 +1,5 @@
 # Bambu Studio — Bambu Lab's slicer, packaged from the upstream Linux AppImage
-# (same pattern as rapidraw.nix / bblauncher.nix). nixpkgs' bambu-studio is
+# (same pattern as bblauncher.nix / packet-tracer.nix). nixpkgs' bambu-studio is
 # marked unfree (bundled network plugin) so Hydra never builds it — installing
 # it from nixpkgs means compiling the whole Slic3r fork locally. The AppImage
 # is prebuilt and is what upstream actually tests.
@@ -12,11 +12,10 @@
 # 3. nixos-rebuild build --flake .#styx
 # 4. Copy the "got: sha256-..." from the error into `hash`
 # 5. Build again
-
-{ self, ... }:
+{ ... }:
 {
   flake.nixosModules.bambuStudio =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     let
       pname = "bambu-studio";
       version = "02.07.01.62";

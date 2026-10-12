@@ -1,13 +1,14 @@
-{ self, inputs, ... }: {
+# BeamMP multiplayer launcher for BeamNG.drive. The upstream launcher
+# self-updates and dlopen()s a pile of runtime libs, so run it inside an
+# FHS env that provides them. See r/BeamMP native NixOS module thread.
+{ ... }:
+{
   flake.nixosModules.beammp =
     { pkgs, ... }:
     let
-      # BeamMP multiplayer launcher for BeamNG.drive. The upstream launcher
-      # self-updates and dlopen()s a pile of runtime libs, so run it inside an
-      # FHS env that provides them. See r/BeamMP native NixOS module thread.
       beammpIcon = pkgs.fetchurl {
         url = "https://beammp.com/assets/BeamMP_blk-BycyukAv.png";
-        sha256 = "sha256-7osWdvH3vG6Jf2I9U0/OPPVSL8wDlTIenwytng5xOyM=";
+        hash = "sha256-7osWdvH3vG6Jf2I9U0/OPPVSL8wDlTIenwytng5xOyM=";
       };
 
       beammp-launcher = pkgs.buildFHSEnv {

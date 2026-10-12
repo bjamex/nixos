@@ -13,7 +13,7 @@
 # `lib.mkIf cfg.enable` upstream, so the import alone can't disturb the current
 # systemd-boot setup.
 #
-# ── Bring-up order (do NOT enable this first) ────────────────────────────────
+# Bring-up order (do NOT enable this first):
 # 1. Install Windows, and confirm it boots. Windows should own its own ESP on
 #    its own disk; it will happily hijack an existing one if it finds it.
 # 2. Set mySecureBoot.enable = true and `sudo nixos-rebuild switch`. Nothing is

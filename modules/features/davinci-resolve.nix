@@ -1,8 +1,8 @@
+# DaVinci Resolve (free edition) from nixpkgs (21.x since 2026-07).
+# The 20.3.3 -> 21.0 version-bump overlay that used to live here broke once
+# nixpkgs merged its own bump (the substitute pattern stopped matching).
 { ... }:
 {
-  # DaVinci Resolve (free edition) from nixpkgs (21.x since 2026-07).
-  # The 20.3.3 -> 21.0 version-bump overlay that used to live here broke once
-  # nixpkgs merged its own bump (the substitute pattern stopped matching).
   flake.nixosModules.davinciResolve =
     { pkgs, ... }:
     let

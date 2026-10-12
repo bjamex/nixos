@@ -15,14 +15,13 @@
 # 2. Update rev, hash, version in that app's block below
 # 3. Set its outputHash to `inputs.nixpkgs.lib.fakeHash` — NOT bare
 #    `lib.fakeHash`. These fields are set at the mkModule call site, which sits
-#    in this file's top-level `{ self, inputs, ... }:` scope where `lib` is not
+#    in this file's top-level `{ inputs, ... }:` scope where `lib` is not
 #    bound (it only exists inside mkModule's inner module function), so the bare
 #    form is an undefined-variable eval error.
 # 4. nixos-rebuild build --flake .#styx
 # 5. Copy the "got: sha256-..." from the error into outputHash
 # 6. Build again
-
-{ self, inputs, ... }:
+{ inputs, ... }: # inputs is only for the fakeHash step above
 let
   mkModule =
     {

@@ -1,6 +1,8 @@
+# The NAS data share at /mnt/data, automounted on first access. Credentials
+# live in /etc/smb-credentials, outside the repo.
 { ... }:
 {
-  flake.nixosModules.smb = { ... }: {
+  flake.nixosModules.smb = {
     fileSystems."/mnt/data" = {
       device = "//192.168.0.100/data"; # NAS static IP — update if it changes
       fsType = "cifs";

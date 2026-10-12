@@ -1,17 +1,18 @@
+# Animated wallpaper via mpvpaper — mpv rendered onto a wlr-layer-shell
+# surface on the background layer.
+#
+# Decode runs on the GPU: with hwdec=vaapi a 1440p60 clip costs ~3.6% of one
+# core steady-state, against ~75% with software decode. That residual is not
+# decode — it is mpv's GL compositing path submitting a frame to the Wayland
+# surface every vblank, which is inherently CPU-side. If the wallpaper ever
+# starts eating a whole core, hwdec silently fell back to software; check
+# `hwdec-current` over the IPC socket (see mpvOptions below).
+#
+# Not imported by any host right now (Noctalia's still wallpaper is back on).
+# Only one of the two may be on: both draw on layer 0 and the one that maps
+# *last* wins, which is a race at login. See the wallpaper note in noctalia.nix.
 { ... }:
 {
-  # Animated wallpaper via mpvpaper — mpv rendered onto a wlr-layer-shell
-  # surface on the background layer.
-  #
-  # Decode runs on the GPU: with hwdec=vaapi a 1440p60 clip costs ~3.6% of one
-  # core steady-state, against ~75% with software decode. That residual is not
-  # decode — it is mpv's GL compositing path submitting a frame to the Wayland
-  # surface every vblank, which is inherently CPU-side. If the wallpaper ever
-  # starts eating a whole core, hwdec silently fell back to software; check
-  # `hwdec-current` over the IPC socket (see mpvOptions below).
-  #
-  # Noctalia's own wallpaper is disabled in noctalia.nix: both draw on layer 0
-  # and the one that maps *last* wins, which is a race at login.
   flake.nixosModules.videoWallpaper =
     {
       pkgs,

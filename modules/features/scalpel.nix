@@ -1,5 +1,5 @@
 # Scalpel — a fourth-party Path of Exile 1/2 overlay & price checker, packaged as an
-# alternative to Exiled Exchange 2 (see exiled-exchange.nix).
+# alternative to Exiled Exchange 2 (see poe-trade-overlays.nix).
 #
 # Packaged from the prebuilt AppImage. Unlike EE2's AppImage, Scalpel's own build patches the
 # uiohook-napi XkbGetKeyboard bug (scripts/postinstall.js applies a patch-package fix and
@@ -15,11 +15,10 @@
 # 3. nixos-rebuild build --flake .#styx
 # 4. Copy the "got: sha256-..." from the error into `hash`
 # 5. Build again
-
-{ self, ... }:
+{ ... }:
 {
   flake.nixosModules.scalpel =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     let
       pname = "scalpel";
       version = "0.9.12";

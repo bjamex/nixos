@@ -1,6 +1,7 @@
+# BudsLink — GTK4 companion app for wireless earbuds (maniacx/BudsLink).
+# Not in nixpkgs, so built from source here.
 { ... }:
 {
-
   flake.nixosModules.budslink =
     { pkgs, ... }:
     let

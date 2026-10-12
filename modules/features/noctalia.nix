@@ -1,11 +1,11 @@
-{ self, inputs, ... }:
+# Noctalia v5 — native C++ Wayland shell (rewrite of the v4 Quickshell shell).
+# Installed and configured through the upstream hjem module, registered in
+# modules/users/swin.nix via `hjem.extraModules`. Hand-written config lands in
+# ~/.config/noctalia/config.toml; GUI tweaks layer on top in
+# ~/.local/state/noctalia/settings.toml, so this declarative config and the GUI
+# no longer fight (unlike the v4 read-only-store setup).
+{ inputs, ... }:
 {
-  # Noctalia v5 — native C++ Wayland shell (rewrite of the v4 Quickshell shell).
-  # Installed and configured through the upstream hjem module, registered in
-  # modules/users/swin.nix via `hjem.extraModules`. Hand-written config lands in
-  # ~/.config/noctalia/config.toml; GUI tweaks layer on top in
-  # ~/.local/state/noctalia/settings.toml, so this declarative config and the GUI
-  # no longer fight (unlike the v4 read-only-store setup).
   flake.nixosModules.noctalia =
     { pkgs, ... }:
     {
@@ -112,11 +112,11 @@
           };
 
           # Stills, re-enabled 2026-08-07 after the mpvpaper video wallpaper
-          # (videoWallpaper.nix) hung — see the note in styx/configuration.nix.
-          # Only one of the two may be on: both draw layer-shell surfaces on
-          # layer 0 and the one that maps last ends up on top, so enabling both
-          # makes the background a login race. To go back to video, set this
-          # false and restore myVideoWallpaper.enable.
+          # (videoWallpaper.nix) hung. Only one of the two may be on: both draw
+          # layer-shell surfaces on layer 0 and the one that maps last ends up
+          # on top, so enabling both makes the background a login race. To go
+          # back to video, set this false, import self.nixosModules.videoWallpaper
+          # on the host and set myVideoWallpaper.enable = true.
           wallpaper = {
             enabled = true;
             directory = "/home/swin/Pictures/Wallpapers";
@@ -146,7 +146,7 @@
             pinned = [ ];
           };
 
-          # ── Bar — ported from the v4 layout ────────────────────────────────
+          # --- Bar (ported from the v4 layout) ---
           # left:  Launcher, Clock, MediaMini          (tamagotchi: no v5 widget)
           # center: Workspaces
           # right: mic/vpn buttons, Tray, Notifications, Battery, Bluetooth,
@@ -181,40 +181,44 @@
             ];
           };
 
-          # v5 custom_button is static (glyph + click commands, no live polling
-          # text), so these lose the v4 MUTED/LIVE and VPN up/down status text —
-          # they're now plain toggle buttons.
-          # v5.0 replaced the single `command` key with per-gesture `actions`
-          # (left/middle/right/back/forward/scroll-up/scroll-down/…); a shell
-          # command has to be prefixed with `exec `.
-          widget.mic_button = {
-            type = "custom_button";
-            glyph = "microphone";
-            tooltip = "Toggle microphone mute";
-            # wpctl toggles only the mute flag; pamixer's PulseAudio-compat path
-            # would clobber the volume (mute-zeroes, unmute restores to ~50%).
-            actions.left = "exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
-          };
-          widget.vpn_button = {
-            type = "custom_button";
-            glyph = "shield-lock";
-            tooltip = "Toggle AirVPN";
-            actions.left = "exec vpn-toggle";
-          };
-          # Plain toggle (no live status) — replaces the broken upstream
-          # tailscale plugin whose bar widget ran `tailscale up/down` without
-          # root, so it silently no-op'd. ts-toggle (tailscale.nix) reads the
-          # daemon BackendState and flips it via sudo NOPASSWD.
-          widget.tailscale_button = {
-            type = "custom_button";
-            glyph = "cloud-network";
-            tooltip = "Toggle Tailscale";
-            actions.left = "exec ts-toggle";
-          };
+          # Bar buttons. v5 custom_button is static (glyph + click commands, no
+          # live polling text), so these lose the v4 MUTED/LIVE and VPN up/down
+          # status text — they're plain toggles now. v5.0 replaced the single
+          # `command` key with per-gesture `actions` (left/middle/right/back/
+          # forward/scroll-up/scroll-down/…); a shell command needs an `exec `
+          # prefix.
+          widget = {
+            mic_button = {
+              type = "custom_button";
+              glyph = "microphone";
+              tooltip = "Toggle microphone mute";
+              # wpctl toggles only the mute flag; pamixer's PulseAudio-compat path
+              # would clobber the volume (mute-zeroes, unmute restores to ~50%).
+              actions.left = "exec ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+            };
 
-          widget.clock = {
-            format = "{:%I:%M %p}";
-            tooltip_format = "{:%A, %B %d, %Y}";
+            vpn_button = {
+              type = "custom_button";
+              glyph = "shield-lock";
+              tooltip = "Toggle AirVPN";
+              actions.left = "exec vpn-toggle";
+            };
+
+            # Replaces the broken upstream tailscale plugin, whose bar widget ran
+            # `tailscale up/down` without root and so silently no-op'd. ts-toggle
+            # (tailscale.nix) reads the daemon BackendState and flips it via
+            # sudo NOPASSWD.
+            tailscale_button = {
+              type = "custom_button";
+              glyph = "cloud-network";
+              tooltip = "Toggle Tailscale";
+              actions.left = "exec ts-toggle";
+            };
+
+            clock = {
+              format = "{:%I:%M %p}";
+              tooltip_format = "{:%A, %B %d, %Y}";
+            };
           };
 
           # Control center quick-toggles (v4: Network/Bluetooth/Wallpaper/... ).

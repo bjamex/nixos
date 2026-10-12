@@ -1,8 +1,8 @@
+# System fonts for both desktops. fonts.packages (not systemPackages) is what
+# registers them with fontconfig, so every app — not just ones that go
+# looking in the profile — can find them.
 { ... }:
 {
-  # System fonts for both desktops. fonts.packages (not systemPackages) is what
-  # registers them with fontconfig, so every app — not just ones that go
-  # looking in the profile — can find them.
   flake.nixosModules.fonts =
     { pkgs, ... }:
     {

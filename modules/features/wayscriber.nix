@@ -1,14 +1,14 @@
+# wayscriber — screen annotation overlay for Wayland (draw on top of whatever
+# is on screen, à la gromit-mpx / Epic Pen).
+#
+# Runs as a daemon so the toggle is instant: `--active` would spawn a fresh
+# process and re-create the wlr-layer-shell surface on every keypress, and the
+# daemon is also what holds the session (boards/pages) between activations.
+# It is started from Hyprland rather than a systemd user service so it
+# inherits WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — see
+# myHyprland.extraStartupExec's own documentation.
 { ... }:
 {
-  # wayscriber — screen annotation overlay for Wayland (draw on top of whatever
-  # is on screen, à la gromit-mpx / Epic Pen).
-  #
-  # Runs as a daemon so the toggle is instant: `--active` would spawn a fresh
-  # process and re-create the wlr-layer-shell surface on every keypress, and the
-  # daemon is also what holds the session (boards/pages) between activations.
-  # It is started from Hyprland rather than a systemd user service so it
-  # inherits WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — see
-  # myHyprland.extraStartupExec's own documentation.
   flake.nixosModules.wayscriber =
     { pkgs, ... }:
     let

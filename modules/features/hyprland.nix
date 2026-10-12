@@ -1,4 +1,7 @@
-{ self, inputs, ... }:
+# Hyprland compositor: the Lua config (binds, window rules, startup), idle and
+# lock, plus the helper scripts the binds call. Per-host knobs live under
+# `myHyprland.*` (monitor line, mod key, idle lock, auto-suspend).
+{ inputs, ... }:
 {
   flake.nixosModules.hyprland =
     {
@@ -9,7 +12,6 @@
     }:
     let
       # Focus an existing Thunderbird window if one is open, else launch it.
-      # Ported from niri-base.nix (niri msg -> hyprctl).
       thunderbirdFocusOrOpen = pkgs.writeShellScript "thunderbird-focus-or-open" ''
         addr=$(${config.programs.hyprland.package}/bin/hyprctl -j clients | \
           ${lib.getExe pkgs.jq} -r '[.[] | select(.class == "thunderbird")] | .[0].address // empty')
@@ -152,56 +154,58 @@
       '';
     in
     {
-      options.myHyprland.monitorLua = lib.mkOption {
-        type = lib.types.lines;
-        default = ''hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })'';
-        description = "Per-host hl.monitor(...) Lua calls. Default auto-detects all outputs.";
-      };
+      options.myHyprland = {
+        monitorLua = lib.mkOption {
+          type = lib.types.lines;
+          default = ''hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })'';
+          description = "Per-host hl.monitor(...) Lua calls. Default auto-detects all outputs.";
+        };
 
-      options.myHyprland.mod = lib.mkOption {
-        type = lib.types.str;
-        default = "SUPER";
-        description = ''
-          Modifier chord for the built-in binds below (hyprlua `+`-joined
-          string, e.g. "SUPER + ALT"). Give a host its own combo when Moonlight
-          in from another Hyprland box, so the mod key doesn't collide with the
-          local compositor's binds and get eaten before it reaches the stream.
-        '';
-      };
+        mod = lib.mkOption {
+          type = lib.types.str;
+          default = "SUPER";
+          description = ''
+            Modifier chord for the built-in binds below (hyprlua `+`-joined
+            string, e.g. "SUPER + ALT"). Give a host its own combo when Moonlight
+            in from another Hyprland box, so the mod key doesn't collide with the
+            local compositor's binds and get eaten before it reaches the stream.
+          '';
+        };
 
-      options.myHyprland.autoSuspend = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether hypridle suspends the machine after the idle timeout. Disable on always-on desktops.";
-      };
+        autoSuspend = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Whether hypridle suspends the machine after the idle timeout. Disable on always-on desktops.";
+        };
 
-      options.myHyprland.idleLock = lib.mkOption {
-        type = lib.types.bool;
-        default = true;
-        description = "Whether hypridle locks the screen after the idle timeout. Disable on trusted always-on desktops.";
-      };
+        idleLock = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Whether hypridle locks the screen after the idle timeout. Disable on trusted always-on desktops.";
+        };
 
-      options.myHyprland.extraBindsLua = lib.mkOption {
-        type = lib.types.lines;
-        default = "";
-        description = ''
-          Extra `hl.bind(...)` Lua appended after the built-in binds, so a
-          feature module can own its own keybind instead of this file carrying a
-          bind for something it doesn't otherwise know about. `mod` is in scope.
-        '';
-      };
+        extraBindsLua = lib.mkOption {
+          type = lib.types.lines;
+          default = "";
+          description = ''
+            Extra `hl.bind(...)` Lua appended after the built-in binds, so a
+            feature module can own its own keybind instead of this file carrying a
+            bind for something it doesn't otherwise know about. `mod` is in scope.
+          '';
+        };
 
-      options.myHyprland.extraStartupExec = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = ''
-          Extra commands (store paths or plain executables) run via `hl.exec_cmd`
-          on `hyprland.start`, alongside the built-ins below. Use this instead of
-          editing the Lua block directly so other feature modules (e.g. the voice
-          satellite) can hook into session startup and inherit Hyprland's
-          WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — a systemd user service
-          on default.target does not have these.
-        '';
+        extraStartupExec = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [ ];
+          description = ''
+            Extra commands (store paths or plain executables) run via `hl.exec_cmd`
+            on `hyprland.start`, alongside the built-ins below. Use this instead of
+            editing the Lua block directly so other feature modules (e.g. wayscriber,
+            insyncNotify) can hook into session startup and inherit Hyprland's
+            WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE — a systemd user service
+            on default.target does not have these.
+          '';
+        };
       };
 
       config = {
@@ -255,7 +259,7 @@
               -- Hyprland leaks a pipe fd per transfer. EE2's price-check hotkey
               -- (synthetic Ctrl+C) fired these rapidly in PoE2, exhausting
               -- Hyprland's RLIMIT_NOFILE (524288) → 40% CPU busy-loop + sluggish
-              -- desktop. See exiled-exchange.nix "synthetic copy" comment.
+              -- desktop.
               hl.exec_cmd("hypridle")
               hl.exec_cmd("${gpuReplayDaemon}")
               ${lib.concatMapStringsSep "\n              " (
@@ -451,6 +455,22 @@
               rounding        = 0, -- square corners: game fills to the edge, no bg peeking through
             })
 
+            -- World of Warcraft — real fullscreen at the monitor's size, so it
+            -- can't be tiled or drag-resized (resizing a Wine/DXVK game mid-
+            -- session glitches its swapchain). Matched on title, not class: it
+            -- runs as a non-Steam shortcut whose steam_app_<id> class is shared
+            -- with the Battle.net launcher. Own workspace (4), clear of PoE on 5.
+            -- suppress_event: Wine answers any resize with its own fullscreen
+            -- on/off requests, which ping-pong with Hyprland thousands of times
+            -- a second — ignore them so only Hyprland decides.
+            hl.window_rule({ match = { title = "World of Warcraft" },
+              workspace      = "4",
+              fullscreen     = true,
+              suppress_event = "fullscreen maximize",
+              idle_inhibit   = "always",
+              rounding       = 0,
+            })
+
             -- PoE overlay tools
             hl.window_rule({ match = { title = "Exiled Exchange 2" },   tag = "+overlay" })
             hl.window_rule({ match = { class = "awakened-poe-trade" },  tag = "+overlay" })
@@ -541,8 +561,18 @@
             end
 
             -- Mouse
-            hl.bind(mod .. " + mouse:272",  hl.dsp.window.drag(),   { mouse = true })
-            hl.bind(mod .. " + mouse:273",  hl.dsp.window.resize(), { mouse = true })
+            -- Drag/resize skip fullscreen windows: Hyprland otherwise pulls the
+            -- window out of fullscreen and floats it for the drag, which resizes
+            -- a fullscreen game (WoW/PoE) mid-session and glitches it.
+            local function unless_fullscreen(dsp)
+              return function()
+                local w = hl.get_active_window()
+                if w and w.fullscreen ~= 0 then return end
+                hl.dispatch(dsp)
+              end
+            end
+            hl.bind(mod .. " + mouse:272",  unless_fullscreen(hl.dsp.window.drag()),   { mouse = true })
+            hl.bind(mod .. " + mouse:273",  unless_fullscreen(hl.dsp.window.resize()), { mouse = true })
             hl.bind(mod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
             hl.bind(mod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 

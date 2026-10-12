@@ -1,30 +1,33 @@
-{ self, inputs, ... }:
+# hades — headless homelab server (OptiPlex 7080). Tailnet-only services behind
+# Caddy on *.swinlab.net; see docs/hades-roadmap.md. Does NOT import common.nix.
+{ self, ... }:
 {
-
   flake.nixosModules.hadesConfiguration =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     {
       imports = [
         self.nixosModules.hadesHardware
         self.nixosModules.hadesDisk
+        self.nixosModules.nixCore # nix daemon policy (shared with the desktops)
         self.nixosModules.tailscale
         self.nixosModules.secretspec # secrets wiring for migrated services
         self.nixosModules.caddy # reverse proxy for *.swinlab.net (tailnet-only)
         self.nixosModules.uptimeKuma # pilot service behind Caddy
-        self.nixosModules.nixCore # nix daemon policy shared with the desktops
       ];
 
       # --- Boot ---
-      boot.loader.systemd-boot.enable = true;
-      boot.loader.efi.canTouchEfiVariables = true;
+      boot.loader = {
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+      };
 
       # --- Networking ---
       networking.hostName = "hades";
       networking.firewall.enable = true;
-      # (port 22 is opened by services.openssh's openFirewall default)
 
       # Headless server — no local console once deployed, so SSH stays on
       # (styx/void disable it since they're reachable in person + Tailscale).
+      # Port 22 is opened by the openFirewall default.
       services.openssh = {
         enable = true;
         settings = {
@@ -47,15 +50,17 @@
       # account, no boot-time external dependency. The encrypted store and the
       # GPG key live under /var/lib/secretspec (root-only, never committed); see
       # the pass setup steps in docs/hades-roadmap.md.
-      services.secretspec.provider = "pass";
-      services.secretspec.providerEnvironment = {
-        PASSWORD_STORE_DIR = "/var/lib/secretspec/password-store";
-        GNUPGHOME = "/var/lib/secretspec/gnupg";
+      services.secretspec = {
+        provider = "pass";
+        providerEnvironment = {
+          PASSWORD_STORE_DIR = "/var/lib/secretspec/password-store";
+          GNUPGHOME = "/var/lib/secretspec/gnupg";
+        };
+        providerPackages = [
+          pkgs.pass
+          pkgs.gnupg
+        ];
       };
-      services.secretspec.providerPackages = [
-        pkgs.pass
-        pkgs.gnupg
-      ];
 
       # --- Virtualisation ---
       # podman backend for oci-containers, used to migrate services off the

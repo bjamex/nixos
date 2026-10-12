@@ -116,7 +116,7 @@
     {
       environment.systemPackages = [ packetTracer ];
 
-      # Pin that .deb against the weekly GC (common.nix: --delete-older-than 14d).
+      # Pin that .deb against the weekly GC (nix-core.nix: --delete-older-than 14d).
       #
       # systemPackages roots the package *output*, not its source, so the
       # installer is collected after 14 days. Nothing breaks right away — it

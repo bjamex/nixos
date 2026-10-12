@@ -1,5 +1,6 @@
-{ ... }: {
-
+# Bash environment: starship prompt, eza aliases, and the `rebuild` alias.
+{ ... }:
+{
   flake.nixosModules.shell =
     { pkgs, ... }:
     {
@@ -31,5 +32,4 @@
         type = "copy";
       };
     };
-
 }

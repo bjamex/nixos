@@ -75,7 +75,7 @@
         # libXss, libtk8.6, libtcl8.6 and both _tcl_data/_tk_data are all inside
         # _internal), so the only external needs are glibc and libxcb.
         buildInputs = [
-          pkgs.xorg.libxcb
+          pkgs.libxcb
           pkgs.stdenv.cc.cc.lib
         ];
 

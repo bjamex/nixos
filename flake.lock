@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "craft-fonts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791295400,
+        "narHash": "sha256-e+6HpOYoAFTh6mNfGBBw2njnBzcE8W8+Jybv1+dKOCA=",
+        "owner": "storytold",
+        "repo": "craft-fonts",
+        "rev": "abb83316d96aa59c1cf64784289e378fe9fa5695",
+        "type": "github"
+      },
+      "original": {
+        "owner": "storytold",
+        "repo": "craft-fonts",
+        "rev": "abb83316d96aa59c1cf64784289e378fe9fa5695",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1781825982,
@@ -283,6 +300,28 @@
         "type": "github"
       }
     },
+    "lightcraft": {
+      "inputs": {
+        "craft-fonts": "craft-fonts",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791468105,
+        "narHash": "sha256-6/MxXgVN+1IPj4i/tjpUvP0xAKk22cuY7p6WQraZ1ug=",
+        "owner": "storytold",
+        "repo": "lightcraft",
+        "rev": "2472021091a28eb93a05947cfc9b941d3911543a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "storytold",
+        "ref": "v0.4.0",
+        "repo": "lightcraft",
+        "type": "github"
+      }
+    },
     "lix": {
       "flake": false,
       "locked": {
@@ -439,6 +478,27 @@
         "type": "github"
       }
     },
+    "omaphoto": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791090103,
+        "narHash": "sha256-UQDH7Xylp4t0/LE3+roFOGRt9Kt6Nyp5XpAlzf+xtgs=",
+        "owner": "ZacharyZhang-NY",
+        "repo": "OmaPhoto",
+        "rev": "4c7d98b17f80c3cbaecc17ac75c27af74f2f703b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ZacharyZhang-NY",
+        "ref": "v1.4.5",
+        "repo": "OmaPhoto",
+        "type": "github"
+      }
+    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -471,12 +531,14 @@
         "hjem": "hjem",
         "import-tree": "import-tree",
         "lanzaboote": "lanzaboote",
+        "lightcraft": "lightcraft",
         "lix-module": "lix-module",
         "nix-gaming": "nix-gaming",
         "nixpkgs": "nixpkgs",
         "nixpkgs-ollama": "nixpkgs-ollama",
         "nixpkgs-pinned": "nixpkgs-pinned",
-        "noctalia": "noctalia"
+        "noctalia": "noctalia",
+        "omaphoto": "omaphoto"
       }
     },
     "rust-overlay": {

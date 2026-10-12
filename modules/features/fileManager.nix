@@ -1,12 +1,9 @@
-{ self, inputs, ... }:
+# File management: yazi as the file manager, gvfs mounts, and the MIME
+# plumbing that opens Google Drive stub files (.gdoc/.gdsheet) in the browser.
+{ ... }:
 {
   flake.nixosModules.fileManager =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
+    { pkgs, lib, ... }:
     let
       googleDriveMimeTypes = pkgs.stdenv.mkDerivation {
         name = "google-drive-mime-types";

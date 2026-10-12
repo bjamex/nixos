@@ -1,21 +1,20 @@
+# flake-parts setup: the systems this flake builds for, and the perSystem
+# `pkgs` (with unfree allowed) used by devShells and the formatter.
 { inputs, ... }:
 {
-  config = {
-    systems = [
-      "x86_64-linux"
-    ];
-    perSystem =
-      { system, pkgs, ... }:
-      {
-        _module.args.pkgs = import inputs.nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-        };
+  systems = [ "x86_64-linux" ];
 
-        # Makes `nix fmt` work on this repo. Same nixfmt (1.4.0) that
-        # neovim.nix installs for in-editor formatting, so the CLI and the
-        # editor can't disagree about style.
-        formatter = pkgs.nixfmt;
+  perSystem =
+    { system, pkgs, ... }:
+    {
+      _module.args.pkgs = import inputs.nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
       };
-  };
+
+      # Makes `nix fmt` work on this repo. Same nixfmt (1.4.0) that
+      # neovim.nix installs for in-editor formatting, so the CLI and the
+      # editor can't disagree about style.
+      formatter = pkgs.nixfmt;
+    };
 }

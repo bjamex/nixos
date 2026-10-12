@@ -1,27 +1,33 @@
-{ self, inputs, ... }: {
-
-  # Placeholder. Replace with the real hardware-configuration.nix generated
-  # on the OptiPlex itself (via nixos-anywhere or nixos-generate-config) once
-  # the hardware is available — don't hand-edit device UUIDs below.
-  flake.nixosModules.hadesHardware = { config, lib, pkgs, modulesPath, ... }:
-
+# Placeholder. Replace with the real hardware-configuration.nix generated on
+# the OptiPlex itself (via nixos-anywhere or nixos-generate-config) once the
+# hardware is available — don't hand-edit device UUIDs below.
+{ ... }:
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
+  flake.nixosModules.hadesHardware =
+    { lib, modulesPath, ... }:
+    {
+      imports = [
+        (modulesPath + "/installer/scan/not-detected.nix")
+      ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+      boot.initrd.availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+      ];
+      boot.initrd.kernelModules = [ ];
+      boot.kernelModules = [ "kvm-intel" ];
+      boot.extraModulePackages = [ ];
 
-  # `/`, `/boot`, `/nix`, `/var` are declared by disko (see disko.nix), not here.
+      # `/`, `/boot`, `/nix`, `/var` are declared by disko (see disko.nix), not here.
 
-  swapDevices = [ ];
+      swapDevices = [ ];
 
-  networking.useDHCP = lib.mkDefault true;
+      networking.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault true;
-};
+      nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+      hardware.cpu.intel.updateMicrocode = lib.mkDefault true;
+    };
 }

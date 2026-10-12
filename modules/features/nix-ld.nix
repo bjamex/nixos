@@ -1,11 +1,11 @@
+# nix-ld lets unpatched, dynamically-linked binaries run on NixOS by supplying
+# a stand-in loader plus a library path. The libraries below are the runtime
+# deps of Playwright's downloaded Chromium (npm `playwright install`), which
+# otherwise dies with "error while loading shared libraries" on every fresh
+# checkout. Listed here rather than in a per-project shell so any checkout,
+# any Playwright version, just works.
 { ... }:
 {
-  # nix-ld lets unpatched, dynamically-linked binaries run on NixOS by supplying
-  # a stand-in loader plus a library path. The libraries below are the runtime
-  # deps of Playwright's downloaded Chromium (npm `playwright install`), which
-  # otherwise dies with "error while loading shared libraries" on every fresh
-  # checkout. Listed here rather than in a per-project shell so any checkout,
-  # any Playwright version, just works.
   flake.nixosModules.nixLd =
     { pkgs, ... }:
     {

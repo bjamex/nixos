@@ -1,10 +1,10 @@
+# Web apps — a URL opened as a frameless browser window, with a real desktop
+# entry so it turns up in the Noctalia launcher, plus an optional Hyprland
+# hotkey. This replaces the one-off `helium --app=https://gemini.google.com`
+# bind that used to live in hyprland.nix: that had no .desktop file, so the
+# app only existed if you remembered the keybind.
 { ... }:
 {
-  # Web apps — a URL opened as a frameless browser window, with a real desktop
-  # entry so it turns up in the Noctalia launcher, plus an optional Hyprland
-  # hotkey. This replaces the one-off `helium --app=https://gemini.google.com`
-  # bind that used to live in hyprland.nix: that had no .desktop file, so the
-  # app only existed if you remembered the keybind.
   flake.nixosModules.webapps =
     {
       config,
@@ -24,8 +24,7 @@
           name = "webapp-${key}";
           desktopName = app.name;
           exec = appExec app;
-          icon = app.icon;
-          categories = app.categories;
+          inherit (app) icon categories;
           # Without this the window comes up as a bare chrome-* class and the
           # dock/taskbar can't tie it back to this entry. Find the real value
           # with `hyprctl clients | grep class` once the app is open.
@@ -109,7 +108,7 @@
         environment.systemPackages = desktopItems;
         myHyprland.extraBindsLua = lib.concatStringsSep "\n" hotkeyBinds;
 
-        # ── The apps ────────────────────────────────────────────────────────
+        # --- The apps ---
         # Add one by dropping another attribute in here; the desktop entry (and
         # the hotkey, when given) follow automatically.
         myWebApps.apps = {

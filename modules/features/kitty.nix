@@ -1,7 +1,7 @@
+# kitty terminal. Config lives in modules/users/dotfiles/kitty.conf (delivered
+# via hjem in swin.nix); this module just installs the terminal.
 { ... }:
 {
-  # Config lives in modules/users/dotfiles/kitty.conf (delivered via hjem in
-  # swin.nix); this module just installs the terminal.
   flake.nixosModules.kitty =
     { pkgs, ... }:
     {

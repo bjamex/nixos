@@ -1,4 +1,7 @@
-{ self, inputs, ... }: {
+# Gaming: Steam + launchers, emulators, Sunshine streaming, and the Xbox
+# controller Bluetooth fixes. Imported on both desktops via common.nix.
+{ inputs, ... }:
+{
   flake.nixosModules.gaming =
     { pkgs, lib, ... }:
     let
@@ -48,15 +51,16 @@
     {
       imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
 
+      # --- Overlays ---
       # patool 4.0.5's check phase fails under nixpkgs 2026-07-15 — its tests can't
       # find the archiver helpers (list_xz/list_bzip2/...) on the build PATH and a
       # libmagic mime assertion mismatches — which blocks bottles. patool resolves
       # archivers at runtime via PATH, so these are test-env failures only; skip
       # the checks. Drop this overlay once nixpkgs fixes patool upstream.
       nixpkgs.overlays = [
-        (final: prev: {
+        (_: prev: {
           pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-            (pyfinal: pyprev: {
+            (_: pyprev: {
               patool = pyprev.patool.overridePythonAttrs (_: {
                 doCheck = false;
                 doInstallCheck = false;
@@ -66,12 +70,16 @@
         })
       ];
 
-      hardware.graphics.enable = lib.mkDefault true;
-      hardware.graphics.enable32Bit = lib.mkDefault true;
-      hardware.graphics.extraPackages = with pkgs; [ rocmPackages.clr ];
+      # --- Graphics ---
+      hardware.graphics = {
+        enable = lib.mkDefault true;
+        enable32Bit = lib.mkDefault true;
+        extraPackages = [ pkgs.rocmPackages.clr ];
+      };
 
       hardware.xpadneo.enable = true;
 
+      # --- Controllers ---
       # Xbox controllers over Bluetooth misbehave on the Intel combo adapter:
       #  - ERTM must be disabled or the controller connects but no input device
       #    is created;
@@ -80,6 +88,13 @@
       boot.extraModprobeConfig = ''
         options bluetooth disable_ertm=Y
         options btusb enable_autosuspend=N
+      '';
+
+      # The btusb option above isn't enough on its own: systemd's
+      # 60-autosuspend-chromiumos.hwdb tags the AX201 (8087:0026) with
+      # ID_AUTOSUSPEND=1, and udev flips power/control back to "auto".
+      services.udev.extraRules = ''
+        ACTION=="add|change", SUBSYSTEM=="usb", ATTR{idVendor}=="8087", ATTR{idProduct}=="0026", ATTR{power/control}="on"
       '';
 
       # BlueZ settings that make the Xbox controller pair cleanly and stay
@@ -102,6 +117,7 @@
         ConnectionLatency = 0;
       };
 
+      # --- Programs & packages ---
       programs = {
         gamemode.enable = true;
         gamescope.enable = true;
@@ -111,52 +127,52 @@
         };
       };
 
-      environment.systemPackages = (
-        with pkgs;
-        [
-          pkgs.stable.lutris
-          steam-run
-          dxvk
-          mangohud
-          r2modman
-          heroic
-          er-patcher
-          bottles
-          steamtinkerlaunch
-          prismlauncher
-          mcpelauncher-client
-          mcpelauncher-ui-qt
-          lsfg-vk
-          lsfg-vk-ui
-          faugus-launcher
-          xivlauncher
-          poe-campaign-copilot # PoE leveling overlay (see let-binding above)
-          shadps4 # core emulator binary (also what BB_Launcher execs to run the game)
-          shadps4-qtlauncher # Qt GUI frontend
-          shadps4Desktop
-          appimage-run
-          # Emulation: RetroArch (curated cores) plus standalones for the heavy
-          # consoles. ROMs/BIOS/saves are mutable state — keep them in a data dir
-          # (e.g. ~/Games/emulation) and point each emulator at it, not in the flake.
-          retroarchWithCores
-          pcsx2 # PS2
-          dolphin-emu # GameCube / Wii
-          rpcs3 # PS3
-          eden # Switch (Yuzu/Sudachi-lineage fork)
-          # Frontend: imports ROMs + the emulators above as non-Steam shortcuts
-          # (with SteamGridDB artwork) so the library browses from the normal Steam
-          # client or Big Picture. Re-run it after adding ROMs; Steam must be running
-          # for the shortcuts to launch.
-          steam-rom-manager
-        ]
-      );
+      environment.systemPackages = with pkgs; [
+        stable.lutris
+        steam-run
+        dxvk
+        mangohud
+        r2modman
+        heroic
+        er-patcher
+        bottles
+        steamtinkerlaunch
+        prismlauncher
+        mcpelauncher-client
+        mcpelauncher-ui-qt
+        lsfg-vk
+        lsfg-vk-ui
+        faugus-launcher
+        xivlauncher
+        wowup-cf # WoW addon manager (CurseForge + Wago); point it at the Steam prefix install
+        poe-campaign-copilot # PoE leveling overlay (see let-binding above)
+        shadps4 # core emulator binary (also what BB_Launcher execs to run the game)
+        shadps4-qtlauncher # Qt GUI frontend
+        shadps4Desktop
+        appimage-run
+        # Emulation: RetroArch (curated cores) plus standalones for the heavy
+        # consoles. ROMs/BIOS/saves are mutable state — keep them in a data dir
+        # (e.g. ~/Games/emulation) and point each emulator at it, not in the flake.
+        retroarchWithCores
+        pcsx2 # PS2
+        dolphin-emu # GameCube / Wii
+        rpcs3 # PS3
+        eden # Switch (Yuzu/Sudachi-lineage fork)
+        # Frontend: imports ROMs + the emulators above as non-Steam shortcuts
+        # (with SteamGridDB artwork) so the library browses from the normal Steam
+        # client or Big Picture. Re-run it after adding ROMs; Steam must be running
+        # for the shortcuts to launch.
+        steam-rom-manager
+      ];
 
+      # --- Steam runtime ---
       # The Steam Linux Runtime hardcodes TZDIR=/usr/share/zoneinfo for the
       # processes it spawns (Proton, the game), which doesn't exist on NixOS — so
       # name-based TZ lookups fall back to UTC and games show the wrong time.
       # Symlink it to the real tzdata so e.g. Path of Exile reads the right zone.
       systemd.tmpfiles.rules = [ "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo" ];
 
+      # --- LAN play ---
       # Minecraft "Open to LAN" picks a random ephemeral port by default, but the
       # Open-to-LAN screen lets you type one — always enter 33737 so a single
       # fixed rule covers it instead of the whole ephemeral range. Scoped to the
@@ -166,6 +182,7 @@
         iptables -A nixos-fw -s 192.168.0.0/24 -p tcp --dport 33737 -j nixos-fw-accept
       '';
 
+      # --- Streaming ---
       services.sunshine = {
         openFirewall = true;
         enable = true;
@@ -181,6 +198,7 @@
         };
       };
 
+      # --- Binary cache ---
       nix.settings = {
         substituters = [ "https://nix-gaming.cachix.org" ];
         trusted-public-keys = [ "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4=" ];

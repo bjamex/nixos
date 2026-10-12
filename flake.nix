@@ -52,6 +52,22 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Layered image editor (a Linux port of Compositor). Not in nixpkgs;
+    # source-built from upstream's flake. Pinned to a release tag as upstream
+    # recommends — bump the tag, then `nix flake update omaphoto`.
+    omaphoto = {
+      url = "github:ZacharyZhang-NY/OmaPhoto/v1.4.5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Raw developer + photo library (a clean-room Lightroom in Rust). Not in
+    # nixpkgs; source-built from upstream's flake. Pinned to a release tag —
+    # bump the tag, then `nix flake update lightcraft`.
+    lightcraft = {
+      url = "github:storytold/lightcraft/v0.4.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);

@@ -1,5 +1,6 @@
-{ inputs, ... }: {
-
+# Local LLMs: ollama (ROCm) behind Open WebUI, both bound to localhost.
+{ inputs, ... }:
+{
   flake.nixosModules.llm =
     { pkgs, ... }:
     let

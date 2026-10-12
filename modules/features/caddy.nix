@@ -1,22 +1,17 @@
-{ self, inputs, ... }:
+# Reverse proxy for *.swinlab.net on hades. Declarative alternative to the
+# Nginx Proxy Manager box on Proxmox — every vhost lives in the flake, and
+# individual service modules add their own `services.caddy.virtualHosts.<host>`.
+#
+# TLS: services are tailnet-only (Cloudflare DNS records point at hades'
+# Tailscale IP), so HTTP-01 can't reach us — certs are issued via ACME DNS-01
+# against Cloudflare. Caddy is built with the caddy-dns/cloudflare plugin, and
+# the API token comes from the secrets provider (see secretspec.nix), never
+# committed. No ACME email is set (Caddy uses an anonymous account) to keep
+# the address out of the repo.
+{ ... }:
 {
-  # Reverse proxy for *.swinlab.net on hades. Declarative alternative to the
-  # Nginx Proxy Manager box on Proxmox — every vhost lives in the flake, and
-  # individual service modules add their own `services.caddy.virtualHosts.<host>`.
-  #
-  # TLS: services are tailnet-only (Cloudflare DNS records point at hades'
-  # Tailscale IP), so HTTP-01 can't reach us — certs are issued via ACME DNS-01
-  # against Cloudflare. Caddy is built with the caddy-dns/cloudflare plugin, and
-  # the API token comes from the secrets provider (see secretspec.nix), never
-  # committed. No ACME email is set (Caddy uses an anonymous account) to keep
-  # the address out of the repo.
   flake.nixosModules.caddy =
-    {
-      config,
-      lib,
-      pkgs,
-      ...
-    }:
+    { config, pkgs, ... }:
     let
       caddyWithCloudflare = pkgs.caddy.withPlugins {
         plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
