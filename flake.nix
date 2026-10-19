@@ -56,7 +56,7 @@
     # nixpkgs; source-built from upstream's flake. Pinned to a release tag —
     # bump the tag, then `nix flake update lightcraft`.
     lightcraft = {
-      url = "github:storytold/lightcraft/v0.4.0";
+      url = "github:storytold/lightcraft/v0.7.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
