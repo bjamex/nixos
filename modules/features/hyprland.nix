@@ -333,6 +333,9 @@
                 -- Honor app activation requests (e.g. EE2's price-check overlay grabbing
                 -- focus when it pops up) so it doesn't instantly hide-on-blur on a tap.
                 focus_on_activate        = true,
+                -- Frame rate for windows with the render_unfocused rule (WoW) while
+                -- their workspace is hidden; the default 15 still stalls the game.
+                render_unfocused_fps     = 60,
               },
               input = {
                 kb_layout    = "us,ua",
@@ -463,12 +466,18 @@
             -- suppress_event: Wine answers any resize with its own fullscreen
             -- on/off requests, which ping-pong with Hyprland thousands of times
             -- a second — ignore them so only Hyprland decides.
+            -- render_unfocused: Hyprland stops sending frame callbacks to a window
+            -- on a hidden workspace, and with vsync on the game's present call
+            -- blocks waiting for them — loading screens crawl and autorun freezes
+            -- whenever you switch away. Keep it rendering (at
+            -- misc.render_unfocused_fps) instead.
             hl.window_rule({ match = { title = "World of Warcraft" },
-              workspace      = "4",
-              fullscreen     = true,
-              suppress_event = "fullscreen maximize",
-              idle_inhibit   = "always",
-              rounding       = 0,
+              workspace        = "4",
+              fullscreen       = true,
+              suppress_event   = "fullscreen maximize",
+              idle_inhibit     = "always",
+              render_unfocused = true,
+              rounding         = 0,
             })
 
             -- PoE overlay tools
