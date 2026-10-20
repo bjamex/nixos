@@ -60,6 +60,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Parametric 3D CAD in Rust. Not in nixpkgs; source-built from upstream's
+    # flake, pinned to a release tag — bump it, then `nix flake update solidcraft`.
+    solidcraft = {
+      url = "github:tangency-labs/solidcraft/v0.16.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);

@@ -38,6 +38,7 @@
         self.nixosModules.davinciResolve
         self.nixosModules.bambuStudio
         self.nixosModules.lightcraft
+        self.nixosModules.solidcraft
         self.nixosModules.craftApps # the rest of the ArtCraft suite
       ];
 
@@ -179,6 +180,7 @@
         vlc
         inkscape
         pinta
+        krita
         xournalpp
 
         # Productivity
@@ -245,6 +247,47 @@
           "audio/x-m4a"
           "audio/mp3"
           "audio/x-mp3"
-        ] (_: "vlc.desktop");
+        ] (_: "vlc.desktop")
+        # Same story for images: krita and the craft apps (photocraft,
+        # vectorcraft) claim most image types, and photocraft had already
+        # taken webp/gif/tiff/bmp/svg. Pin Loupe for every type it claims.
+        // lib.genAttrs [
+          "image/png"
+          "image/jpeg"
+          "image/webp"
+          "image/gif"
+          "image/apng"
+          "image/avif"
+          "image/heic"
+          "image/jxl"
+          "image/jp2"
+          "image/tiff"
+          "image/bmp"
+          "image/x-win-bitmap"
+          "image/qoi"
+          "image/x-qoi"
+          "image/vnd.microsoft.icon"
+          "image/x-tga"
+          "image/x-exr"
+          "image/x-dds"
+          "image/x-portable-anymap"
+          "image/x-portable-bitmap"
+          "image/x-portable-graymap"
+          "image/x-portable-pixmap"
+          "image/x-xbitmap"
+          "image/x-xpixmap"
+          "image/svg+xml"
+          "image/svg+xml-compressed"
+        ] (_: "org.gnome.Loupe.desktop")
+        # krita also claims PDF and CSV; keep their current openers.
+        // {
+          "application/pdf" = "com.github.xournalpp.xournalpp.desktop";
+          "text/csv" = "calc.desktop";
+        }
+        # SolidCraft claims STL/3MF; keep sending print files to the slicer.
+        // lib.genAttrs [
+          "model/stl"
+          "model/3mf"
+        ] (_: "bambu-studio.desktop");
     };
 }

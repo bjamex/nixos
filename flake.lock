@@ -516,7 +516,8 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-ollama": "nixpkgs-ollama",
         "nixpkgs-pinned": "nixpkgs-pinned",
-        "noctalia": "noctalia"
+        "noctalia": "noctalia",
+        "solidcraft": "solidcraft"
       }
     },
     "rust-overlay": {
@@ -558,6 +559,27 @@
       "original": {
         "owner": "oxalica",
         "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "solidcraft": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792370370,
+        "narHash": "sha256-azubgrSxmebSU9kcHtoLKPoiFSoqToAz/wPauHs9bio=",
+        "owner": "tangency-labs",
+        "repo": "solidcraft",
+        "rev": "5de48e916df2d659586a36b15c90ed05293a0954",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tangency-labs",
+        "ref": "v0.16.2",
+        "repo": "solidcraft",
         "type": "github"
       }
     },
