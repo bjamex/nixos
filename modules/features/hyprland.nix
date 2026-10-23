@@ -480,6 +480,11 @@
               rounding         = 0,
             })
 
+            -- RimWorld (native Unity build) — same hidden-workspace stall as WoW:
+            -- its in-game "run in background" is on, but with no frame callbacks
+            -- the vsync'd present blocks and the colony stops ticking.
+            hl.window_rule({ match = { class = "RimWorldLinux" }, render_unfocused = true })
+
             -- PoE overlay tools
             hl.window_rule({ match = { title = "Exiled Exchange 2" },   tag = "+overlay" })
             hl.window_rule({ match = { class = "awakened-poe-trade" },  tag = "+overlay" })
