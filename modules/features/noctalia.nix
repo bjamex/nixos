@@ -99,7 +99,6 @@
               # delivered with hjem `type = "copy"` (writable) instead of
               # read-only store symlinks. A read-only symlink is exactly what
               # silently stranded btop on the old palette.
-              # NOTE: yazi still has no builtin v5 template (follow-up).
               builtin_ids = [
                 "kitty"
                 "btop"

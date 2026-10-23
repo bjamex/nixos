@@ -533,7 +533,6 @@
             hl.bind(mod .. " + Space",        hl.dsp.exec_cmd("noctalia msg panel-toggle launcher"))
             hl.bind(mod .. " + SHIFT + F",    hl.dsp.exec_cmd("nautilus"))
             hl.bind(mod .. " + B",            hl.dsp.exec_cmd("helium"))
-            hl.bind(mod .. " + F",            hl.dsp.exec_cmd("kitty yazi"))
             hl.bind(mod .. " + E",            hl.dsp.exec_cmd("${thunderbirdFocusOrOpen}"))
             hl.bind(mod .. " + D",            hl.dsp.exec_cmd("flatpak run com.discordapp.Discord"))
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))

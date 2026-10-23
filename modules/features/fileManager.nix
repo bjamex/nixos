@@ -1,4 +1,4 @@
-# File management: yazi as the file manager, gvfs mounts, and the MIME
+# File management: Nautilus/Nemo, gvfs mounts, and the MIME
 # plumbing that opens Google Drive stub files (.gdoc/.gdsheet) in the browser.
 { ... }:
 {
@@ -33,7 +33,7 @@
       gdocOpener = pkgs.makeDesktopItem {
         name = "gdoc-opener";
         desktopName = "Google Drive Opener";
-        # Also handles application/json so yazi can route .gdsheet (detected as json) here.
+        # Also handles application/json, since .gdsheet stubs can be detected as json.
         # Falls back to kitty+nvim for regular JSON files.
         exec = "${pkgs.writeShellScript "gdoc-open" ''
           url=$(${lib.getExe pkgs.jq} -r '.url // empty' "$1" 2>/dev/null)
@@ -147,121 +147,6 @@
         }
       ];
 
-      programs.yazi = {
-        enable = true;
-        plugins = {
-          inherit (pkgs.yaziPlugins) drag mediainfo;
-          bookmarks = pkgs.yaziPlugins.bookmarks.overrideAttrs (old: {
-            postInstall = (old.postInstall or "") + ''
-              substituteInPlace $out/main.lua \
-                --replace-fail 'ya.mgr_emit' 'ya.emit'
-            '';
-          });
-        };
-        settings.yazi = {
-          # Route media through the mediainfo plugin: it renders the usual
-          # image/video preview AND a metadata block in the preview pane.
-          # Needs the `mediainfo` CLI on PATH (added to systemPackages below).
-          plugin = {
-            prepend_previewers = [
-              {
-                mime = "{audio,video,image}/*";
-                run = "mediainfo";
-              }
-              {
-                mime = "application/subrip";
-                run = "mediainfo";
-              }
-            ];
-            prepend_preloaders = [
-              {
-                mime = "{audio,video,image}/*";
-                run = "mediainfo";
-              }
-              {
-                mime = "application/subrip";
-                run = "mediainfo";
-              }
-            ];
-          };
-          opener = {
-            edit = [
-              {
-                run = "nvim %s";
-                block = true;
-                desc = "nvim";
-              }
-            ];
-            open = [
-              {
-                run = "xdg-open %s";
-                orphan = true;
-                desc = "xdg-open";
-              }
-            ];
-          };
-          open.prepend_rules = [
-            {
-              mime = "text/*";
-              use = "edit";
-            }
-            {
-              mime = "inode/x-empty";
-              use = "edit";
-            }
-            {
-              mime = "*/*";
-              use = "open";
-            }
-          ];
-        };
-        initLua = pkgs.writeText "init.lua" ''
-          require("bookmarks"):setup({
-            persist = "all",
-            desc_format = "full",
-            notify = { enable = true, timeout = 1 },
-          })
-        '';
-        settings.keymap.mgr.prepend_keymap = [
-          {
-            on = [ "O" ];
-            run = "shell --block 'handlr open --ask %s'";
-            desc = "Open with...";
-          }
-          {
-            on = [ "<C-d>" ];
-            run = "plugin drag";
-            desc = "Drag selected files";
-          }
-          {
-            on = [ "m" ];
-            run = "plugin bookmarks save";
-            desc = "Save bookmark";
-          }
-          {
-            on = [ "'" ];
-            run = "plugin bookmarks jump";
-            desc = "Jump to bookmark";
-          }
-          {
-            on = [
-              "b"
-              "d"
-            ];
-            run = "plugin bookmarks delete";
-            desc = "Delete bookmark";
-          }
-          {
-            on = [
-              "b"
-              "D"
-            ];
-            run = "plugin bookmarks delete_all";
-            desc = "Delete all bookmarks";
-          }
-        ];
-      };
-
       hjem.users.swin.files = {
         ".local/share/nemo/actions/open-in-terminal.nemo_action".text = ''
           [Nemo Action]
@@ -283,14 +168,11 @@
         xdg-utils
         papirus-icon-theme
         adw-gtk3
-        ripdrag
-        mediainfo
         googleDriveMimeTypes
         gdocOpener
         nvimKitty
         xdg-terminal-exec
         jq
-        handlr-regex
       ];
 
       # Make kitty the terminal for every `Terminal=true` desktop entry, not just
