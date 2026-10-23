@@ -42,11 +42,26 @@
                 installPhase = ''
                   runHook preInstall
                   rm -rf usr/lib/insync/PySide2/Qt/qml/
+                  # Detached debug-symbol files (QtWebEngineProcess.debug) are never
+                  # run, and patchelf 0.19 aborts on them ("data offset extends past
+                  # file end"), failing the whole build.
+                  find usr/lib/insync -name '*.debug' -delete
                   mkdir -p $out
                   cp -R usr/* $out/
                   runHook postInstall
                 '';
                 dontStrip = true;
+                # patchelf 0.19 (nixpkgs 2026-10) corrupts the PyInstaller launcher
+                # lib/insync/insync — it SIGSEGVs in the dynamic loader (dl_main) before
+                # any code runs. The launcher already targets /lib64/ld-linux-x86-64.so.2,
+                # which the FHS env below provides (plus zlib, its only non-glibc dep),
+                # so keep it pristine and autoPatchelf everything else.
+                dontAutoPatchelf = true;
+                postFixup = ''
+                  mv $out/lib/insync/insync "$TMPDIR/insync-launcher"
+                  autoPatchelf $out
+                  mv "$TMPDIR/insync-launcher" $out/lib/insync/insync
+                '';
               };
             in
             prev.buildFHSEnv {
@@ -55,6 +70,7 @@
               targetPkgs =
                 pkgs: with pkgs; [
                   libudev0-shim
+                  zlib # the unpatched launcher's libz.so.1
                   insync-pkg
                   hicolor-icon-theme
                 ];
