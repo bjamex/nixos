@@ -36,7 +36,6 @@
         # Apps
         self.nixosModules.gaming
         self.nixosModules.thunderbird
-        self.nixosModules.davinciResolve
         self.nixosModules.bambuStudio
         self.nixosModules.lightcraft
         self.nixosModules.solidcraft
@@ -47,7 +46,7 @@
       nixpkgs.overlays = [
         (final: prev: {
           # pkgs.stable pinned escape hatch for packages unstable breaks
-          # (currently lutris and freecad — see gaming.nix / package lists).
+          # (currently lutris — see gaming.nix).
           stable = import inputs.nixpkgs-pinned {
             system = final.stdenv.hostPlatform.system;
             config.allowUnfree = true;
@@ -160,7 +159,6 @@
         qdirstat
         fzf
         lazygit
-        weathr
 
         # Internet & Communication
         inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.helium
@@ -169,8 +167,7 @@
         localsend
 
         # Media & Creative
-        ffmpeg # audio/video transcode; also lets open-webui do voice/audio
-        rapidraw
+        ffmpeg # audio/video transcode
         obs-studio
         darktable
         jellyfin-tui
@@ -179,7 +176,6 @@
         ani-cli
         loupe
         vlc
-        inkscape
         pinta
         krita
         xournalpp
@@ -189,7 +185,6 @@
         libreoffice
         gnome-calculator
         pdfarranger
-        stable.freecad # unstable's freecad→vtk→pdal breaks on the 2026-07 GDAL bump
 
         # Networking & Monitoring
         nethogs

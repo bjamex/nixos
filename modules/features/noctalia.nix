@@ -111,12 +111,7 @@
             };
           };
 
-          # Stills, re-enabled 2026-08-07 after the mpvpaper video wallpaper
-          # (videoWallpaper.nix) hung. Only one of the two may be on: both draw
-          # layer-shell surfaces on layer 0 and the one that maps last ends up
-          # on top, so enabling both makes the background a login race. To go
-          # back to video, set this false, import self.nixosModules.videoWallpaper
-          # on the host and set myVideoWallpaper.enable = true.
+          # Stills. (An mpvpaper video wallpaper was tried and dropped: it hung.)
           wallpaper = {
             enabled = true;
             directory = "/home/swin/Pictures/Wallpapers";

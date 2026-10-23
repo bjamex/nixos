@@ -40,9 +40,6 @@
 
       # --- Packages (void-only; shared set lives in common.nix) ---
       environment.systemPackages = with pkgs; [
-        komikku # manga reader
-        obsidian
-        lmstudio
       ];
 
       system.stateVersion = "25.11";

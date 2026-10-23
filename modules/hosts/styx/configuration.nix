@@ -15,23 +15,18 @@
         # System
         self.nixosModules.virtualisation # libvirt/KVM + virt-manager
         self.nixosModules.nixLd # unpatched binaries (Playwright's Chromium et al)
-        self.nixosModules.llm # ollama + open-webui
         self.nixosModules.insyncNotify # Insync 3.9.10 lost its own notifications
         self.nixosModules.airvpn
 
         # Games
-        self.nixosModules.bblauncher # Bloodborne launcher/mod manager for shadPS4
         self.nixosModules.beammp # BeamNG.drive multiplayer launcher
         self.nixosModules.rustyPob # rusty-path-of-building (PoE build planner)
         self.nixosModules.awakenedPoeTrade # PoE1 price checker
         self.nixosModules.exiledExchange # PoE2 price checker
         self.nixosModules.scalpel # alternative PoE2 overlay/price checker
-        self.nixosModules.stashsage # PoE2 ML price prediction overlay (~2.8GB store path)
 
         # Apps
-        self.nixosModules.budslink
         self.nixosModules.jdownloader # bootstraps upstream jar into ~/.local/share/jdownloader
-        self.nixosModules.packetTracer # needs the NetAcad .deb added by hand, see module
       ];
 
       # --- Boot ---
@@ -138,7 +133,6 @@
       };
 
       # --- Packages (styx-only; shared set lives in common.nix) ---
-      programs.firefox.enable = true;
 
       environment.systemPackages = with pkgs; [
         # Shell utilities
@@ -150,25 +144,18 @@
 
         # Terminal & System
         nvtopPackages.amd
-        tickrs
 
         # Internet & Communication
         mcp-nixos
         teams-for-linux
-        webex # unfree, so uncached — builds locally (a .deb unpack + autoPatchelf)
 
         # Media & Creative
         blender
         kdePackages.kdenlive
-        video2x # AI upscaling/interpolation (Real-ESRGAN, RIFE…) on Vulkan — the 9070 XT is device 0
 
         # Productivity
-        orca-slicer
         simple-scan
-        typora
 
-        # Containers (uses the docker backend enabled in common.nix)
-        distrobox
       ];
 
       # --- Storage ---

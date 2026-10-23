@@ -1,5 +1,5 @@
 # Bambu Studio — Bambu Lab's slicer, packaged from the upstream Linux AppImage
-# (same pattern as bblauncher.nix / packet-tracer.nix). nixpkgs' bambu-studio is
+# (same pattern as scalpel.nix). nixpkgs' bambu-studio is
 # marked unfree (bundled network plugin) so Hydra never builds it — installing
 # it from nixpkgs means compiling the whole Slic3r fork locally. The AppImage
 # is prebuilt and is what upstream actually tests.

@@ -1,52 +1,14 @@
-# Gaming: Steam + launchers, emulators, Sunshine streaming, and the Xbox
+# Gaming: Steam + launchers, Sunshine streaming, and the Xbox
 # controller Bluetooth fixes. Imported on both desktops via common.nix.
 { inputs, ... }:
 {
   flake.nixosModules.gaming =
     { pkgs, lib, ... }:
     let
-      # shadps4-qtlauncher is the Qt GUI frontend (it pulls in the shadps4 core as
-      # its emulator backend); the plain shadps4 binary is CLI-only. Neither ships
-      # a .desktop entry or icon, so generate one — using the upstream icon — that
-      # launches the Qt GUI.
-      shadps4Icon = pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/shadps4-emu/shadPS4/main/.github/shadps4.png";
-        sha256 = "15a79cphq8qca7ndvwmyzbzk1wvs01ghf766wc1jvkf576hv89mg";
-      };
-      shadps4Desktop = pkgs.makeDesktopItem {
-        name = "shadps4";
-        desktopName = "shadPS4";
-        genericName = "PlayStation 4 Emulator";
-        comment = "Emulate PlayStation 4 games";
-        exec = "shadPS4QtLauncher";
-        icon = "${shadps4Icon}";
-        categories = [
-          "Game"
-          "Emulator"
-        ];
-        terminal = false;
-      };
-
       # PoE Campaign Copilot — passive leveling overlay built from source (no
       # upstream Linux release). Point its Settings at the Proton install's
       # Client.txt, e.g. ~/.local/share/Steam/steamapps/common/Path of Exile/logs/Client.txt
       poe-campaign-copilot = pkgs.callPackage ../../pkgs/poe-campaign-copilot { };
-
-      # RetroArch wrapped with a curated core set covering the systems that run
-      # well as libretro cores; the heavier consoles (PS2/PS3/GC-Wii/PS4) get
-      # dedicated standalone emulators below instead.
-      retroarchWithCores = pkgs.retroarch.withCores (
-        cores: with cores; [
-          nestopia # NES / Famicom
-          snes9x # SNES
-          genesis-plus-gx # Genesis / Mega Drive / Master System / Game Gear
-          mgba # GB / GBC / GBA
-          mupen64plus # N64 (mupen64plus-next)
-          beetle-psx-hw # PS1 (hardware-rendered)
-          melonds # DS
-          flycast # Dreamcast
-        ]
-      );
     in
     {
       imports = [ inputs.nix-gaming.nixosModules.pipewireLowLatency ];
@@ -74,7 +36,12 @@
       hardware.graphics = {
         enable = lib.mkDefault true;
         enable32Bit = lib.mkDefault true;
-        extraPackages = [ pkgs.rocmPackages.clr ];
+        # .icd registers the AMD OpenCL vendor ICD in /run/opengl-driver; without
+        # it the OpenCL platform list is empty (darktable falls back to CPU).
+        extraPackages = with pkgs.rocmPackages; [
+          clr
+          clr.icd
+        ];
       };
 
       hardware.xpadneo.enable = true;
@@ -142,27 +109,10 @@
         mcpelauncher-ui-qt
         lsfg-vk
         lsfg-vk-ui
-        faugus-launcher
         xivlauncher
         wowup-cf # WoW addon manager (CurseForge + Wago); point it at the Steam prefix install
         poe-campaign-copilot # PoE leveling overlay (see let-binding above)
-        shadps4 # core emulator binary (also what BB_Launcher execs to run the game)
-        shadps4-qtlauncher # Qt GUI frontend
-        shadps4Desktop
         appimage-run
-        # Emulation: RetroArch (curated cores) plus standalones for the heavy
-        # consoles. ROMs/BIOS/saves are mutable state — keep them in a data dir
-        # (e.g. ~/Games/emulation) and point each emulator at it, not in the flake.
-        retroarchWithCores
-        pcsx2 # PS2
-        dolphin-emu # GameCube / Wii
-        rpcs3 # PS3
-        eden # Switch (Yuzu/Sudachi-lineage fork)
-        # Frontend: imports ROMs + the emulators above as non-Steam shortcuts
-        # (with SteamGridDB artwork) so the library browses from the normal Steam
-        # client or Big Picture. Re-run it after adding ROMs; Steam must be running
-        # for the shortcuts to launch.
-        steam-rom-manager
       ];
 
       # --- Steam runtime ---
