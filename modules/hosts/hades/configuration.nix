@@ -9,6 +9,7 @@
         self.nixosModules.hadesHardware
         self.nixosModules.hadesDisk
         self.nixosModules.nixCore # nix daemon policy (shared with the desktops)
+        self.nixosModules.caDistrust # leaked-CA root blocklist (shared with the desktops)
         self.nixosModules.tailscale
         self.nixosModules.secretspec # secrets wiring for migrated services
         self.nixosModules.caddy # reverse proxy for *.swinlab.net (tailnet-only)

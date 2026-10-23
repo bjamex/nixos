@@ -10,6 +10,7 @@
       imports = [
         inputs.lix-module.nixosModules.lixFromNixpkgs
         self.nixosModules.nixCore # nix daemon policy (shared with hades)
+        self.nixosModules.caDistrust # leaked-CA root blocklist (shared with hades)
         self.nixosModules.swinHome # hjem dotfiles for swin
 
         # Desktop session
