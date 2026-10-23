@@ -92,7 +92,14 @@
 
         # :lang sql (nixpkgs ships sqls, not the node sql-language-server)
         sqls
-        sqlfluff
+        # diff-cover's HTML report tests fail on nixpkgs 2026-10-20 (6/366, a
+        # test-fixture mismatch, not a runtime bug); skip them until fixed
+        # upstream, then go back to plain `sqlfluff`.
+        (sqlfluff.override {
+          python3Packages = python3Packages.overrideScope (
+            _: prev: { diff-cover = prev.diff-cover.overridePythonAttrs { doCheck = false; }; }
+          );
+        })
 
         # :lang typst
         tinymist
