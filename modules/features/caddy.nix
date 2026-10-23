@@ -16,8 +16,8 @@
       caddyWithCloudflare = pkgs.caddy.withPlugins {
         plugins = [ "github.com/caddy-dns/cloudflare@v0.2.4" ];
         # Go-modules vendor hash; changes whenever nixpkgs bumps caddy/Go — refresh
-        # from the build's "got:" on a hash mismatch (last: 2026-07-26 nixpkgs bump).
-        hash = "sha256-7GoH8YLCoPmPExQxoga2FHB58zQDoZVf1BBwkVi0SsQ=";
+        # from the build's "got:" on a hash mismatch (last: 2026-10-21, caddy 2.11.4).
+        hash = "sha256-dQvk6ezY6TQ1J7PjhCXnThF/SqVgPwBO8/RXzHCY+js=";
       };
     in
     {
