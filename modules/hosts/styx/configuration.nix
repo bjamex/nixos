@@ -17,6 +17,7 @@
         self.nixosModules.nixLd # unpatched binaries (Playwright's Chromium et al)
         self.nixosModules.insyncNotify # Insync 3.9.10 lost its own notifications
         self.nixosModules.airvpn
+        self.nixosModules.tdarrNode # GPU transcode node for the Tdarr server on docker-prod-2
 
         # Games
         self.nixosModules.beammp # BeamNG.drive multiplayer launcher

@@ -11,6 +11,10 @@
 #    both bound from the /mnt/data SMB share. /mnt/data is an automount, hence
 #    rslave propagation and RequiresMountsFor. transcode_cache must stay
 #    writable over SMB (a Windows NTACL on it once blocked that).
+#  - The container's use of /mnt/data doesn't count as activity for the
+#    automount's 60s idle timeout (smb.nix), and RequiresMountsFor means the
+#    idle unmount stops this service first — it killed the first encode after
+#    3 minutes. The drop-in below disables the idle unmount on styx only.
 #  - Worker limits live on the server, not here: styx = 1 GPU transcode worker,
 #    everything else 0. Set them in the web UI (192.168.0.101:8265 → Nodes).
 { ... }:
@@ -51,6 +55,16 @@
         "d /var/lib/tdarr-node/logs 0755 swin users - -"
       ];
       services.docker-tdarr-node.unitConfig.RequiresMountsFor = [ "/mnt/data/transcode_cache" ];
+
+      # Drop-in over the fstab-generated mnt-data.automount (x-systemd.idle-timeout=60
+      # in smb.nix) so the share stays mounted under a running node.
+      units."mnt-data.automount" = {
+        overrideStrategy = "asDropin";
+        text = ''
+          [Automount]
+          TimeoutIdleSec=0
+        '';
+      };
     };
   };
 }
