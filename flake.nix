@@ -62,7 +62,7 @@
     # Parametric 3D CAD in Rust. Not in nixpkgs; source-built from upstream's
     # flake, pinned to a release tag — bump it, then `nix flake update solidcraft`.
     solidcraft = {
-      url = "github:tangency-labs/solidcraft/v0.16.2";
+      url = "github:tangency-labs/solidcraft/v0.23.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
