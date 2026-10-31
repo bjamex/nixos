@@ -120,6 +120,35 @@
       # share/ covers every folder that actually receives files.
       insyncNotify.paths = [ "/mnt/nvme3/share" ];
 
+      # --- Remote builds ---
+      # Offload builds to the Proxmox builder LXC (modules/hosts/builder,
+      # 32 cores / 48 GB). nix-daemon connects as root with a key that isn't
+      # committed — create it once with
+      #   sudo ssh-keygen -t ed25519 -N "" -C styx-nix-builder -f /etc/nix/builder_ed25519
+      # and append the .pub to /root/.ssh/authorized_keys on the builder. When
+      # the builder is unreachable (away from home), Nix builds locally instead.
+      nix = {
+        distributedBuilds = true;
+        buildMachines = [
+          {
+            hostName = "192.168.0.160";
+            sshUser = "root";
+            sshKey = "/etc/nix/builder_ed25519";
+            system = "x86_64-linux";
+            maxJobs = 4;
+            speedFactor = 2; # prefer it over local builds
+            supportedFeatures = [ "big-parallel" ]; # no kvm in an LXC
+          }
+        ];
+        # The builder pulls cache.nixos.org paths itself rather than styx
+        # uploading them over the LAN.
+        settings.builders-use-substitutes = true;
+      };
+      programs.ssh.knownHosts.builder = {
+        hostNames = [ "192.168.0.160" ];
+        publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILksde8DJVyvqTTQKeozIW51GzeC+COPIyaHZiQr6IQD";
+      };
+
       # --- Users ---
       # Base user + shared groups come from common.nix; these merge on top.
       users.users.swin.extraGroups = [
