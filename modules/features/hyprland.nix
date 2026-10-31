@@ -341,6 +341,10 @@
                 kb_layout    = "us,ua",
                 follow_mouse = 1,
                 accel_profile = "flat",
+                -- Every keyboard device keeps its own lock state, and the LEDs follow
+                -- whichever sent the last key, so a device that starts with Num Lock
+                -- off blanks it for all of them.
+                numlock_by_default = true,
                 touchpad = {
                   natural_scroll = true,
                   tap_to_click   = true,
