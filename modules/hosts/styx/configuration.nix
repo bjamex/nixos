@@ -10,6 +10,7 @@
         self.nixosModules.styxHardware
         self.nixosModules.common # shared styx/void desktop foundation
         self.nixosModules.noctalia
+        self.nixosModules.logiBattery # mouse battery % in the bar, via openlogi
         self.nixosModules.secureboot # inert until mySecureBoot.enable; see the module header
 
         # System
