@@ -7,15 +7,16 @@
 # cert for any site. They chain to these two roots; this drops both from the
 # system bundle (/etc/ssl/certs), the advisory's own NixOS workaround.
 #
-# Remove once nixpkgs' cacert is >= 3.131.1 (merged to master 2026-10-20 as
-# "cacert: 3.126 -> 3.131.1") — check with
-# `nix eval --raw .#nixosConfigurations.styx.pkgs.cacert.version`.
-# Browsers and Electron apps carry their own root stores and aren't covered.
+# cacert 3.131.1 (nixpkgs 2026-10-27) dropped "emSign ECC Root CA - G3" itself,
+# so it's gone from this list — the cacert builder fails on a blocklist entry
+# that isn't in the store. It still ships "Comodo AAA Services root", so that
+# block stays; remove this module once
+#   grep '^Comodo AAA' $(nix build --no-link --print-out-paths \
+#     .#nixosConfigurations.styx.pkgs.cacert)/etc/ssl/certs/ca-bundle.crt
+# comes back empty. Browsers and Electron apps carry their own root stores and
+# aren't covered.
 {
   flake.nixosModules.caDistrust = {
-    security.pki.caCertificateBlacklist = [
-      "Comodo AAA Services root"
-      "emSign ECC Root CA - G3"
-    ];
+    security.pki.caCertificateBlacklist = [ "Comodo AAA Services root" ];
   };
 }

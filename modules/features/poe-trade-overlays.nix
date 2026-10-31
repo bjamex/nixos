@@ -72,7 +72,9 @@ let
           cd renderer
           npm ci
           patchShebangs node_modules
-          npm run make-index-files
+          # APT 3.29.108 folded this into `vite build` (a vite plugin) and
+          # dropped the script; EE2 still has it as a separate step.
+          npm run make-index-files --if-present
           npm run build
           cd ..
           # Force uiohook-napi 1.5.5 (see file header). Drop main's lock so
@@ -174,12 +176,12 @@ in
 {
   flake.nixosModules.awakenedPoeTrade = mkModule {
     pname = "awakened-poe-trade";
-    version = "3.29.107";
+    version = "3.29.108";
     owner = "SnosMe";
     repo = "awakened-poe-trade";
-    rev = "f9c7ffc247e82db6cd6c7203d5be74be01f43dcd";
-    srcHash = "sha256-VEv07fuyRxTGXRI1QK8t89ugXMdlTcTdMp1tpc6Mavw=";
-    outputHash = "sha256-QPg99UhZ+3o8J54dOHIL21RTd5DxOfQUWtlwmCyaP3A="; # rebuilt for 3.29.107 on the 2026-10-20 nixpkgs
+    rev = "543423aba68db81d965f42bfbe7af47bf435fe13";
+    srcHash = "sha256-RvKCJztsk6wWimSLUbRe9Q+BzhZMSNFbB/a28vtZ7N0=";
+    outputHash = "sha256-318AC5894rzDA3t+L9+uOqfdDwMNC1n//H/uoFUwHhA="; # built for 3.29.108 on the 2026-10-27 nixpkgs
     desktopName = "Awakened PoE Trade";
     comment = "Path of Exile trading macro";
     wmClass = "awakened-poe-trade";
@@ -193,7 +195,7 @@ in
     repo = "Exiled-Exchange-2";
     rev = "v0.16.3";
     srcHash = "sha256-yGP9u4lidmzKJgryW1oS5ooZ2OUdtZ5afy9RtAEUQZI=";
-    outputHash = "sha256-qaZGpmy01YibKoCOxKxNvWWhqIExFGMxuvz8FeWB8Q4="; # rebuilt for 0.16.3 on the 2026-10-20 nixpkgs
+    outputHash = "sha256-mnTEoiC2YlfgelCTt2JDK5q2jnonuwUxHjaZ/gm40do="; # rebuilt for 0.16.3 on the 2026-10-27 nixpkgs
     desktopName = "Exiled Exchange 2";
     comment = "Path of Exile 2 trading macro";
     wmClass = "Exiled Exchange 2";
