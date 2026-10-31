@@ -129,6 +129,9 @@
           notification.enable_daemon = true;
           osd.position = "top_right";
 
+          # Keep the old notification chime: see noctalia-classic below.
+          audio.sound_theme = "noctalia-classic";
+
           dock = {
             enabled = true;
             position = "bottom";
@@ -225,6 +228,25 @@
             { type = "session"; }
           ];
         };
+      };
+
+      # --- Sound theme ---
+      # Noctalia 2026-09-24 switched the notification chime from freedesktop's
+      # `message` to `message-new-instant`. This theme inherits freedesktop for
+      # every other event and maps message-new-instant back to message.oga.
+      hjem.users.swin.files = {
+        ".local/share/sounds/noctalia-classic/index.theme".text = ''
+          [Sound Theme]
+          Name=Noctalia classic
+          Comment=freedesktop, with the original notification chime
+          Inherits=freedesktop
+          Directories=stereo
+
+          [stereo]
+          OutputProfile=stereo
+        '';
+        ".local/share/sounds/noctalia-classic/stereo/message-new-instant.oga".source =
+          "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message.oga";
       };
     };
 }
