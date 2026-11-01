@@ -337,6 +337,14 @@
                 -- their workspace is hidden; the default 15 still stalls the game.
                 render_unfocused_fps     = 60,
               },
+              -- Hyprland 0.57 flips the M27Q into HDR whenever Helium fullscreens a
+              -- video (Chromium tags its surface wide-gamut), costing a modeset and
+              -- a black screen each way — and on the way out it leaves the
+              -- connector's Colorspace at BT2020_RGB, so the desktop stays washed
+              -- out until the next modeset. SDR panel anyway: never auto-switch.
+              render = {
+                cm_auto_hdr = 0,
+              },
               input = {
                 kb_layout    = "us,ua",
                 follow_mouse = 1,
