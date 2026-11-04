@@ -26,6 +26,7 @@
         self.nixosModules.awakenedPoeTrade # PoE1 price checker
         self.nixosModules.exiledExchange # PoE2 price checker
         self.nixosModules.scalpel # alternative PoE2 overlay/price checker
+        self.nixosModules.wowAddons # daily WoW Forever addon updates from GitHub releases
 
         # Apps
         self.nixosModules.jdownloader # bootstraps upstream jar into ~/.local/share/jdownloader
