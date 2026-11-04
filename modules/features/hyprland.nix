@@ -16,7 +16,7 @@
         addr=$(${config.programs.hyprland.package}/bin/hyprctl -j clients | \
           ${lib.getExe pkgs.jq} -r '[.[] | select(.class == "thunderbird")] | .[0].address // empty')
         if [ -n "$addr" ]; then
-          ${config.programs.hyprland.package}/bin/hyprctl dispatch focuswindow "address:$addr"
+          ${config.programs.hyprland.package}/bin/hyprctl dispatch "hl.dsp.focus({ window = \"address:$addr\" })"
         else
           thunderbird
         fi
@@ -124,7 +124,7 @@
         pids=$(printf '%s' "$clients" | "$jq" -r --argjson want "$want" "$sel | .pid")
 
         for addr in $addrs; do
-          "$hyprctl" dispatch closewindow "address:$addr"
+          "$hyprctl" dispatch "hl.dsp.window.close({ window = \"address:$addr\" })"
         done
 
         # Give them up to 15s to write their config, then exit regardless — a
@@ -138,7 +138,7 @@
           sleep 0.1
         done
 
-        "$hyprctl" dispatch exit
+        "$hyprctl" dispatch 'hl.dsp.exit()'
       '';
 
       # Flush the current 5-min buffer to disk. gpu-screen-recorder saves the
@@ -363,8 +363,8 @@
             -- Scratchpad — a Quake-style herdr console, ported from Omarchy's
             -- default/hypr/qconsole.lua. mod+S (or mod+grave) drops it down over
             -- whatever workspace you're on; the workspace underneath dims rather
-            -- than being replaced. The first toggle spawns herdr via
-            -- on_created_empty; after that the same session is only shown and
+            -- than being replaced. The first toggle spawns herdr via the
+            -- workspace.created handler; after that the same session is only shown and
             -- hidden, so agents keep running while it's away. Its --class is
             -- distinct from the mod+Return instance so the two are tellable
             -- apart in `hyprctl clients`.
@@ -407,10 +407,18 @@
                 -- while open, and an active border reads as a stray frame
                 -- around a panel the dimming already sets apart.
                 no_border = true,
-
-                on_created_empty = "kitty --class herdr-scratch herdr",
               })
             end
+
+            -- Seed the console when its workspace first comes up empty. This was
+            -- the rule's on_created_empty, which 0.57 deprecates — and since the
+            -- rule is rewritten on every refit, it re-raised the deprecation
+            -- notice each time.
+            hl.on("workspace.created", function(ws)
+              if ws.name == "special:herdr" and ws.is_empty then
+                hl.exec_cmd("kitty --class herdr-scratch herdr")
+              end
+            end)
 
             local function scratchpadFit()
               local monitor = hl.get_active_monitor()
@@ -555,7 +563,13 @@
             hl.bind(mod .. " + SHIFT + V",    hl.dsp.exec_cmd("vpn-toggle"))
             hl.bind(mod .. " + SHIFT + F12",  hl.dsp.exec_cmd("${gracefulExit}"))
             hl.bind("Print",                  hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave area ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
+            hl.bind("SHIFT + Print",          hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave output ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
+            hl.bind(mod .. " + Print",        hl.dsp.exec_cmd("mkdir -p ~/Pictures/Screenshots && grimblast copysave active ~/Pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S).png"))
             hl.bind(mod .. " + CTRL + Print", hl.dsp.exec_cmd("${ocrRegion}"))
+            hl.bind(mod .. " + SHIFT + P",    hl.dsp.exec_cmd("${lib.getExe pkgs.hyprpicker} -a"))
+            -- Via logind rather than hyprlock directly, so hypridle's lock_cmd
+            -- runs it and an already-locked screen doesn't get a second hyprlock.
+            hl.bind(mod .. " + L",            hl.dsp.exec_cmd("loginctl lock-session"))
             hl.bind(mod .. " + SHIFT + R",    hl.dsp.exec_cmd("${screenRecordToggle}"))
             hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
 
@@ -565,13 +579,32 @@
             hl.bind(mod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
             hl.bind(mod .. " + C",         hl.dsp.exec_cmd("gnome-calculator"))
             hl.bind(mod .. " + O",         hl.dsp.exec_cmd("${transparencyToggle}"))
-            hl.bind(mod .. " + H",         hl.dsp.exec_cmd("hyprctl dispatch resizeactive -640 0"))
+            hl.bind(mod .. " + H",         hl.dsp.window.resize({ x = -640, y = 0, relative = true }))
+            hl.bind(mod .. " + SHIFT + W", hl.dsp.window.kill())
+            hl.bind(mod .. " + J",         hl.dsp.layout("togglesplit"))
+            hl.bind(mod .. " + P",         hl.dsp.window.pin())
+            hl.bind(mod .. " + SHIFT + C", hl.dsp.window.center())
+            hl.bind(mod .. " + G",         hl.dsp.group.toggle())
+            hl.bind(mod .. " + ALT + Tab", hl.dsp.group.next())
+
+            -- Focus between windows
+            hl.bind(mod .. " + CTRL + left",  hl.dsp.focus({ direction = "left" }))
+            hl.bind(mod .. " + CTRL + right", hl.dsp.focus({ direction = "right" }))
+            hl.bind(mod .. " + CTRL + up",    hl.dsp.focus({ direction = "up" }))
+            hl.bind(mod .. " + CTRL + down",  hl.dsp.focus({ direction = "down" }))
+
+            -- Resize (repeating: holding the key keeps resizing)
+            hl.bind(mod .. " + ALT + left",  hl.dsp.window.resize({ x = -50, y = 0,   relative = true }), { repeating = true })
+            hl.bind(mod .. " + ALT + right", hl.dsp.window.resize({ x = 50,  y = 0,   relative = true }), { repeating = true })
+            hl.bind(mod .. " + ALT + up",    hl.dsp.window.resize({ x = 0,   y = -50, relative = true }), { repeating = true })
+            hl.bind(mod .. " + ALT + down",  hl.dsp.window.resize({ x = 0,   y = 50,  relative = true }), { repeating = true })
 
             -- Workspace navigation
             hl.bind(mod .. " + left",  hl.dsp.focus({ workspace = "e-1" }))
             hl.bind(mod .. " + right", hl.dsp.focus({ workspace = "e+1" }))
             hl.bind(mod .. " + up",    hl.dsp.focus({ workspace = "e+1" }))
             hl.bind(mod .. " + down",  hl.dsp.focus({ workspace = "e-1" }))
+            hl.bind(mod .. " + Tab",   hl.dsp.focus({ workspace = "previous" }))
 
             -- Move window
             hl.bind(mod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "l" }))
@@ -632,7 +665,7 @@
             general {
               lock_cmd         = hyprlock
               before_sleep_cmd = hyprlock
-              after_sleep_cmd  = hyprctl dispatch dpms on
+              after_sleep_cmd  = hyprctl dispatch 'hl.dsp.dpms({ action = "on" })'
             }
 
             ${lib.optionalString config.myHyprland.idleLock ''
