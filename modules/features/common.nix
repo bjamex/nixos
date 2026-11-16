@@ -27,6 +27,7 @@
         self.nixosModules.shell
         self.nixosModules.neovim
         self.nixosModules.herdr
+        self.nixosModules.herdrApp
 
         # Network & sync
         self.nixosModules.tailscale
