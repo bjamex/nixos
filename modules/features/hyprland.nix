@@ -242,16 +242,15 @@
 
             -- Startup
             hl.on("hyprland.start", function()
-              -- xdg-desktop-portal 1.22 added Requisite=graphical-session.target
-              -- to its unit: the portal now refuses to start unless that target
-              -- is already active, where 1.20 D-Bus activated regardless. The
-              -- plain start-hyprland session (login.nix keeps it over the uwsm
-              -- one, whose bindpid handshake fails under SDDM) never activates
-              -- it, so after the 2026-08-16 bump nothing had a ScreenCast
-              -- backend — Discord streaming, OBS and screenshots all silently
-              -- lost their portal. This shipped-but-unwired NixOS target
-              -- BindsTo graphical-session.target, which pulls it up.
-              hl.exec_cmd("systemctl --user start nixos-fake-graphical-session.target")
+              -- xdg-desktop-portal 1.22 refuses to start unless
+              -- graphical-session.target is active, and without it Discord
+              -- streaming, OBS and screenshots silently lose their portal. Up to
+              -- 0.56 the plain start-hyprland session never activated it, so this
+              -- started nixos-fake-graphical-session.target to pull it up. 0.57
+              -- starts hyprland-session.target itself (hyprwm/Hyprland#15776),
+              -- which BindsTo graphical-session.target, so that is gone. If the
+              -- portal goes missing again, check `systemctl --user status
+              -- hyprland-session.target` first.
               hl.exec_cmd("noctalia")
               hl.exec_cmd("${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1")
               hl.exec_cmd("insync start")
@@ -344,6 +343,13 @@
               -- out until the next modeset. SDR panel anyway: never auto-switch.
               render = {
                 cm_auto_hdr = 0,
+              },
+              -- Since 0.57: a layer mapped after a window went fullscreen (a
+              -- Noctalia notification or popup) stays under it instead of
+              -- drawing over the game. Only real fullscreen counts — WoW and
+              -- fullscreen video; PoE's fake fullscreen still gets overlays.
+              layers = {
+                allow_new_top_layers_over_existing_fullscreen = false,
               },
               input = {
                 kb_layout    = "us,ua",
@@ -574,8 +580,10 @@
             hl.bind(mod .. " + SHIFT + S",    hl.dsp.exec_cmd("${gpuReplaySave}"))
 
             -- Window management
-            hl.bind(mod .. " + SHIFT + M", hl.dsp.window.fullscreen({ type = "fullscreen" }))
-            hl.bind(mod .. " + M",         hl.dsp.window.fullscreen({ type = "maximize" }))
+            -- The key is `mode`: 0.57 silently ignores `type`, which made both
+            -- binds toggle real fullscreen (Super+M knocked WoW out of it).
+            hl.bind(mod .. " + SHIFT + M", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+            hl.bind(mod .. " + M",         hl.dsp.window.fullscreen({ mode = "maximized" }))
             hl.bind(mod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
             hl.bind(mod .. " + C",         hl.dsp.exec_cmd("gnome-calculator"))
             hl.bind(mod .. " + O",         hl.dsp.exec_cmd("${transparencyToggle}"))
