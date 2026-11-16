@@ -5,7 +5,31 @@
   # Insync, overlaid with a pinned build of upstream's .deb run in an FHS env.
   # inotify limits are raised so it can watch the whole synced tree.
   flake.nixosModules.insync =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      # Network mounts hidden from Insync's sandbox. For every path it touches,
+      # Insync walks /proc/self/mounts and statfs()es every mount on the system.
+      # On a CIFS share each statfs is a round trip to the NAS (~8 ms), which
+      # pinned its single core-loop thread: during the startup rescan of the
+      # synced tree, downloads crawled at ~10 KiB/s per file over a link that
+      # does 25 MB/s. A tmpfs over the mount point makes those calls local.
+      networkMounts = map (fs: fs.mountPoint) (
+        lib.filter (
+          fs:
+          lib.elem fs.fsType [
+            "cifs"
+            "smb3"
+            "nfs"
+            "nfs4"
+          ]
+        ) (lib.attrValues config.fileSystems)
+      );
+    in
     {
       boot.kernel.sysctl = {
         "fs.inotify.max_user_watches" = 524288;
@@ -88,6 +112,7 @@
               unshareUts = false;
               unshareCgroup = false;
               dieWithParent = true;
+              extraBwrapArgs = map (m: "--tmpfs ${lib.escapeShellArg m}") networkMounts;
               meta = prev.insync.meta;
             };
         })
